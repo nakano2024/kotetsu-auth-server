@@ -4,7 +4,7 @@ import lombok.Getter;
 
 public class UserCredentialsOutput {
     @Getter
-    private final String userCode;
+    private final String code;
 
     @Getter
     private final String email;
@@ -12,13 +12,13 @@ public class UserCredentialsOutput {
     @Getter
     private final String hashedPassword;
 
-    private UserCredentialsOutput(String userCode, String email, String hashedPassword) {
-        this.userCode = userCode;
+    private UserCredentialsOutput(String code, String email, String hashedPassword) {
+        this.code = code;
         this.email = email;
         this.hashedPassword = hashedPassword;
     }
 
-    public static UserCredentialsOutput of(String userCode, String email, String hashedPassword) {
-        return new UserCredentialsOutput(userCode, email, hashedPassword);
+    public static UserCredentialsOutput of(String code, String email, String hashedPassword) {
+        return new UserCredentialsOutput(code, email, hashedPassword);
     }
 }

@@ -6,7 +6,7 @@ import kotetsu.auth.application.domain.entity.UserCredential;
 import kotetsu.auth.application.domain.exception.UserCredentialNotFoundException;
 import kotetsu.auth.application.domain.repository.IFetchUserCredentialByEmailRepository;
 import kotetsu.auth.application.domain.value.Email;
-import kotetsu.auth.application.dto.GetUserCredentialsInput;
+import kotetsu.auth.application.dto.GetUserCredentialEmailInput;
 import kotetsu.auth.application.dto.UserCredentialsOutput;
 
 @Component
@@ -17,7 +17,7 @@ public class GetUserCredentialsByEmailUsecase {
         this.fetchUserCredentialByEmailRepository = fetchUserCredentialByEmailRepository;
     }
 
-    public UserCredentialsOutput getUserCredentials(GetUserCredentialsInput input) throws UserCredentialNotFoundException {
+    public UserCredentialsOutput getUserCredentials(GetUserCredentialEmailInput input) throws UserCredentialNotFoundException {
         UserCredential user = fetchUserCredentialByEmailRepository.fetchByEmail(Email.of(input.getEmail()));
 
         if (user == null) {

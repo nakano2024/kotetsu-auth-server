@@ -10,6 +10,9 @@ services:
       - DATASOURCE_URL=jdbc:postgresql://data/usermanager
       - DATASOURCE_USERNAME=webapp
       - DATASOURCE_PASSWORD=webapp
+      - JWT_PRIVATE_KEY=${JWT_PRIVATE_KEY}
+      - JWT_PUBLIC_KEY=${JWT_PUBLIC_KEY}
+
     tty: true
     command: sleep infinity
   

@@ -25,7 +25,7 @@ import kotetsu.auth.application.domain.value.Email;
 import kotetsu.auth.application.domain.value.HashedPassword;
 import kotetsu.auth.application.domain.value.UserImageUrl;
 import kotetsu.auth.application.domain.value.UserName;
-import kotetsu.auth.application.dto.GetUserCredentialsInput;
+import kotetsu.auth.application.dto.GetUserCredentialEmailInput;
 import kotetsu.auth.application.dto.UserCredentialsOutput;
 import kotetsu.auth.application.usecase.GetUserCredentialsByEmailUsecase;
 
@@ -36,7 +36,7 @@ public class GetUserCredentialsTest {
     IFetchUserCredentialByEmailRepository fetchUserCredentialByEmailRepository;
 
     @Mock
-    GetUserCredentialsInput input;
+    GetUserCredentialEmailInput input;
 
     @Mock
     Email inputEmail;
