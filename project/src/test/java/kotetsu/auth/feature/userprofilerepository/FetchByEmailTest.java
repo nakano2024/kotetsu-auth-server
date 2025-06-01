@@ -15,9 +15,8 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
-import kotetsu.auth.application.domain.entity.UserProfile;
-import kotetsu.auth.application.domain.value.Email;
-import kotetsu.auth.repository.UserProfileRepository;
+import kotetsu.auth.application.dto.data.UserProfileData;
+import kotetsu.auth.persistence.UserProfileDao;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -28,7 +27,7 @@ public class FetchByEmailTest {
     NamedParameterJdbcTemplate jdbcTemplate;
 
     @Autowired
-    UserProfileRepository repository;
+    UserProfileDao userProfileDao;
 
     @BeforeEach
     @Transactional
@@ -53,16 +52,16 @@ public class FetchByEmailTest {
             parameters
         );
 
-        UserProfile profile = repository.fetchByEmail(Email.of("tanaka@example.com"));
-        assertEquals("9afd6f24-49b8-0ddd-1797-552b9b31dbe4", profile.getCode().getValue());
-        assertEquals("田中太郎", profile.getName().getValue());
-        assertEquals("tanaka@example.com", profile.getEmail().getValue());
-        assertEquals("https://example.com/0ef2bc81-1804-6d0b-d0ba-2e31ae44a3cb.png", profile.getImageUrl().getValue());
+        UserProfileData profile = userProfileDao.findByEmail("tanaka@example.com");
+        assertEquals("9afd6f24-49b8-0ddd-1797-552b9b31dbe4", profile.getCode().toString());
+        assertEquals("田中太郎", profile.getName());
+        assertEquals("tanaka@example.com", profile.getEmail());
+        assertEquals("https://example.com/0ef2bc81-1804-6d0b-d0ba-2e31ae44a3cb.png", profile.getImageUrl());
     }
 
         @Test
     public void returnNullIfUserDoseNotExist() {
-        UserProfile profile = repository.fetchByEmail(Email.of("tanaka@example.com"));
+        UserProfileData profile = userProfileDao.findByEmail("tanaka@example.com");
         assertNull(profile);
     }
 }

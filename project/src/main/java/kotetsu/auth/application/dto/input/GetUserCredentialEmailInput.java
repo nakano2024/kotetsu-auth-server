@@ -1,4 +1,4 @@
-package kotetsu.auth.application.dto;
+package kotetsu.auth.application.dto.input;
 
 import lombok.Getter;
 

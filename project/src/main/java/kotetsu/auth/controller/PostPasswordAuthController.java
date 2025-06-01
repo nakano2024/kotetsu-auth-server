@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.annotation.security.PermitAll;
 import kotetsu.auth.application.domain.exception.UserProfileNotFoundException;
-import kotetsu.auth.application.dto.GetUserProfileEmailInput;
-import kotetsu.auth.application.dto.UserProfileOutput;
+import kotetsu.auth.application.dto.input.GetUserProfileEmailInput;
+import kotetsu.auth.application.dto.output.UserProfileOutput;
 import kotetsu.auth.application.usecase.GetUserProfileByEmailUsecase;
 import kotetsu.auth.request.PasswordAuthRequest;
 import kotetsu.auth.util.InternalAuthIdTokenGenerator;
@@ -49,7 +49,7 @@ public class PostPasswordAuthController {
             
             UserProfileOutput output = getUserProfileByEmailUsecase.getUserProfile(GetUserProfileEmailInput.of(authentication.getName()));
 
-            String jwt = idTokenGenerator.generate(output.getCode(), Map.of(
+            String jwt = idTokenGenerator.generate(output.getCode().toString(), Map.of(
                 "name", output.getName(),
                 "email", output.getEmail(),
                 "image_url", output.getImageUrl()

@@ -17,9 +17,8 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
-import kotetsu.auth.application.domain.entity.UserCredential;
-import kotetsu.auth.application.domain.value.Email;
-import kotetsu.auth.repository.UserCredentialRepository;
+import kotetsu.auth.application.dto.data.UserCredentialData;
+import kotetsu.auth.persistence.UserCredentialDao;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -29,7 +28,7 @@ public class FetchByEmailTest {
     NamedParameterJdbcTemplate jdbcTemplate;
 
     @Autowired
-    UserCredentialRepository repository;
+    UserCredentialDao userCredentialDao;
 
     @BeforeEach
     @Transactional
@@ -54,16 +53,15 @@ public class FetchByEmailTest {
             parameters
         );
 
-        UserCredential userCredential = repository.fetchByEmail(Email.of("tanaka@example.com"));
+        UserCredentialData userCredential = userCredentialDao.findByEmail("tanaka@example.com");
         assertNotNull(userCredential);
-        assertEquals("9afd6f24-49b8-0ddd-1797-552b9b31dbe4", userCredential.getCode().getValue());
-        assertEquals("tanaka@example.com", userCredential.getEmail().getValue());
-        assertEquals("$2a$08$I9vocqeWlWqAA/mAux33O.2v2smtFpVf8GdTyJt8rVe45pjwR8Q4S", userCredential.getPassword().getValue());
+        assertEquals("tanaka@example.com", userCredential.getEmail());
+        assertEquals("$2a$08$I9vocqeWlWqAA/mAux33O.2v2smtFpVf8GdTyJt8rVe45pjwR8Q4S", userCredential.getHashedPassword());
     }
 
     @Test
     public void returnNullIfDataDoseNotExist() throws SQLException {
-        UserCredential userCredential = repository.fetchByEmail(Email.of("tanaka@example.com"));
+        UserCredentialData userCredential = userCredentialDao.findByEmail("tanaka@example.com");
         assertNull(userCredential);
     }
 }

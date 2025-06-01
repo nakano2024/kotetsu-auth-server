@@ -2,34 +2,33 @@ package kotetsu.auth.application.usecase;
 
 import org.springframework.stereotype.Component;
 
-import kotetsu.auth.application.domain.entity.UserProfile;
 import kotetsu.auth.application.domain.exception.UserProfileNotFoundException;
-import kotetsu.auth.application.domain.repository.IFetchUserProfileByEmailRepository;
-import kotetsu.auth.application.domain.value.Email;
-import kotetsu.auth.application.dto.GetUserProfileEmailInput;
-import kotetsu.auth.application.dto.UserProfileOutput;
+import kotetsu.auth.application.dto.data.UserProfileData;
+import kotetsu.auth.application.dto.input.GetUserProfileEmailInput;
+import kotetsu.auth.application.dto.output.UserProfileOutput;
+import kotetsu.auth.application.persistence.IFindUserProfileByEmailPort;
 
 @Component
 public class GetUserProfileByEmailUsecase {
 
-    final IFetchUserProfileByEmailRepository fetchUserProfileByEmailRepository;
+    final IFindUserProfileByEmailPort findUserProfileByEmailPort;
 
-    public GetUserProfileByEmailUsecase(final IFetchUserProfileByEmailRepository fetchUserProfileByEmailRepository) {
-        this.fetchUserProfileByEmailRepository = fetchUserProfileByEmailRepository;
+    public GetUserProfileByEmailUsecase(final IFindUserProfileByEmailPort findUserProfileByEmailPort) {
+        this.findUserProfileByEmailPort = findUserProfileByEmailPort;
     }
 
     public UserProfileOutput getUserProfile(GetUserProfileEmailInput input) throws UserProfileNotFoundException {
-        UserProfile userProfile = fetchUserProfileByEmailRepository.fetchByEmail(Email.of(input.getEmail()));
+        UserProfileData userProfile = findUserProfileByEmailPort.findByEmail(input.getEmail());
 
         if (userProfile == null) {
             throw new UserProfileNotFoundException();
         }
 
         return UserProfileOutput.of(
-            userProfile.getCode().getValue(),
-            userProfile.getName().getValue(),
-            userProfile.getEmail().getValue(),
-            userProfile.getImageUrl().getValue()
+            userProfile.getCode(),
+            userProfile.getName(),
+            userProfile.getEmail(),
+            userProfile.getImageUrl()
         );
     }
 }
