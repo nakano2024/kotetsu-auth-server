@@ -1,36 +1,35 @@
 package kotetsu.auth.util;
 
 import java.security.PrivateKey;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.Map;
 
 import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Jwts;
+import kotetsu.auth.application.util.IGenerateIdTokenPort;
 
 @Component
-public class InternalAuthIdTokenGenerator {
+public class JwtGenerator implements IGenerateIdTokenPort {
     private final PrivateKeyGetter privateKeyGetter;
 
-    public InternalAuthIdTokenGenerator(PrivateKeyGetter privateKeyGetter) {
+    public JwtGenerator(PrivateKeyGetter privateKeyGetter) {
         this.privateKeyGetter = privateKeyGetter;
     }
 
     public String generate(
         final String subject,
+        final Date issuedAt,
+        final Date expiredAt,
         final Map<String, String> profile
     ) {
-        Instant now = Instant.now();
-
         PrivateKey privateKey = privateKeyGetter.getPrivateKey();
 
         return Jwts.builder()
             .subject(subject)
             .claim("profile", profile)
-            .issuedAt(Date.from(now))
-            .expiration(Date.from(now.plus(7, ChronoUnit.DAYS)))
+            .issuedAt(issuedAt)
+            .expiration(expiredAt)
             .signWith(privateKey, Jwts.SIG.RS256)
             .compact();
     }

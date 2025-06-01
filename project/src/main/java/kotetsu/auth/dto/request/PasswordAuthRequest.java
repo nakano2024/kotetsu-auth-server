@@ -1,4 +1,4 @@
-package kotetsu.auth.request;
+package kotetsu.auth.dto.request;
 
 import lombok.Data;
 
