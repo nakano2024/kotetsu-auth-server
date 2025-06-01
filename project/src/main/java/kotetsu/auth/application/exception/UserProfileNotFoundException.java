@@ -1,4 +1,4 @@
-package kotetsu.auth.application.domain.exception;
+package kotetsu.auth.application.exception;
 
 import java.io.IOException;
 

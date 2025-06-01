@@ -8,9 +8,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import kotetsu.auth.application.domain.exception.UserCredentialNotFoundException;
 import kotetsu.auth.application.dto.input.GetUserCredentialEmailInput;
 import kotetsu.auth.application.dto.output.UserCredentialsOutput;
+import kotetsu.auth.application.exception.UserCredentialNotFoundException;
 import kotetsu.auth.application.usecase.GetUserCredentialsByEmailUsecase;
 
 @Service

@@ -2,10 +2,10 @@ package kotetsu.auth.application.usecase;
 
 import org.springframework.stereotype.Component;
 
-import kotetsu.auth.application.domain.exception.UserProfileNotFoundException;
 import kotetsu.auth.application.dto.data.UserProfileData;
 import kotetsu.auth.application.dto.input.GetUserProfileEmailInput;
 import kotetsu.auth.application.dto.output.UserProfileOutput;
+import kotetsu.auth.application.exception.UserProfileNotFoundException;
 import kotetsu.auth.application.persistence.IFindUserProfileByEmailPort;
 
 @Component

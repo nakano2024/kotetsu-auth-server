@@ -17,10 +17,10 @@ import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import kotetsu.auth.application.domain.exception.UserProfileNotFoundException;
 import kotetsu.auth.application.dto.data.UserProfileData;
 import kotetsu.auth.application.dto.input.GetUserProfileEmailInput;
 import kotetsu.auth.application.dto.output.UserProfileOutput;
+import kotetsu.auth.application.exception.UserProfileNotFoundException;
 import kotetsu.auth.application.persistence.IFindUserProfileByEmailPort;
 import kotetsu.auth.application.usecase.GetUserProfileByEmailUsecase;
 

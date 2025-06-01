@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.annotation.security.PermitAll;
-import kotetsu.auth.application.domain.exception.UserProfileNotFoundException;
 import kotetsu.auth.application.dto.input.GetUserProfileEmailInput;
 import kotetsu.auth.application.dto.output.UserProfileOutput;
+import kotetsu.auth.application.exception.UserProfileNotFoundException;
 import kotetsu.auth.application.usecase.GetUserProfileByEmailUsecase;
 import kotetsu.auth.request.PasswordAuthRequest;
 import kotetsu.auth.util.InternalAuthIdTokenGenerator;
