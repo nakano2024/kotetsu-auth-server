@@ -88,7 +88,7 @@ public class GetUserProfileTest {
             assertEquals(Map.of(
                 "name", "田中太郎",
                 "email", "tanaka@example.com",
-                "imageUrl", "https://example.com/image.pn"
+                "imageUrl", "https://example.com/image.png"
             ), profileCaptor.getValue());
 
             ArgumentCaptor<String> jwtCaptor = ArgumentCaptor.forClass(String.class);
