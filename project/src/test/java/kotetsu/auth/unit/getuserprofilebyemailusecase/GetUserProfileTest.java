@@ -1,22 +1,24 @@
 package kotetsu.auth.unit.getuserprofilebyemailusecase;
 
+import java.time.Instant;
+import java.util.Date;
+import java.util.Map;
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.when;
-
-import java.time.Instant;
-import java.util.UUID;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import kotetsu.auth.application.dto.data.UserProfileData;
@@ -64,17 +66,30 @@ public class GetUserProfileTest {
             when(userProfile.getEmail()).thenReturn("tanaka@example.com");
             when(userProfile.getImageUrl()).thenReturn("https://example.com/image.png");
             when(findUserProfileByEmailPort.findByEmail(anyString())).thenReturn(userProfile);
-            
             when(input.getEmail()).thenReturn("tanaka@example.com");
-
             when(generateIdTokenPort.generate(anyString(), any(), any(), any()))
                 .thenReturn("eyJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI4YTExMDFiMS0yYmJkLTQxYzktOTIwNi0zOWE2NDQ1M2I3YzUiLCJwcm9maWxlIjp7ImVtYWlsIjoidGVzdEBleGFtcGxlLmNvbSIsImltYWdlX3VybCI6Imh0dHBzOi8vZXhhbXBsZS5jb20vdXNlci8zNWRiMTI1MS00NGE3LWI0MzItNTZkNC1kNDg2NGY4Yjk0ZDEucG5nIiwibmFtZSI6IuODhuOCueODiOWkqumDjiJ9LCJpYXQiOjE3NDg3NzI1NDQsImV4cCI6MTc0OTM3NzM0NH0.s8AEkS4_F1sUEn8oEnKhWy0wXdQ2SoY3GWfG7A0bWAJ-zgGhySFK1J970WZWT3kTEngla88SRe4swXYyb6AT3ZHyLf8vzn_NQYgQdgJYE-DQ9xQChPYMdfvc9sJ9kjHWWMvHv_XpUvblztVBen7oaFkXsUwTbaniWQcqs9hFJzKa7Zpy7MKPRf7kF-O-KGjU_qg_DPDwde9LO5RsoWqgCpFvBXguYEty8i9WOrFdWtCUmpmka0tr7qxd6faehy9aRlUAZVIHcdP0h970talgCBdcYQM26n-mVOwPCaKd_a76JqjML7Oq9GUHpleeB2xRCP2Oy6wKllkefiHo6oueYQ");
-
             when(getCurrentDatePort.getCurrent()).thenReturn(Instant.parse("2025-06-01T00:00:00Z"));
-
+            
             assertDoesNotThrow(() -> {
                 getUserProfileByEmailUsecase.getUserProfile(input);
             });
+
+            ArgumentCaptor<String> subjectCaptor = ArgumentCaptor.forClass(String.class);
+            ArgumentCaptor<Date> issuedAtCaptor = ArgumentCaptor.forClass(Date.class);
+            ArgumentCaptor<Date> expiredAtCaptor = ArgumentCaptor.forClass(Date.class);
+            @SuppressWarnings("unchecked")
+            ArgumentCaptor<Map<String, String>> profileCaptor = ArgumentCaptor.forClass(Map.class);
+            verify(generateIdTokenPort).generate(subjectCaptor.capture(), issuedAtCaptor.capture(), expiredAtCaptor.capture(), profileCaptor.capture());
+            assertEquals("b4aabeed-c3bc-7873-636f-a38786457162", subjectCaptor.getValue());
+            assertEquals(Date.from(Instant.parse("2025-06-01T00:00:00Z")), issuedAtCaptor.getValue());
+            assertEquals(Date.from(Instant.parse("2025-06-02T00:00:00Z")), expiredAtCaptor.getValue());
+            assertEquals(Date.from(Instant.parse("2025-06-02T00:00:00Z")), expiredAtCaptor.getValue());
+            assertEquals(Map.of(
+                "name", "田中太郎",
+                "email", "tanaka@example.com",
+                "imageUrl", "https://example.com/image.png"
+            ), profileCaptor.getValue());
 
             ArgumentCaptor<String> jwtCaptor = ArgumentCaptor.forClass(String.class);
             ArgumentCaptor<String> tokenTypeCaptor = ArgumentCaptor.forClass(String.class);
@@ -84,7 +99,6 @@ public class GetUserProfileTest {
                 tokenTypeCaptor.capture(),
                 expiresInCaptor.capture())
             );
-
             assertEquals("eyJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI4YTExMDFiMS0yYmJkLTQxYzktOTIwNi0zOWE2NDQ1M2I3YzUiLCJwcm9maWxlIjp7ImVtYWlsIjoidGVzdEBleGFtcGxlLmNvbSIsImltYWdlX3VybCI6Imh0dHBzOi8vZXhhbXBsZS5jb20vdXNlci8zNWRiMTI1MS00NGE3LWI0MzItNTZkNC1kNDg2NGY4Yjk0ZDEucG5nIiwibmFtZSI6IuODhuOCueODiOWkqumDjiJ9LCJpYXQiOjE3NDg3NzI1NDQsImV4cCI6MTc0OTM3NzM0NH0.s8AEkS4_F1sUEn8oEnKhWy0wXdQ2SoY3GWfG7A0bWAJ-zgGhySFK1J970WZWT3kTEngla88SRe4swXYyb6AT3ZHyLf8vzn_NQYgQdgJYE-DQ9xQChPYMdfvc9sJ9kjHWWMvHv_XpUvblztVBen7oaFkXsUwTbaniWQcqs9hFJzKa7Zpy7MKPRf7kF-O-KGjU_qg_DPDwde9LO5RsoWqgCpFvBXguYEty8i9WOrFdWtCUmpmka0tr7qxd6faehy9aRlUAZVIHcdP0h970talgCBdcYQM26n-mVOwPCaKd_a76JqjML7Oq9GUHpleeB2xRCP2Oy6wKllkefiHo6oueYQ", jwtCaptor.getValue());
             assertEquals("Bearer", tokenTypeCaptor.getValue());
             assertEquals(86400, expiresInCaptor.getValue());
