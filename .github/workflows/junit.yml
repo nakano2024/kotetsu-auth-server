@@ -22,7 +22,7 @@ jobs:
 
     - name: Build and start containers with docker-compose
       run: |
-        docker-compose -f docker-compose.yml up -d  # バックグラウンドでコンテナを起動
+        docker compose up -d app data-testing  # バックグラウンドでコンテナを起動
 
     - name: Run tests inside the container
       run: |

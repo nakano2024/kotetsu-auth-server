@@ -1,33 +1,31 @@
 package kotetsu.auth.application.usecase;
 
-import kotetsu.auth.application.domain.entity.AuthUser;
-import kotetsu.auth.application.domain.exception.AuthUserNotFoundException;
-import kotetsu.auth.application.domain.repository.IFetchAuthUserByEmailRepository;
-import kotetsu.auth.application.domain.value.Email;
-import kotetsu.auth.application.dto.GetUserCredentialsInput;
-import kotetsu.auth.application.dto.UserCredentialsOutput;
+import org.springframework.stereotype.Component;
 
+import kotetsu.auth.application.dto.data.UserCredentialData;
+import kotetsu.auth.application.dto.input.GetUserCredentialEmailInput;
+import kotetsu.auth.application.dto.output.UserCredentialsOutput;
+import kotetsu.auth.application.exception.UserCredentialNotFoundException;
+import kotetsu.auth.application.persistence.IFindUserCredentialByEmailPort;
 
+@Component
 public class GetUserCredentialsByEmailUsecase {
-    private final IFetchAuthUserByEmailRepository fetchAuthUserRepository;
+    private final IFindUserCredentialByEmailPort findUserCredentialByEmailPort;
 
-    public GetUserCredentialsByEmailUsecase(IFetchAuthUserByEmailRepository fetchAuthUserRepository) {
-        this.fetchAuthUserRepository = fetchAuthUserRepository;
+    public GetUserCredentialsByEmailUsecase(final IFindUserCredentialByEmailPort findUserCredentialByEmailPort) {
+        this.findUserCredentialByEmailPort = findUserCredentialByEmailPort;
     }
 
-    public UserCredentialsOutput getUserCredentials(GetUserCredentialsInput input) {
-        AuthUser user = fetchAuthUserRepository.fetchByEmail(Email.of(input.getEmail()));
+    public UserCredentialsOutput getUserCredentials(GetUserCredentialEmailInput input) throws UserCredentialNotFoundException {
+        UserCredentialData userCredential = findUserCredentialByEmailPort.findByEmail(input.getEmail());
 
-        if (user == null) {
-            throw new AuthUserNotFoundException();
+        if (userCredential == null) {
+            throw new UserCredentialNotFoundException();
         }
 
         return UserCredentialsOutput.of(
-            user.getCode().getValue(),
-            user.getName().getValue(),
-            user.getEmail().getValue(),
-            user.getPassword().getValue(),
-            user.getImageUrl().getValue()
+            userCredential.getEmail(),
+            userCredential.getHashedPassword()
         );
     }
 }

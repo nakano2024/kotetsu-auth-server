@@ -10,6 +10,9 @@ services:
       - DATASOURCE_URL=jdbc:postgresql://data/usermanager
       - DATASOURCE_USERNAME=webapp
       - DATASOURCE_PASSWORD=webapp
+      - JWT_PRIVATE_KEY=${JWT_PRIVATE_KEY}
+      - JWT_PUBLIC_KEY=${JWT_PUBLIC_KEY}
+
     tty: true
     command: sleep infinity
   
@@ -25,6 +28,18 @@ services:
       - POSTGRES_PASSWORD=webapp
     tty: true
 
+  data-testing:
+    build: ./docker/data
+    volumes:
+      - db-testing-store:/var/lib/postgresql/data
+    ports:
+      - 6433:5432
+    environment:
+      - POSTGRES_DB=usermanager
+      - POSTGRES_USER=webapp
+      - POSTGRES_PASSWORD=webapp
+    tty: true
+
 volumes:
   app-store:
     driver: local
@@ -33,3 +48,4 @@ volumes:
       device: ./project
       o: bind
   db-store:
+  db-testing-store:
