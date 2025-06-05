@@ -17,6 +17,7 @@ public class JwtGenerator implements IGenerateIdTokenPort {
         this.privateKeyGetter = privateKeyGetter;
     }
 
+    @Override
     public String generate(
         final String subject,
         final Date issuedAt,

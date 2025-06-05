@@ -7,6 +7,7 @@ CREATE TABLE users (
     "email" VARCHAR(128) NOT NULL UNIQUE,
     "password" VARCHAR(128) NOT NULL,
     "image_file_code" UUID NOT NULL,
+    "is_deleted" BOOLEAN DEFAULT FALSE NOT NULL,
     "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (image_file_code) REFERENCES files(code)
