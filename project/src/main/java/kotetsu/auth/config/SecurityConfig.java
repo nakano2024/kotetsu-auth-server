@@ -11,16 +11,22 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import kotetsu.auth.filter.BearerAuthenticationFilter;
 import kotetsu.auth.service.MyUserDetailsService;
+import kotetsu.auth.util.JwtClaimsGetter;
 
 @Configuration
 @EnableMethodSecurity(jsr250Enabled = true)
 public class SecurityConfig {
+    final JwtClaimsGetter jwtClaimsGetter;
+
     final MyUserDetailsService userDetailsService;
 
-    public SecurityConfig(MyUserDetailsService userDetailsService) {
+    public SecurityConfig(final MyUserDetailsService userDetailsService, final JwtClaimsGetter jwtClaimsGetter) {
         this.userDetailsService = userDetailsService;
+        this.jwtClaimsGetter = jwtClaimsGetter;
     }
 
     @Bean
@@ -41,7 +47,8 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .httpBasic(Customizer.withDefaults());
+            .httpBasic(Customizer.withDefaults())
+            .addFilterAfter(new BearerAuthenticationFilter(jwtClaimsGetter), UsernamePasswordAuthenticationFilter.class);
         return httpSecurity.build();
     }
 }
