@@ -2,8 +2,8 @@ package kotetsu.auth.application.exception;
 
 import java.io.IOException;
 
-public class UserProfileNotFoundException extends IOException {
-    public UserProfileNotFoundException() {
+public class UserProfileNotFoundIOException extends IOException {
+    public UserProfileNotFoundIOException() {
         super("UserProfile Not Found");
     }
 }

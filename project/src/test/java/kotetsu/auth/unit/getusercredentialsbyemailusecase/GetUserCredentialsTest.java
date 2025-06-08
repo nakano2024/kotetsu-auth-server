@@ -20,7 +20,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import kotetsu.auth.application.dto.data.UserCredentialData;
 import kotetsu.auth.application.dto.input.GetUserCredentialEmailInput;
 import kotetsu.auth.application.dto.output.UserCredentialsOutput;
-import kotetsu.auth.application.exception.UserCredentialNotFoundException;
+import kotetsu.auth.application.exception.UserCredentialNotFoundIOException;
 import kotetsu.auth.application.persistence.IFindUserCredentialByEmailPort;
 import kotetsu.auth.application.usecase.GetUserCredentialsByEmailUsecase;
 
@@ -73,7 +73,7 @@ public class GetUserCredentialsTest {
         when(input.getEmail()).thenReturn("hoge@example.com");
         when(findUserCredentialByEmailPort.findByEmail(any())).thenReturn(null);
         
-        assertThrows(UserCredentialNotFoundException.class, () -> {
+        assertThrows(UserCredentialNotFoundIOException.class, () -> {
             usecase.getUserCredentials(input);
         }, "UserCredential Not Found");
     }

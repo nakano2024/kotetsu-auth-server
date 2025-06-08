@@ -5,7 +5,8 @@ import org.springframework.stereotype.Component;
 import kotetsu.auth.application.dto.data.UserCredentialData;
 import kotetsu.auth.application.dto.input.GetUserCredentialEmailInput;
 import kotetsu.auth.application.dto.output.UserCredentialsOutput;
-import kotetsu.auth.application.exception.UserCredentialNotFoundException;
+import kotetsu.auth.application.exception.InputNullException;
+import kotetsu.auth.application.exception.UserCredentialNotFoundIOException;
 import kotetsu.auth.application.persistence.IFindUserCredentialByEmailPort;
 
 @Component
@@ -16,11 +17,15 @@ public class GetUserCredentialsByEmailUsecase {
         this.findUserCredentialByEmailPort = findUserCredentialByEmailPort;
     }
 
-    public UserCredentialsOutput getUserCredentials(GetUserCredentialEmailInput input) throws UserCredentialNotFoundException {
+    public UserCredentialsOutput getUserCredentials(GetUserCredentialEmailInput input) throws UserCredentialNotFoundIOException {
+        if (input == null) {
+            throw new InputNullException();
+        }        
+        
         UserCredentialData userCredential = findUserCredentialByEmailPort.findByEmail(input.getEmail());
 
         if (userCredential == null) {
-            throw new UserCredentialNotFoundException();
+            throw new UserCredentialNotFoundIOException();
         }
 
         return UserCredentialsOutput.of(

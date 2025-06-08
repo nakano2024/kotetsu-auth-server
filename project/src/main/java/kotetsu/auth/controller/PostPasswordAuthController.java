@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.annotation.security.PermitAll;
 import kotetsu.auth.application.dto.input.GetUserProfileEmailInput;
 import kotetsu.auth.application.dto.output.IdTokenOutput;
-import kotetsu.auth.application.exception.UserProfileNotFoundException;
+import kotetsu.auth.application.exception.UserProfileNotFoundIOException;
 import kotetsu.auth.application.usecase.GetIdTokenByEmailUsecase;
 import kotetsu.auth.dto.request.PasswordAuthRequest;
 import kotetsu.auth.dto.resource.IdTokenResource;
@@ -50,7 +50,7 @@ public class PostPasswordAuthController {
                 output.getExpiresIn()
             )));
         }
-        catch (UserProfileNotFoundException e) {
+        catch (UserProfileNotFoundIOException e) {
             throw new RuntimeException(e.getMessage());
         }
         catch (Exception e) {

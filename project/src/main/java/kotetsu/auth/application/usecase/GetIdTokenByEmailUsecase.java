@@ -11,7 +11,8 @@ import org.springframework.stereotype.Component;
 import kotetsu.auth.application.dto.data.UserProfileData;
 import kotetsu.auth.application.dto.input.GetUserProfileEmailInput;
 import kotetsu.auth.application.dto.output.IdTokenOutput;
-import kotetsu.auth.application.exception.UserProfileNotFoundException;
+import kotetsu.auth.application.exception.InputNullException;
+import kotetsu.auth.application.exception.UserProfileNotFoundIOException;
 import kotetsu.auth.application.persistence.IFindUserProfileByEmailPort;
 import kotetsu.auth.application.util.IGenerateIdTokenPort;
 import kotetsu.auth.application.util.IGetCurrentInstantPort;
@@ -33,16 +34,20 @@ public class GetIdTokenByEmailUsecase {
         this.getCurrentInstantPort = getCurrentInstantPort;
     }
 
-    public IdTokenOutput getUserProfile(GetUserProfileEmailInput input) throws UserProfileNotFoundException {
-        UserProfileData userProfile = findUserProfileByEmailPort.findByEmail(input.getEmail());
-
-        if (userProfile == null) {
-            throw new UserProfileNotFoundException();
+    public IdTokenOutput getUserProfile(GetUserProfileEmailInput input) throws UserProfileNotFoundIOException {
+        if (input == null) {
+            throw new InputNullException();
         }
 
-        Instant curren = getCurrentInstantPort.getCurrent();
-        Date issuedAt = Date.from(curren);
-        Date expiresAt = Date.from(curren.plus(1, ChronoUnit.DAYS));
+        final UserProfileData userProfile = findUserProfileByEmailPort.findByEmail(input.getEmail());
+
+        if (userProfile == null) {
+            throw new UserProfileNotFoundIOException();
+        }
+
+        Instant current = getCurrentInstantPort.getCurrent();
+        Date issuedAt = Date.from(current);
+        Date expiresAt = Date.from(current.plus(1, ChronoUnit.DAYS));
         String idToken = generateIdTokenPort.generate(
             userProfile.getCode().toString(),
             issuedAt,

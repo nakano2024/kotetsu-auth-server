@@ -24,7 +24,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import kotetsu.auth.application.dto.data.UserProfileData;
 import kotetsu.auth.application.dto.input.GetUserProfileEmailInput;
 import kotetsu.auth.application.dto.output.IdTokenOutput;
-import kotetsu.auth.application.exception.UserProfileNotFoundException;
+import kotetsu.auth.application.exception.UserProfileNotFoundIOException;
 import kotetsu.auth.application.persistence.IFindUserProfileByEmailPort;
 import kotetsu.auth.application.usecase.GetIdTokenByEmailUsecase;
 import kotetsu.auth.application.util.IGenerateIdTokenPort;
@@ -112,7 +112,7 @@ public class GetUserProfileTest {
             
             when(input.getEmail()).thenReturn("tanaka@example.com");
 
-            assertThrows(UserProfileNotFoundException.class, () -> {
+            assertThrows(UserProfileNotFoundIOException.class, () -> {
                 getUserProfileByEmailUsecase.getUserProfile(input);
             }, "UserProfile Not Found");
         }
