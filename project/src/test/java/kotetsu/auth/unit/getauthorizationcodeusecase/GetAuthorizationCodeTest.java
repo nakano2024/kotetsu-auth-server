@@ -107,10 +107,10 @@ public class GetAuthorizationCodeTest {
 
     public void returnAuthorizationCodeIfAllConditionsValid() {
         try (
-            MockedStatic outputStatic = mockStatic(AuthorizationCodeOutput.class);
-            MockedStatic accessTokenDraftStoreStatic = mockStatic(AccessTokenDraftStore.class);
-            MockedStatic idTokenDraftStoreStatic = mockStatic(IdTokenDraftStore.class);
-            MockedStatic authorizationCodeStoreStatic = mockStatic(AuthorizationCodeStore.class);
+            MockedStatic<AuthorizationCodeOutput> outputStatic = mockStatic(AuthorizationCodeOutput.class);
+            MockedStatic<AccessTokenDraftStore> accessTokenDraftStoreStatic = mockStatic(AccessTokenDraftStore.class);
+            MockedStatic<IdTokenDraftStore> idTokenDraftStoreStatic = mockStatic(IdTokenDraftStore.class);
+            MockedStatic<AuthorizationCodeStore> authorizationCodeStoreStatic = mockStatic(AuthorizationCodeStore.class);
         ) {
             when(storeAccessTokenDraftPort.store(any())).thenReturn(UUID.fromString("0ad217c3-0018-6627-0500-e9d315f74e32"));
             when(storeIdTokenDraftPort.store(any())).thenReturn(UUID.fromString("2896437a-4cec-7cb4-43af-bf5efa279f61"));
@@ -151,6 +151,10 @@ public class GetAuthorizationCodeTest {
             when(input.getRedirectUri()).thenReturn("https://app.example.com/oauth2/callback");
             when(input.getResourceOwnerCode()).thenReturn("f47ac10b-58cc-4372-a567-0e02b2c3d479");
 
+            assertDoesNotThrow(() -> {
+                getAuthorizationCodeUsecase.getAuthorizationCode(input);
+            });
+
             ArgumentCaptor<String> accessTokenValueCaptor = ArgumentCaptor.forClass(String.class);
             ArgumentCaptor<String> accessTokenIssuerCaptor = ArgumentCaptor.forClass(String.class);
             ArgumentCaptor<UUID> accessTokenSubjectCaptor = ArgumentCaptor.forClass(UUID.class);
@@ -162,10 +166,6 @@ public class GetAuthorizationCodeTest {
                 accessTokenSubjectCaptor.capture(),
                 accessTokenScopeCodesCaptor.capture()
             ));
-
-            assertDoesNotThrow(() -> {
-                getAuthorizationCodeUsecase.getAuthorizationCode(input);
-            });
         }
     }
 }
