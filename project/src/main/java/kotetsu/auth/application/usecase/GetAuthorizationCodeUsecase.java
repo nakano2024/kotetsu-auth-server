@@ -91,7 +91,7 @@ public class GetAuthorizationCodeUsecase {
             throw new ClientCheckIOException("redirectUriが登録情報と一致しません。");
         }
 
-        final List<String> pendingScopeNames = Arrays.asList(input.getPendingScopes().split(" "));
+        final List<String> pendingScopeNames = Arrays.asList(input.getPendingScopeString().split(" "));
         final List<ScopeData> permittedScope = findPermittedScopeListByClientCodePort.findByClientCode(clientInformation.getCode());
         final Set<String> permittedScopeNames = permittedScope.stream()
             .map(scope -> scope.getName())
