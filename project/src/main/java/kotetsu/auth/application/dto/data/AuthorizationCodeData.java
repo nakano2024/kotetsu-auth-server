@@ -1,6 +1,7 @@
 package kotetsu.auth.application.dto.data;
 
 import java.util.Date;
+import java.util.UUID;
 
 import lombok.Getter;
 
@@ -12,10 +13,10 @@ public class AuthorizationCodeData {
     private final String challenge;
 
     @Getter
-    private final String accessTokenDraftCode;
+    private final UUID accessTokenDraftCode;
 
     @Getter
-    private final String idTokenDraftCode;
+    private final UUID idTokenDraftCode;
 
     @Getter
     private final Date issuedAt;
@@ -26,8 +27,8 @@ public class AuthorizationCodeData {
     private AuthorizationCodeData(
         final String value,
         final String challenge,
-        final String accessTokenDraftCode,
-        final String idTokenDraftCode,
+        final UUID accessTokenDraftCode,
+        final UUID idTokenDraftCode,
         final Date issuedAt,
         final Date expiredAt
     ) {
@@ -42,8 +43,8 @@ public class AuthorizationCodeData {
     public static AuthorizationCodeData of(
         final String value,
         final String challenge,
-        final String accessTokenDraftCode,
-        final String idTokenDraftCode,
+        final UUID accessTokenDraftCode,
+        final UUID idTokenDraftCode,
         final Date issuedAt,
         final Date expiredAt
     ) {
