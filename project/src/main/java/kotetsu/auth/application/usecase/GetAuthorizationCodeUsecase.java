@@ -92,8 +92,8 @@ public class GetAuthorizationCodeUsecase {
         }
 
         final List<String> pendingScopeNames = Arrays.asList(input.getPendingScopeString().split(" "));
-        final List<ScopeData> permittedScope = findPermittedScopeListByClientCodePort.findByClientCode(clientInformation.getCode());
-        final Set<String> permittedScopeNames = permittedScope.stream()
+        final List<ScopeData> permittedScopes = findPermittedScopeListByClientCodePort.findByClientCode(clientInformation.getCode());
+        final Set<String> permittedScopeNames = permittedScopes.stream()
             .map(scope -> scope.getName())
             .collect(Collectors.toSet());
         if (!new HashSet<>(pendingScopeNames).stream().allMatch(permittedScopeNames::contains)) {
