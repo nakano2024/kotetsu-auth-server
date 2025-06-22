@@ -121,6 +121,11 @@ public class ExchangeTokenUsecase {
             .map(scope -> scope.getCode())
             .toList();
 
+        final List<String> scopeNames = accessTokenDraft.getScopes()
+            .stream()
+            .map(scope -> scope.getName())
+            .toList();
+
         final String accessTokenValue = storeAccessTokenPort.store(AccessTokenStore.of(
             generateRandomStringPort.generate(512),
             getSelfUrlPort.getUrl(),
@@ -130,15 +135,22 @@ public class ExchangeTokenUsecase {
             Date.from(current.plus(1, ChronoUnit.HOURS))
         ));
 
-        final String idToken = generateIdTokenFromDraftPort.generate(idTokenDraft);
+        // else ifでの分岐を避けるためにあらかじめnullを格納し条件に応じてセットする方式にしている
+        String idToken = null;
+        if (scopeNames.contains("openid")) {
+            idToken = generateIdTokenFromDraftPort.generate(idTokenDraft);
+        }
 
-        final String refreshTokenValue = storeRefreshTokenPort.store(RefreshTokenStore.of(
-            generateRandomStringPort.generate(256),
-            authorizationCode.getAccessTokenDraftCode(),
-            authorizationCode.getIdTokenDraftCode(),
-            Date.from(current),
-            Date.from(current.plus(30, ChronoUnit.DAYS))
-        ));
+        String refreshTokenValue = null;
+        if (scopeNames.contains("offline_access")) {
+            refreshTokenValue = storeRefreshTokenPort.store(RefreshTokenStore.of(
+                generateRandomStringPort.generate(256),
+                authorizationCode.getAccessTokenDraftCode(),
+                authorizationCode.getIdTokenDraftCode(),
+                Date.from(current),
+                Date.from(current.plus(30, ChronoUnit.DAYS))
+            ));
+        }
 
         deleteAuthorizationCodePort.deleteByCode(input.getCode());
 
@@ -148,7 +160,7 @@ public class ExchangeTokenUsecase {
             3600L,
             refreshTokenValue,
             idToken,
-            accessTokenDraft.getScopes().stream().map(scope -> scope.getName()).toList(),
+            scopeNames,
             accessTokenDraft.getAudiences()
         );
     }

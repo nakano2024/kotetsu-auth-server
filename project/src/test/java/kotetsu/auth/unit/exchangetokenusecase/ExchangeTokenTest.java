@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -151,9 +152,9 @@ public class ExchangeTokenTest {
             when(findAccessTokenDraftByIdPort.findById(any())).thenReturn(accessTokenDraft);
             when(accessTokenDraft.getSubject()).thenReturn("f47ac10b-58cc-4372-a567-0e02b2c3d479");
             when(scopeTaskRead.getCode()).thenReturn(UUID.fromString("a8b9c7d2-4f5e-4a1b-9c8d-7e6f5a4b3c2d"));
-            when(scopeTaskRead.getName()).thenReturn("task.read");
+            when(scopeTaskRead.getName()).thenReturn("openid");
             when(scopeTaskWrite.getCode()).thenReturn(UUID.fromString("3e7f8a9b-2c1d-4e5f-8a7b-6c9d2e1f4a5b"));
-            when(scopeTaskWrite.getName()).thenReturn("task.write");
+            when(scopeTaskWrite.getName()).thenReturn("offline_access");
             when(accessTokenDraft.getScopes()).thenReturn(List.of(scopeTaskRead, scopeTaskWrite));
             when(accessTokenDraft.getAudiences()).thenReturn(List.of("api.example.com", "resource.example.com"));
 
@@ -243,7 +244,7 @@ public class ExchangeTokenTest {
             assertEquals(3600L, outputExpiresInCaptor.getValue());
             assertEquals("stored-refresh-token", outputRefreshTokenCaptor.getValue());
             assertEquals("generated-id-token", outputIdTokenCaptor.getValue());
-            assertEquals(List.of("task.read", "task.write"), outputScopesCaptor.getValue());
+            assertEquals(List.of("openid", "offline_access"), outputScopesCaptor.getValue());
             assertEquals(List.of("api.example.com", "resource.example.com"), outputAudiencesCaptor.getValue());
         }
     }
@@ -349,5 +350,222 @@ public class ExchangeTokenTest {
         });
 
         assertEquals("code_verifierが一致しません。", exception.getMessage());
+    }
+
+    @Test
+    public void returnTokenWithoutOfflineAccessScope() {
+        try (
+            MockedStatic<TokenOutput> outputStatic = mockStatic(TokenOutput.class);
+            MockedStatic<AccessTokenStore> accessTokenStoreStatic = mockStatic(AccessTokenStore.class);
+        ) {
+            when(findAuthorizationCodeByCodePort.findByCode(anyString())).thenReturn(authorizationCode);
+            when(authorizationCode.getExpiredAt()).thenReturn(Date.from(Instant.parse("2025-06-01T00:10:00Z")));
+            when(authorizationCode.getChallenge()).thenReturn("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855");
+            when(authorizationCode.getAccessTokenDraftCode()).thenReturn(UUID.fromString("0ad217c3-0018-6627-0500-e9d315f74e32"));
+            when(authorizationCode.getIdTokenDraftCode()).thenReturn(UUID.fromString("2896437a-4cec-7cb4-43af-bf5efa279f61"));
+
+            when(getCurrentInstantPort.getCurrent()).thenReturn(Instant.parse("2025-06-01T00:00:00Z"));
+
+            when(findClientInformationByIdPort.findById(anyString())).thenReturn(clientInformation);
+            when(clientInformation.getSecret()).thenReturn("client-secret");
+            when(clientInformation.getRedirectUri()).thenReturn("https://app.example.com/oauth2/callback");
+
+            when(hashStringPort.hashSha256(anyString())).thenReturn("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855");
+
+            when(findAccessTokenDraftByIdPort.findById(any())).thenReturn(accessTokenDraft);
+            when(accessTokenDraft.getSubject()).thenReturn("f47ac10b-58cc-4372-a567-0e02b2c3d479");
+            when(scopeTaskRead.getCode()).thenReturn(UUID.fromString("a8b9c7d2-4f5e-4a1b-9c8d-7e6f5a4b3c2d"));
+            when(scopeTaskRead.getName()).thenReturn("openid");
+            when(accessTokenDraft.getScopes()).thenReturn(List.of(scopeTaskRead));
+            when(accessTokenDraft.getAudiences()).thenReturn(List.of("api.example.com"));
+
+            when(findIdTokenDraftByIdPort.findByCode(any())).thenReturn(idTokenDraft);
+
+            when(generateRandomStringPort.generate(512)).thenReturn("access-token-512-chars");
+            when(getSelfUrlPort.getUrl()).thenReturn("https://auth.example.com");
+            when(storeAccessTokenPort.store(any())).thenReturn("stored-access-token");
+            when(generateIdTokenFromDraftPort.generate(any())).thenReturn("generated-id-token");
+
+            when(input.getCode()).thenReturn("authorization-code");
+            when(input.getClientId()).thenReturn("client-id");
+            when(input.getClientSecret()).thenReturn("client-secret");
+            when(input.getCodeVerifier()).thenReturn("code-verifier");
+            when(input.getRedirectUri()).thenReturn("https://app.example.com/oauth2/callback");
+
+            assertDoesNotThrow(() -> {
+                exchangeTokenUsecase.exchangeToken(input);
+            });
+
+            ArgumentCaptor<String> outputAccessTokenCaptor = ArgumentCaptor.forClass(String.class);
+            ArgumentCaptor<String> outputTokenTypeCaptor = ArgumentCaptor.forClass(String.class);
+            ArgumentCaptor<Long> outputExpiresInCaptor = ArgumentCaptor.forClass(Long.class);
+            ArgumentCaptor<String> outputRefreshTokenCaptor = ArgumentCaptor.forClass(String.class);
+            ArgumentCaptor<String> outputIdTokenCaptor = ArgumentCaptor.forClass(String.class);
+            @SuppressWarnings("unchecked")
+            ArgumentCaptor<List<String>> outputScopesCaptor = ArgumentCaptor.forClass(List.class);
+            @SuppressWarnings("unchecked")
+            ArgumentCaptor<List<String>> outputAudiencesCaptor = ArgumentCaptor.forClass(List.class);
+            outputStatic.verify(() -> TokenOutput.of(
+                outputAccessTokenCaptor.capture(),
+                outputTokenTypeCaptor.capture(),
+                outputExpiresInCaptor.capture(),
+                outputRefreshTokenCaptor.capture(),
+                outputIdTokenCaptor.capture(),
+                outputScopesCaptor.capture(),
+                outputAudiencesCaptor.capture()
+            ));
+            assertEquals("stored-access-token", outputAccessTokenCaptor.getValue());
+            assertEquals("Bearer", outputTokenTypeCaptor.getValue());
+            assertEquals(3600L, outputExpiresInCaptor.getValue());
+            assertNull(outputRefreshTokenCaptor.getValue());
+            assertEquals("generated-id-token", outputIdTokenCaptor.getValue());
+            assertEquals(List.of("openid"), outputScopesCaptor.getValue());
+            assertEquals(List.of("api.example.com"), outputAudiencesCaptor.getValue());
+        }
+    }
+
+    @Test
+    public void returnTokenWithoutOpenidScope() {
+        try (
+            MockedStatic<TokenOutput> outputStatic = mockStatic(TokenOutput.class);
+            MockedStatic<AccessTokenStore> accessTokenStoreStatic = mockStatic(AccessTokenStore.class);
+            MockedStatic<RefreshTokenStore> refreshTokenStoreStatic = mockStatic(RefreshTokenStore.class);
+        ) {
+            when(findAuthorizationCodeByCodePort.findByCode(anyString())).thenReturn(authorizationCode);
+            when(authorizationCode.getExpiredAt()).thenReturn(Date.from(Instant.parse("2025-06-01T00:10:00Z")));
+            when(authorizationCode.getChallenge()).thenReturn("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855");
+            when(authorizationCode.getAccessTokenDraftCode()).thenReturn(UUID.fromString("0ad217c3-0018-6627-0500-e9d315f74e32"));
+            when(authorizationCode.getIdTokenDraftCode()).thenReturn(UUID.fromString("2896437a-4cec-7cb4-43af-bf5efa279f61"));
+
+            when(getCurrentInstantPort.getCurrent()).thenReturn(Instant.parse("2025-06-01T00:00:00Z"));
+
+            when(findClientInformationByIdPort.findById(anyString())).thenReturn(clientInformation);
+            when(clientInformation.getSecret()).thenReturn("client-secret");
+            when(clientInformation.getRedirectUri()).thenReturn("https://app.example.com/oauth2/callback");
+
+            when(hashStringPort.hashSha256(anyString())).thenReturn("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855");
+
+            when(findAccessTokenDraftByIdPort.findById(any())).thenReturn(accessTokenDraft);
+            when(accessTokenDraft.getSubject()).thenReturn("f47ac10b-58cc-4372-a567-0e02b2c3d479");
+            when(scopeTaskWrite.getCode()).thenReturn(UUID.fromString("3e7f8a9b-2c1d-4e5f-8a7b-6c9d2e1f4a5b"));
+            when(scopeTaskWrite.getName()).thenReturn("offline_access");
+            when(accessTokenDraft.getScopes()).thenReturn(List.of(scopeTaskWrite));
+            when(accessTokenDraft.getAudiences()).thenReturn(List.of("api.example.com"));
+
+            when(findIdTokenDraftByIdPort.findByCode(any())).thenReturn(idTokenDraft);
+
+            when(generateRandomStringPort.generate(512)).thenReturn("access-token-512-chars");
+            when(generateRandomStringPort.generate(256)).thenReturn("refresh-token-256-chars");
+            when(getSelfUrlPort.getUrl()).thenReturn("https://auth.example.com");
+            when(storeAccessTokenPort.store(any())).thenReturn("stored-access-token");
+            when(storeRefreshTokenPort.store(any())).thenReturn("stored-refresh-token");
+
+            when(input.getCode()).thenReturn("authorization-code");
+            when(input.getClientId()).thenReturn("client-id");
+            when(input.getClientSecret()).thenReturn("client-secret");
+            when(input.getCodeVerifier()).thenReturn("code-verifier");
+            when(input.getRedirectUri()).thenReturn("https://app.example.com/oauth2/callback");
+
+            assertDoesNotThrow(() -> {
+                exchangeTokenUsecase.exchangeToken(input);
+            });
+
+            ArgumentCaptor<String> outputAccessTokenCaptor = ArgumentCaptor.forClass(String.class);
+            ArgumentCaptor<String> outputTokenTypeCaptor = ArgumentCaptor.forClass(String.class);
+            ArgumentCaptor<Long> outputExpiresInCaptor = ArgumentCaptor.forClass(Long.class);
+            ArgumentCaptor<String> outputRefreshTokenCaptor = ArgumentCaptor.forClass(String.class);
+            ArgumentCaptor<String> outputIdTokenCaptor = ArgumentCaptor.forClass(String.class);
+            @SuppressWarnings("unchecked")
+            ArgumentCaptor<List<String>> outputScopesCaptor = ArgumentCaptor.forClass(List.class);
+            @SuppressWarnings("unchecked")
+            ArgumentCaptor<List<String>> outputAudiencesCaptor = ArgumentCaptor.forClass(List.class);
+            outputStatic.verify(() -> TokenOutput.of(
+                outputAccessTokenCaptor.capture(),
+                outputTokenTypeCaptor.capture(),
+                outputExpiresInCaptor.capture(),
+                outputRefreshTokenCaptor.capture(),
+                outputIdTokenCaptor.capture(),
+                outputScopesCaptor.capture(),
+                outputAudiencesCaptor.capture()
+            ));
+            assertEquals("stored-access-token", outputAccessTokenCaptor.getValue());
+            assertEquals("Bearer", outputTokenTypeCaptor.getValue());
+            assertEquals(3600L, outputExpiresInCaptor.getValue());
+            assertEquals("stored-refresh-token", outputRefreshTokenCaptor.getValue());
+            assertNull(outputIdTokenCaptor.getValue());
+            assertEquals(List.of("offline_access"), outputScopesCaptor.getValue());
+            assertEquals(List.of("api.example.com"), outputAudiencesCaptor.getValue());
+        }
+    }
+
+    @Test
+    public void returnTokenWithoutBothOpenidAndOfflineAccessScopes() {
+        try (
+            MockedStatic<TokenOutput> outputStatic = mockStatic(TokenOutput.class);
+            MockedStatic<AccessTokenStore> accessTokenStoreStatic = mockStatic(AccessTokenStore.class);
+        ) {
+            when(findAuthorizationCodeByCodePort.findByCode(anyString())).thenReturn(authorizationCode);
+            when(authorizationCode.getExpiredAt()).thenReturn(Date.from(Instant.parse("2025-06-01T00:10:00Z")));
+            when(authorizationCode.getChallenge()).thenReturn("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855");
+            when(authorizationCode.getAccessTokenDraftCode()).thenReturn(UUID.fromString("0ad217c3-0018-6627-0500-e9d315f74e32"));
+            when(authorizationCode.getIdTokenDraftCode()).thenReturn(UUID.fromString("2896437a-4cec-7cb4-43af-bf5efa279f61"));
+
+            when(getCurrentInstantPort.getCurrent()).thenReturn(Instant.parse("2025-06-01T00:00:00Z"));
+
+            when(findClientInformationByIdPort.findById(anyString())).thenReturn(clientInformation);
+            when(clientInformation.getSecret()).thenReturn("client-secret");
+            when(clientInformation.getRedirectUri()).thenReturn("https://app.example.com/oauth2/callback");
+
+            when(hashStringPort.hashSha256(anyString())).thenReturn("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855");
+
+            when(findAccessTokenDraftByIdPort.findById(any())).thenReturn(accessTokenDraft);
+            when(accessTokenDraft.getSubject()).thenReturn("f47ac10b-58cc-4372-a567-0e02b2c3d479");
+            when(scopeTaskRead.getCode()).thenReturn(UUID.fromString("a8b9c7d2-4f5e-4a1b-9c8d-7e6f5a4b3c2d"));
+            when(scopeTaskRead.getName()).thenReturn("read");
+            when(accessTokenDraft.getScopes()).thenReturn(List.of(scopeTaskRead));
+            when(accessTokenDraft.getAudiences()).thenReturn(List.of("api.example.com"));
+
+            when(findIdTokenDraftByIdPort.findByCode(any())).thenReturn(idTokenDraft);
+
+            when(generateRandomStringPort.generate(512)).thenReturn("access-token-512-chars");
+            when(getSelfUrlPort.getUrl()).thenReturn("https://auth.example.com");
+            when(storeAccessTokenPort.store(any())).thenReturn("stored-access-token");
+
+            when(input.getCode()).thenReturn("authorization-code");
+            when(input.getClientId()).thenReturn("client-id");
+            when(input.getClientSecret()).thenReturn("client-secret");
+            when(input.getCodeVerifier()).thenReturn("code-verifier");
+            when(input.getRedirectUri()).thenReturn("https://app.example.com/oauth2/callback");
+
+            assertDoesNotThrow(() -> {
+                exchangeTokenUsecase.exchangeToken(input);
+            });
+
+            ArgumentCaptor<String> outputAccessTokenCaptor = ArgumentCaptor.forClass(String.class);
+            ArgumentCaptor<String> outputTokenTypeCaptor = ArgumentCaptor.forClass(String.class);
+            ArgumentCaptor<Long> outputExpiresInCaptor = ArgumentCaptor.forClass(Long.class);
+            ArgumentCaptor<String> outputRefreshTokenCaptor = ArgumentCaptor.forClass(String.class);
+            ArgumentCaptor<String> outputIdTokenCaptor = ArgumentCaptor.forClass(String.class);
+            @SuppressWarnings("unchecked")
+            ArgumentCaptor<List<String>> outputScopesCaptor = ArgumentCaptor.forClass(List.class);
+            @SuppressWarnings("unchecked")
+            ArgumentCaptor<List<String>> outputAudiencesCaptor = ArgumentCaptor.forClass(List.class);
+            outputStatic.verify(() -> TokenOutput.of(
+                outputAccessTokenCaptor.capture(),
+                outputTokenTypeCaptor.capture(),
+                outputExpiresInCaptor.capture(),
+                outputRefreshTokenCaptor.capture(),
+                outputIdTokenCaptor.capture(),
+                outputScopesCaptor.capture(),
+                outputAudiencesCaptor.capture()
+            ));
+            assertEquals("stored-access-token", outputAccessTokenCaptor.getValue());
+            assertEquals("Bearer", outputTokenTypeCaptor.getValue());
+            assertEquals(3600L, outputExpiresInCaptor.getValue());
+            assertNull(outputRefreshTokenCaptor.getValue());
+            assertNull(outputIdTokenCaptor.getValue());
+            assertEquals(List.of("read"), outputScopesCaptor.getValue());
+            assertEquals(List.of("api.example.com"), outputAudiencesCaptor.getValue());
+        }
     }
 }
