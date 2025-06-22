@@ -138,12 +138,11 @@ public class GetAuthorizationCodeTest {
                 permittedScopeTaskWrite
             ));
 
-            when(clientInformation.getId()).thenReturn("wSHyRwltCIQVaXlynrVkFiiyNAu1vnis.kotetsu");
             when(clientInformation.getCode()).thenReturn(UUID.fromString("ef726f1b-2569-1b91-3385-88d1eb375df6"));
             when(clientInformation.getRedirectUri()).thenReturn("https://app.example.com/oauth2/callback");
             when(findClientInformationByIdPort.findById(anyString())).thenReturn(clientInformation);
 
-            when(generateRandomStringPort.generate(anyInt())).thenReturn("YKovutYoVp2MttO7EBmVSLidrOHEvWrlCwpFjhSHjaqtWxIc3eB0g5K367Hi6vjW");
+            when(generateRandomStringPort.generate(64)).thenReturn("YKovutYoVp2MttO7EBmVSLidrOHEvWrlCwpFjhSHjaqtWxIc3eB0g5K367Hi6vjW");
 
             when(getSelfUrlPort.getUrl()).thenReturn("https://auth.example.com");
 
@@ -159,18 +158,15 @@ public class GetAuthorizationCodeTest {
                 getAuthorizationCodeUsecase.getAuthorizationCode(input);
             });
 
-            ArgumentCaptor<String> accessTokenValueCaptor = ArgumentCaptor.forClass(String.class);
             ArgumentCaptor<String> accessTokenIssuerCaptor = ArgumentCaptor.forClass(String.class);
             ArgumentCaptor<UUID> accessTokenSubjectCaptor = ArgumentCaptor.forClass(UUID.class);
             @SuppressWarnings("unchecked")
             ArgumentCaptor<List<UUID>> accessTokenScopeCodesCaptor = ArgumentCaptor.forClass(List.class);
             accessTokenDraftStoreStatic.verify(() -> AccessTokenDraftStore.of(
-                accessTokenValueCaptor.capture(), 
                 accessTokenIssuerCaptor.capture(),
                 accessTokenSubjectCaptor.capture(),
                 accessTokenScopeCodesCaptor.capture()
             ));
-            assertEquals("YKovutYoVp2MttO7EBmVSLidrOHEvWrlCwpFjhSHjaqtWxIc3eB0g5K367Hi6vjW", accessTokenValueCaptor.getValue());
             assertEquals("https://auth.example.com", accessTokenIssuerCaptor.getValue());
             assertEquals(UUID.fromString("f47ac10b-58cc-4372-a567-0e02b2c3d479"), accessTokenSubjectCaptor.getValue());
             assertEquals(List.of(
@@ -180,7 +176,7 @@ public class GetAuthorizationCodeTest {
 
             ArgumentCaptor<UUID> idTokenSubjectCaptor = ArgumentCaptor.forClass(UUID.class);
             ArgumentCaptor<String> idTokenIssuerCaptor = ArgumentCaptor.forClass(String.class);
-            ArgumentCaptor<String> idTokenAudienceCaptor = ArgumentCaptor.forClass(String.class);
+            ArgumentCaptor<UUID> idTokenAudienceCaptor = ArgumentCaptor.forClass(UUID.class);
             idTokenDraftStoreStatic.verify(() -> IdTokenDraftStore.of(
                 idTokenSubjectCaptor.capture(),
                 idTokenIssuerCaptor.capture(),
@@ -188,7 +184,7 @@ public class GetAuthorizationCodeTest {
             ));
             assertEquals(UUID.fromString("f47ac10b-58cc-4372-a567-0e02b2c3d479"), idTokenSubjectCaptor.getValue());
             assertEquals("https://auth.example.com", idTokenIssuerCaptor.getValue());
-            assertEquals("wSHyRwltCIQVaXlynrVkFiiyNAu1vnis.kotetsu", idTokenAudienceCaptor.getValue());
+            assertEquals(UUID.fromString("ef726f1b-2569-1b91-3385-88d1eb375df6"), idTokenAudienceCaptor.getValue());
 
             ArgumentCaptor<String> authCodeValueCaptor = ArgumentCaptor.forClass(String.class);
             ArgumentCaptor<String> authCodeChallengeCaptor = ArgumentCaptor.forClass(String.class);

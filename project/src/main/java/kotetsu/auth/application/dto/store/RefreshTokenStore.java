@@ -7,13 +7,13 @@ import lombok.Getter;
 
 public class RefreshTokenStore {
     @Getter
-    private final String value;
+    private final String code;
 
     @Getter
-    private final UUID accessTokenDraftId;
+    private final UUID accessTokenDraftCode;
 
     @Getter
-    private final UUID idTokenDraftId;
+    private final UUID idTokenDraftCode;
 
     @Getter
     private final Date issuedAt;
@@ -22,30 +22,30 @@ public class RefreshTokenStore {
     private final Date expiredAt;
 
     private RefreshTokenStore(
-        final String value,
-        final UUID accessTokenDraftId,
-        final UUID idTokenDraftId,
+        final String code,
+        final UUID accessTokenDraftCode,
+        final UUID idTokenDraftCode,
         final Date issuedAt,
         final Date expiredAt
     ) {
-        this.value = value;
-        this.accessTokenDraftId = accessTokenDraftId;
-        this.idTokenDraftId = idTokenDraftId;
+        this.code = code;
+        this.accessTokenDraftCode = accessTokenDraftCode;
+        this.idTokenDraftCode = idTokenDraftCode;
         this.issuedAt = issuedAt;
         this.expiredAt = expiredAt;
     }
 
     public static RefreshTokenStore of(
-        final String value,
-        final UUID accessTokenDraftId,
-        final UUID idTokenDraftId,
+        final String code,
+        final UUID accessTokenDraftCode,
+        final UUID idTokenDraftCode,
         final Date issuedAt,
         final Date expiredAt
     ) {
         return new RefreshTokenStore(
-            value,
-            accessTokenDraftId,
-            idTokenDraftId,
+            code,
+            accessTokenDraftCode,
+            idTokenDraftCode,
             issuedAt,
             expiredAt
         );

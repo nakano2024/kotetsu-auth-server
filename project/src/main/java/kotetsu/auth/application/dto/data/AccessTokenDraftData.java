@@ -10,13 +10,10 @@ public class AccessTokenDraftData {
     private final UUID code;
 
     @Getter
-    private final String value;
-
-    @Getter
     private final String issuer;
 
     @Getter
-    private final String subject;
+    private final UUID subject;
 
     @Getter
     private final List<ScopeData> scopes;
@@ -26,14 +23,12 @@ public class AccessTokenDraftData {
 
     private AccessTokenDraftData(
         final UUID code,
-        final String value,
         final String issuer,
-        final String subject,
+        final UUID subject,
         final List<ScopeData> scopes,
         final List<String> audiences
     ) {
         this.code = code;
-        this.value = value;
         this.issuer = issuer;
         this.subject = subject;
         this.scopes = scopes;
@@ -42,15 +37,13 @@ public class AccessTokenDraftData {
 
     public static AccessTokenDraftData of(
         final UUID code,
-        final String value,
         final String issuer,
-        final String subject,
+        final UUID subject,
         final List<ScopeData> scopes,
         final List<String> audiences
     ) {
         return new AccessTokenDraftData(
             code,
-            value,
             issuer,
             subject,
             scopes,

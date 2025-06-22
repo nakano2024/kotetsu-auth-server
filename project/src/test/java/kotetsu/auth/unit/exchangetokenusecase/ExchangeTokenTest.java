@@ -45,7 +45,6 @@ import kotetsu.auth.application.usecase.ExchangeTokenUsecase;
 import kotetsu.auth.application.util.IGenerateIdTokenFromDraftPort;
 import kotetsu.auth.application.util.IGenerateRandomStringPort;
 import kotetsu.auth.application.util.IGetCurrentInstantPort;
-import kotetsu.auth.application.util.IGetSelfUrlPort;
 import kotetsu.auth.application.util.IHashStringPort;
 
 @ExtendWith(MockitoExtension.class)
@@ -87,9 +86,6 @@ public class ExchangeTokenTest {
     private IGetCurrentInstantPort getCurrentInstantPort;
 
     @Mock
-    private IGetSelfUrlPort getSelfUrlPort;
-
-    @Mock
     private ExchangeTokenInput input;
 
     @Mock
@@ -123,8 +119,7 @@ public class ExchangeTokenTest {
             hashStringPort,
             generateRandomStringPort,
             generateIdTokenFromDraftPort,
-            getCurrentInstantPort,
-            getSelfUrlPort
+            getCurrentInstantPort
         );
     }
 
@@ -150,19 +145,19 @@ public class ExchangeTokenTest {
             when(hashStringPort.hashSha256(anyString())).thenReturn("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855");
 
             when(findAccessTokenDraftByIdPort.findById(any())).thenReturn(accessTokenDraft);
-            when(accessTokenDraft.getSubject()).thenReturn("f47ac10b-58cc-4372-a567-0e02b2c3d479");
+            when(accessTokenDraft.getSubject()).thenReturn(UUID.fromString("f47ac10b-58cc-4372-a567-0e02b2c3d479"));
             when(scopeTaskRead.getCode()).thenReturn(UUID.fromString("a8b9c7d2-4f5e-4a1b-9c8d-7e6f5a4b3c2d"));
             when(scopeTaskRead.getName()).thenReturn("openid");
             when(scopeTaskWrite.getCode()).thenReturn(UUID.fromString("3e7f8a9b-2c1d-4e5f-8a7b-6c9d2e1f4a5b"));
             when(scopeTaskWrite.getName()).thenReturn("offline_access");
             when(accessTokenDraft.getScopes()).thenReturn(List.of(scopeTaskRead, scopeTaskWrite));
             when(accessTokenDraft.getAudiences()).thenReturn(List.of("api.example.com", "resource.example.com"));
+            when(accessTokenDraft.getIssuer()).thenReturn("https://auth.example.com");
 
             when(findIdTokenDraftByIdPort.findByCode(any())).thenReturn(idTokenDraft);
 
             when(generateRandomStringPort.generate(512)).thenReturn("access-token-512-chars");
             when(generateRandomStringPort.generate(256)).thenReturn("refresh-token-256-chars");
-            when(getSelfUrlPort.getUrl()).thenReturn("https://auth.example.com");
 
             when(storeAccessTokenPort.store(any())).thenReturn("stored-access-token");
             when(storeRefreshTokenPort.store(any())).thenReturn("stored-refresh-token");
@@ -373,16 +368,16 @@ public class ExchangeTokenTest {
             when(hashStringPort.hashSha256(anyString())).thenReturn("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855");
 
             when(findAccessTokenDraftByIdPort.findById(any())).thenReturn(accessTokenDraft);
-            when(accessTokenDraft.getSubject()).thenReturn("f47ac10b-58cc-4372-a567-0e02b2c3d479");
+            when(accessTokenDraft.getSubject()).thenReturn(UUID.fromString("f47ac10b-58cc-4372-a567-0e02b2c3d479"));
             when(scopeTaskRead.getCode()).thenReturn(UUID.fromString("a8b9c7d2-4f5e-4a1b-9c8d-7e6f5a4b3c2d"));
             when(scopeTaskRead.getName()).thenReturn("openid");
             when(accessTokenDraft.getScopes()).thenReturn(List.of(scopeTaskRead));
             when(accessTokenDraft.getAudiences()).thenReturn(List.of("api.example.com"));
+            when(accessTokenDraft.getIssuer()).thenReturn("https://auth.example.com");
 
             when(findIdTokenDraftByIdPort.findByCode(any())).thenReturn(idTokenDraft);
 
             when(generateRandomStringPort.generate(512)).thenReturn("access-token-512-chars");
-            when(getSelfUrlPort.getUrl()).thenReturn("https://auth.example.com");
             when(storeAccessTokenPort.store(any())).thenReturn("stored-access-token");
             when(generateIdTokenFromDraftPort.generate(any())).thenReturn("generated-id-token");
 
@@ -446,17 +441,17 @@ public class ExchangeTokenTest {
             when(hashStringPort.hashSha256(anyString())).thenReturn("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855");
 
             when(findAccessTokenDraftByIdPort.findById(any())).thenReturn(accessTokenDraft);
-            when(accessTokenDraft.getSubject()).thenReturn("f47ac10b-58cc-4372-a567-0e02b2c3d479");
+            when(accessTokenDraft.getSubject()).thenReturn(UUID.fromString("f47ac10b-58cc-4372-a567-0e02b2c3d479"));
             when(scopeTaskWrite.getCode()).thenReturn(UUID.fromString("3e7f8a9b-2c1d-4e5f-8a7b-6c9d2e1f4a5b"));
             when(scopeTaskWrite.getName()).thenReturn("offline_access");
             when(accessTokenDraft.getScopes()).thenReturn(List.of(scopeTaskWrite));
             when(accessTokenDraft.getAudiences()).thenReturn(List.of("api.example.com"));
+            when(accessTokenDraft.getIssuer()).thenReturn("https://auth.example.com");
 
             when(findIdTokenDraftByIdPort.findByCode(any())).thenReturn(idTokenDraft);
 
             when(generateRandomStringPort.generate(512)).thenReturn("access-token-512-chars");
             when(generateRandomStringPort.generate(256)).thenReturn("refresh-token-256-chars");
-            when(getSelfUrlPort.getUrl()).thenReturn("https://auth.example.com");
             when(storeAccessTokenPort.store(any())).thenReturn("stored-access-token");
             when(storeRefreshTokenPort.store(any())).thenReturn("stored-refresh-token");
 
@@ -519,16 +514,16 @@ public class ExchangeTokenTest {
             when(hashStringPort.hashSha256(anyString())).thenReturn("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855");
 
             when(findAccessTokenDraftByIdPort.findById(any())).thenReturn(accessTokenDraft);
-            when(accessTokenDraft.getSubject()).thenReturn("f47ac10b-58cc-4372-a567-0e02b2c3d479");
+            when(accessTokenDraft.getSubject()).thenReturn(UUID.fromString("f47ac10b-58cc-4372-a567-0e02b2c3d479"));
             when(scopeTaskRead.getCode()).thenReturn(UUID.fromString("a8b9c7d2-4f5e-4a1b-9c8d-7e6f5a4b3c2d"));
             when(scopeTaskRead.getName()).thenReturn("read");
             when(accessTokenDraft.getScopes()).thenReturn(List.of(scopeTaskRead));
             when(accessTokenDraft.getAudiences()).thenReturn(List.of("api.example.com"));
+            when(accessTokenDraft.getIssuer()).thenReturn("https://auth.example.com");
 
             when(findIdTokenDraftByIdPort.findByCode(any())).thenReturn(idTokenDraft);
 
             when(generateRandomStringPort.generate(512)).thenReturn("access-token-512-chars");
-            when(getSelfUrlPort.getUrl()).thenReturn("https://auth.example.com");
             when(storeAccessTokenPort.store(any())).thenReturn("stored-access-token");
 
             when(input.getCode()).thenReturn("authorization-code");

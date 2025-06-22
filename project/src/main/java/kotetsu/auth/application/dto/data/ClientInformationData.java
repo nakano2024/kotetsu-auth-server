@@ -9,7 +9,7 @@ public class ClientInformationData {
     private final UUID code;
 
     @Getter
-    private final String id;
+    private final String name;
 
     @Getter
     private final String secret;
@@ -23,13 +23,13 @@ public class ClientInformationData {
 
     private ClientInformationData(
         final UUID code,
-        final String id,
+        final String name,
         final String secret,
         final String redirectUri,
         final boolean isValid
     ) {
         this.code = code;
-        this.id = id;
+        this.name = name;
         this.secret = secret;
         this.redirectUri = redirectUri;
         this.isValid = isValid;
@@ -37,14 +37,14 @@ public class ClientInformationData {
 
     public static ClientInformationData of(
         final UUID code,
-        final String id,
+        final String name,
         final String secret,
         final String redirectUri,
         final boolean isValid
     ) {
         return new ClientInformationData(
             code,
-            id,
+            name,
             secret,
             redirectUri,
             isValid

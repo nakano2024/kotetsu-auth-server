@@ -107,7 +107,6 @@ public class GetAuthorizationCodeUsecase {
             .toList();
 
         final UUID accessTokenDraftCode = storeAccessTokenDraftPort.store(AccessTokenDraftStore.of(
-            generateRandomStringPort.generate(512),
             getSelfUrlport.getUrl(),
             UUID.fromString(input.getResourceOwnerCode()),
             scopeCodes
@@ -115,7 +114,7 @@ public class GetAuthorizationCodeUsecase {
         final UUID idTokenDraftCode = storeIdTokenDraftPort.store(IdTokenDraftStore.of(
             UUID.fromString(input.getResourceOwnerCode()),
             getSelfUrlport.getUrl(),
-            clientInformation.getId()
+            clientInformation.getCode()
         ));
         final Instant current = getCurrentInstantPort.getCurrent();
         final String authorizationCode = storeAuthorizationCodePort.store(AuthorizationCodeStore.of(

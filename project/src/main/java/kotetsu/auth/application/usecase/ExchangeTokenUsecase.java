@@ -32,7 +32,6 @@ import kotetsu.auth.application.persistence.IStoreRefreshTokenPort;
 import kotetsu.auth.application.util.IGenerateIdTokenFromDraftPort;
 import kotetsu.auth.application.util.IGenerateRandomStringPort;
 import kotetsu.auth.application.util.IGetCurrentInstantPort;
-import kotetsu.auth.application.util.IGetSelfUrlPort;
 import kotetsu.auth.application.util.IHashStringPort;
 
 public class ExchangeTokenUsecase {
@@ -47,7 +46,6 @@ public class ExchangeTokenUsecase {
     private final IGenerateRandomStringPort generateRandomStringPort;
     private final IGenerateIdTokenFromDraftPort generateIdTokenFromDraftPort;
     private final IGetCurrentInstantPort getCurrentInstantPort;
-    private final IGetSelfUrlPort getSelfUrlPort;
 
     public ExchangeTokenUsecase(
         final IFindAuthorizationCodeByCodePort findAuthorizationCodeByCodePort,
@@ -60,8 +58,7 @@ public class ExchangeTokenUsecase {
         final IHashStringPort hashStringPort,
         final IGenerateRandomStringPort generateRandomStringPort,
         final IGenerateIdTokenFromDraftPort generateIdTokenFromDraftPort,
-        final IGetCurrentInstantPort getCurrentInstantPort,
-        final IGetSelfUrlPort getSelfUrlPort
+        final IGetCurrentInstantPort getCurrentInstantPort
     ) {
         this.findAuthorizationCodeByCodePort = findAuthorizationCodeByCodePort;
         this.findClientInformationByIdPort = findClientInformationByIdPort;
@@ -74,7 +71,6 @@ public class ExchangeTokenUsecase {
         this.generateRandomStringPort = generateRandomStringPort;
         this.generateIdTokenFromDraftPort = generateIdTokenFromDraftPort;
         this.getCurrentInstantPort = getCurrentInstantPort;
-        this.getSelfUrlPort = getSelfUrlPort;
     }
 
     @Transactional
@@ -128,8 +124,8 @@ public class ExchangeTokenUsecase {
 
         final String accessTokenValue = storeAccessTokenPort.store(AccessTokenStore.of(
             generateRandomStringPort.generate(512),
-            getSelfUrlPort.getUrl(),
-            UUID.fromString(accessTokenDraft.getSubject()),
+            accessTokenDraft.getIssuer(),
+            accessTokenDraft.getSubject(),
             scopeCodes,
             Date.from(current),
             Date.from(current.plus(1, ChronoUnit.HOURS))

@@ -7,9 +7,6 @@ import lombok.Getter;
 
 public class AccessTokenDraftStore {
     @Getter
-    private final String value;
-
-    @Getter
     private final String issuer;
 
     @Getter
@@ -19,25 +16,21 @@ public class AccessTokenDraftStore {
     private final List<UUID> scopeCodes;
 
     private AccessTokenDraftStore(
-        final String value,
         final String issuer,
         final UUID subject,
         final List<UUID> scopeCodes
     ) {
-        this.value = value;
         this.issuer = issuer;
         this.subject = subject;
         this.scopeCodes = scopeCodes;
     }
 
     public static AccessTokenDraftStore of(
-        final String value,
         final String issuer,
         final UUID subject,
         final List<UUID> scopeCodes
     ) {
         return new AccessTokenDraftStore(
-            value,
             issuer,
             subject,
             scopeCodes

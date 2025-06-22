@@ -1,0 +1,11 @@
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+CREATE TABLE client_informations (
+    "code" UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    "name" VARCHAR(512) NOT NULL,
+    "secret" VARCHAR(512) NOT NULL,
+    "redirect_uri" VARCHAR(512) NOT NULL,
+    "is_valid" BOOLEAN DEFAULT TRUE NOT NULL,
+    "created_at" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);

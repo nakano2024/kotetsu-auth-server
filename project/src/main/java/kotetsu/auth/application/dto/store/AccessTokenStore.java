@@ -8,7 +8,7 @@ import lombok.Getter;
 
 public class AccessTokenStore {
     @Getter
-    private final String value;
+    private final String code;
 
     @Getter
     private final String issuer;
@@ -26,14 +26,14 @@ public class AccessTokenStore {
     private final Date expiredAt;
 
     private AccessTokenStore(
-        final String value,
+        final String code,
         final String issuer,
         final UUID subject,
         final List<UUID> scopeCodes,
         final Date issuedAt,
         final Date expiredAt
     ) {
-        this.value = value;
+        this.code = code;
         this.issuer = issuer;
         this.subject = subject;
         this.scopeCodes = scopeCodes;
@@ -42,7 +42,7 @@ public class AccessTokenStore {
     }
 
     public static AccessTokenStore of(
-        final String value,
+        final String code,
         final String issuer,
         final UUID subject,
         final List<UUID> scopeCodes,
@@ -50,7 +50,7 @@ public class AccessTokenStore {
         final Date expiredAt
     ) {
         return new AccessTokenStore(
-            value,
+            code,
             issuer,
             subject,
             scopeCodes,

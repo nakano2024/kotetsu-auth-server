@@ -1,0 +1,10 @@
+CREATE TABLE access_tokens (
+    code VARCHAR(512) NOT NULL PRIMARY KEY,
+    issuer VARCHAR(255) NOT NULL,
+    subject UUID NOT NULL,
+    issued_at TIMESTAMP NOT NULL,
+    expired_at TIMESTAMP NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (subject) REFERENCES users(code)
+);
