@@ -1,6 +1,6 @@
 CREATE TABLE access_token_scopes (
-    access_token_code VARCHAR(512) NOT NULL,
-    scope_code VARCHAR(255) NOT NULL,
+    access_token_code UUID NOT NULL,
+    scope_code UUID NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (access_token_code, scope_code),

@@ -1,5 +1,6 @@
 CREATE TABLE authorization_codes (
-    code VARCHAR(255) NOT NULL PRIMARY KEY,
+    code UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    value VARCHAR(255) NOT NULL UNIQUE,
     challenge VARCHAR(255) NOT NULL,
     access_token_draft_code UUID NOT NULL,
     id_token_draft_code UUID NOT NULL,

@@ -1,5 +1,6 @@
 CREATE TABLE access_tokens (
-    code VARCHAR(512) NOT NULL PRIMARY KEY,
+    code UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    value VARCHAR(512) NOT NULL UNIQUE,
     issuer VARCHAR(255) NOT NULL,
     subject UUID NOT NULL,
     issued_at TIMESTAMP NOT NULL,
