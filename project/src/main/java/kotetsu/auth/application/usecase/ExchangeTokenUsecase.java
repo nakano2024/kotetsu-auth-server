@@ -133,12 +133,12 @@ public class ExchangeTokenUsecase {
 
         // else ifでの分岐を避けるためにあらかじめnullを格納し条件に応じてセットする方式にしている
         String idToken = null;
-        if (scopeNames.contains("openid")) {
+        if (authorizationCode.isEnableOpenid()) {
             idToken = generateIdTokenFromDraftPort.generate(idTokenDraft);
         }
 
         String refreshTokenValue = null;
-        if (scopeNames.contains("offline_access")) {
+        if (authorizationCode.isEnableOfflineAccess()) {
             refreshTokenValue = storeRefreshTokenPort.store(RefreshTokenStore.of(
                 generateRandomStringPort.generate(256),
                 authorizationCode.getAccessTokenDraftCode(),
@@ -148,7 +148,7 @@ public class ExchangeTokenUsecase {
             ));
         }
 
-        deleteAuthorizationCodePort.deleteByCode(input.getCode());
+        deleteAuthorizationCodePort.deleteByCode(authorizationCode.getValue());
 
         return TokenOutput.of(
             accessTokenValue,

@@ -24,13 +24,21 @@ public class AuthorizationCodeStore {
     @Getter
     private final Date expiredAt;
 
+    @Getter
+    private final boolean enableOpenid;
+
+    @Getter
+    private final boolean enableOfflineAccess;
+
     private AuthorizationCodeStore(
         String value,
         String challenge,
         UUID accessTokenDraftCode,
         UUID idTokenDraftCode,
         Date issuedAt,
-        Date expiredAt
+        Date expiredAt,
+        boolean enableOpenid,
+        boolean enableOfflineAccess
     ) {
         this.value = value;
         this.challenge = challenge;
@@ -38,6 +46,8 @@ public class AuthorizationCodeStore {
         this.idTokenDraftCode = idTokenDraftCode;
         this.issuedAt = issuedAt;
         this.expiredAt = expiredAt;
+        this.enableOpenid = enableOpenid;
+        this.enableOfflineAccess = enableOfflineAccess;
     }
 
     public static AuthorizationCodeStore of(
@@ -46,7 +56,9 @@ public class AuthorizationCodeStore {
         final UUID accessTokenDraftCode,
         final UUID idTokenDraftCode,
         final Date issuedAt,
-        final Date expiredAt
+        final Date expiredAt,
+        final boolean enableOpenid,
+        final boolean enableOfflineAccess
     ) {
         return new AuthorizationCodeStore(
             value,
@@ -54,7 +66,9 @@ public class AuthorizationCodeStore {
             accessTokenDraftCode,
             idTokenDraftCode,
             issuedAt,
-            expiredAt
+            expiredAt,
+            enableOpenid,
+            enableOfflineAccess
         );
     }
 }

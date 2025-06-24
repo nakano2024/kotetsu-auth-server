@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
+import kotetsu.auth.application.constant.ScopeNameConstant;
 import kotetsu.auth.application.dto.data.ClientInformationData;
 import kotetsu.auth.application.dto.data.ScopeData;
 import kotetsu.auth.application.dto.input.GetAuthorizationCodeInput;
@@ -91,16 +92,19 @@ public class GetAuthorizationCodeUsecase {
             throw new ClientCheckIOException("redirectUriが登録情報と一致しません。");
         }
 
-        final List<String> pendingScopeNames = Arrays.asList(input.getPendingScopeString().split(" "));
+        final List<String> allPendingScopeNames = Arrays.asList(input.getPendingScopeString().split(" "));
+        final List<String> oauth2PendingScopeNames = allPendingScopeNames.stream()
+            .filter(scope -> !scope.equals(ScopeNameConstant.OPENID) && !scope.equals(ScopeNameConstant.OFFLINE_ACCESS))
+            .collect(Collectors.toList());
         final List<ScopeData> permittedScopes = findPermittedScopeListByClientCodePort.findByClientCode(clientInformation.getCode());
         final Set<String> permittedScopeNames = permittedScopes.stream()
             .map(scope -> scope.getName())
             .collect(Collectors.toSet());
-        if (!new HashSet<>(pendingScopeNames).stream().allMatch(permittedScopeNames::contains)) {
+        if (!new HashSet<>(oauth2PendingScopeNames).stream().allMatch(permittedScopeNames::contains)) {
             throw new InvalidPendingScopesIOException("許可されていないscopeが含まれています。");
         }
 
-        final List<ScopeData> scopes = findScopeListByScopeNameList.findByScopeNames(pendingScopeNames);
+        final List<ScopeData> scopes = findScopeListByScopeNameList.findByScopeNames(oauth2PendingScopeNames);
         final List<UUID> scopeCodes = scopes
             .stream()
             .map(scope -> scope.getCode())
@@ -114,7 +118,8 @@ public class GetAuthorizationCodeUsecase {
         final UUID idTokenDraftCode = storeIdTokenDraftPort.store(IdTokenDraftStore.of(
             UUID.fromString(input.getResourceOwnerCode()),
             getSelfUrlport.getUrl(),
-            clientInformation.getCode()
+            clientInformation.getCode(),
+            input.getNonce()
         ));
         final Instant current = getCurrentInstantPort.getCurrent();
         final String authorizationCode = storeAuthorizationCodePort.store(AuthorizationCodeStore.of(
@@ -123,7 +128,9 @@ public class GetAuthorizationCodeUsecase {
             accessTokenDraftCode,
             idTokenDraftCode,
             Date.from(current),
-            Date.from(current.plus(1, ChronoUnit.MINUTES))
+            Date.from(current.plus(1, ChronoUnit.MINUTES)),
+            allPendingScopeNames.contains(ScopeNameConstant.OPENID),
+            allPendingScopeNames.contains(ScopeNameConstant.OFFLINE_ACCESS)
         ));
         return AuthorizationCodeOutput.of(authorizationCode);
     }

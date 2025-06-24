@@ -4,6 +4,8 @@ CREATE TABLE authorization_codes (
     challenge VARCHAR(255) NOT NULL,
     access_token_draft_code UUID NOT NULL,
     id_token_draft_code UUID NOT NULL,
+    enable_openid BOOLEAN NOT NULL DEFAULT FALSE,
+    enable_offline_access BOOLEAN NOT NULL DEFAULT FALSE,
     issued_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     expired_at TIMESTAMP NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,

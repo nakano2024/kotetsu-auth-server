@@ -24,13 +24,21 @@ public class AuthorizationCodeData {
     @Getter
     private final Date expiredAt;
 
+    @Getter
+    private final boolean enableOpenid;
+
+    @Getter
+    private final boolean enableOfflineAccess;
+
     private AuthorizationCodeData(
         final String value,
         final String challenge,
         final UUID accessTokenDraftCode,
         final UUID idTokenDraftCode,
         final Date issuedAt,
-        final Date expiredAt
+        final Date expiredAt,
+        final boolean enableOpenid,
+        final boolean enableOfflineAccess
     ) {
         this.value = value;
         this.challenge = challenge;
@@ -38,6 +46,8 @@ public class AuthorizationCodeData {
         this.idTokenDraftCode = idTokenDraftCode;
         this.issuedAt = issuedAt;
         this.expiredAt = expiredAt;
+        this.enableOpenid = enableOpenid;
+        this.enableOfflineAccess = enableOfflineAccess;
     }
 
     public static AuthorizationCodeData of(
@@ -46,7 +56,9 @@ public class AuthorizationCodeData {
         final UUID accessTokenDraftCode,
         final UUID idTokenDraftCode,
         final Date issuedAt,
-        final Date expiredAt
+        final Date expiredAt,
+        final boolean enableOpenid,
+        final boolean enableOfflineAccess
     ) {
         return new AuthorizationCodeData(
             value,
@@ -54,7 +66,9 @@ public class AuthorizationCodeData {
             accessTokenDraftCode,
             idTokenDraftCode,
             issuedAt,
-            expiredAt
+            expiredAt,
+            enableOpenid,
+            enableOfflineAccess
         );
     }
 }

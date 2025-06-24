@@ -17,24 +17,30 @@ public class IdTokenDraftData {
     @Getter
     private final IdTokenProfileData profile;
 
+    @Getter
+    private final String nonce;
+
     private IdTokenDraftData(
         final UUID code,
         final String subject,
         final String audience,
-        final IdTokenProfileData profile
+        final IdTokenProfileData profile,
+        final String nonce
     ) {
         this.code = code;
         this.subject = subject;
         this.audience = audience;
         this.profile = profile;
+        this.nonce = nonce;
     }
 
     public static IdTokenDraftData of(
         final UUID code,
         final String subject,
         final String audience,
-        final IdTokenProfileData profile
+        final IdTokenProfileData profile,
+        final String nonce
     ) {
-        return new IdTokenDraftData(code, subject, audience, profile);
+        return new IdTokenDraftData(code, subject, audience, profile, nonce);
     }
 }

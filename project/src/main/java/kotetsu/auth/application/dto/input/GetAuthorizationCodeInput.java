@@ -37,18 +37,23 @@ public class GetAuthorizationCodeInput {
     @Pattern(regexp = "[a-zA-Z0-9]+")
     private final String codeChallenge;
 
+    @Getter
+    private final String nonce;
+
     private GetAuthorizationCodeInput(
         final String resourceOwnerCode,
         final String clientId,
         final String redirectUri,
         final String pendingScopeString,
-        final String codeChallenge
+        final String codeChallenge,
+        final String nonce
     ) {
         this.resourceOwnerCode = resourceOwnerCode;
         this.clientId = clientId;
         this.redirectUri = redirectUri;
         this.pendingScopeString = pendingScopeString;
         this.codeChallenge = codeChallenge;
+        this.nonce = nonce;
     }
 
     public static  GetAuthorizationCodeInput of(
@@ -56,14 +61,16 @@ public class GetAuthorizationCodeInput {
         final String clientId,
         final String redirectUri,
         final String pendingScopeString,
-        final String codeChallenge
+        final String codeChallenge,
+        final String nonce
     ) {
         final GetAuthorizationCodeInput input = new GetAuthorizationCodeInput(
             resourceOwnerCode,
             clientId,
             redirectUri,
             pendingScopeString,
-            codeChallenge
+            codeChallenge,
+            nonce
         );
 
         final ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();

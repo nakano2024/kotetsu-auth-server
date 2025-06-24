@@ -135,6 +135,8 @@ public class ExchangeTokenTest {
             when(authorizationCode.getChallenge()).thenReturn("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855");
             when(authorizationCode.getAccessTokenDraftCode()).thenReturn(UUID.fromString("0ad217c3-0018-6627-0500-e9d315f74e32"));
             when(authorizationCode.getIdTokenDraftCode()).thenReturn(UUID.fromString("2896437a-4cec-7cb4-43af-bf5efa279f61"));
+            when(authorizationCode.isEnableOpenid()).thenReturn(true);
+            when(authorizationCode.isEnableOfflineAccess()).thenReturn(true);
 
             when(getCurrentInstantPort.getCurrent()).thenReturn(Instant.parse("2025-06-01T00:00:00Z"));
 
@@ -147,9 +149,9 @@ public class ExchangeTokenTest {
             when(findAccessTokenDraftByIdPort.findById(any())).thenReturn(accessTokenDraft);
             when(accessTokenDraft.getSubject()).thenReturn(UUID.fromString("f47ac10b-58cc-4372-a567-0e02b2c3d479"));
             when(scopeTaskRead.getCode()).thenReturn(UUID.fromString("a8b9c7d2-4f5e-4a1b-9c8d-7e6f5a4b3c2d"));
-            when(scopeTaskRead.getName()).thenReturn("openid");
+            when(scopeTaskRead.getName()).thenReturn("task.read");
             when(scopeTaskWrite.getCode()).thenReturn(UUID.fromString("3e7f8a9b-2c1d-4e5f-8a7b-6c9d2e1f4a5b"));
-            when(scopeTaskWrite.getName()).thenReturn("offline_access");
+            when(scopeTaskWrite.getName()).thenReturn("task.write");
             when(accessTokenDraft.getScopes()).thenReturn(List.of(scopeTaskRead, scopeTaskWrite));
             when(accessTokenDraft.getAudiences()).thenReturn(List.of("api.example.com", "resource.example.com"));
             when(accessTokenDraft.getIssuer()).thenReturn("https://auth.example.com");
@@ -239,7 +241,7 @@ public class ExchangeTokenTest {
             assertEquals(3600L, outputExpiresInCaptor.getValue());
             assertEquals("stored-refresh-token", outputRefreshTokenCaptor.getValue());
             assertEquals("generated-id-token", outputIdTokenCaptor.getValue());
-            assertEquals(List.of("openid", "offline_access"), outputScopesCaptor.getValue());
+            assertEquals(List.of("task.read", "task.write"), outputScopesCaptor.getValue());
             assertEquals(List.of("api.example.com", "resource.example.com"), outputAudiencesCaptor.getValue());
         }
     }
@@ -358,6 +360,8 @@ public class ExchangeTokenTest {
             when(authorizationCode.getChallenge()).thenReturn("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855");
             when(authorizationCode.getAccessTokenDraftCode()).thenReturn(UUID.fromString("0ad217c3-0018-6627-0500-e9d315f74e32"));
             when(authorizationCode.getIdTokenDraftCode()).thenReturn(UUID.fromString("2896437a-4cec-7cb4-43af-bf5efa279f61"));
+            when(authorizationCode.isEnableOpenid()).thenReturn(true);
+            when(authorizationCode.isEnableOfflineAccess()).thenReturn(false);
 
             when(getCurrentInstantPort.getCurrent()).thenReturn(Instant.parse("2025-06-01T00:00:00Z"));
 
@@ -370,7 +374,7 @@ public class ExchangeTokenTest {
             when(findAccessTokenDraftByIdPort.findById(any())).thenReturn(accessTokenDraft);
             when(accessTokenDraft.getSubject()).thenReturn(UUID.fromString("f47ac10b-58cc-4372-a567-0e02b2c3d479"));
             when(scopeTaskRead.getCode()).thenReturn(UUID.fromString("a8b9c7d2-4f5e-4a1b-9c8d-7e6f5a4b3c2d"));
-            when(scopeTaskRead.getName()).thenReturn("openid");
+            when(scopeTaskRead.getName()).thenReturn("task.read");
             when(accessTokenDraft.getScopes()).thenReturn(List.of(scopeTaskRead));
             when(accessTokenDraft.getAudiences()).thenReturn(List.of("api.example.com"));
             when(accessTokenDraft.getIssuer()).thenReturn("https://auth.example.com");
@@ -414,7 +418,7 @@ public class ExchangeTokenTest {
             assertEquals(3600L, outputExpiresInCaptor.getValue());
             assertNull(outputRefreshTokenCaptor.getValue());
             assertEquals("generated-id-token", outputIdTokenCaptor.getValue());
-            assertEquals(List.of("openid"), outputScopesCaptor.getValue());
+            assertEquals(List.of("task.read"), outputScopesCaptor.getValue());
             assertEquals(List.of("api.example.com"), outputAudiencesCaptor.getValue());
         }
     }
@@ -431,6 +435,8 @@ public class ExchangeTokenTest {
             when(authorizationCode.getChallenge()).thenReturn("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855");
             when(authorizationCode.getAccessTokenDraftCode()).thenReturn(UUID.fromString("0ad217c3-0018-6627-0500-e9d315f74e32"));
             when(authorizationCode.getIdTokenDraftCode()).thenReturn(UUID.fromString("2896437a-4cec-7cb4-43af-bf5efa279f61"));
+            when(authorizationCode.isEnableOpenid()).thenReturn(false);
+            when(authorizationCode.isEnableOfflineAccess()).thenReturn(true);
 
             when(getCurrentInstantPort.getCurrent()).thenReturn(Instant.parse("2025-06-01T00:00:00Z"));
 
@@ -443,7 +449,7 @@ public class ExchangeTokenTest {
             when(findAccessTokenDraftByIdPort.findById(any())).thenReturn(accessTokenDraft);
             when(accessTokenDraft.getSubject()).thenReturn(UUID.fromString("f47ac10b-58cc-4372-a567-0e02b2c3d479"));
             when(scopeTaskWrite.getCode()).thenReturn(UUID.fromString("3e7f8a9b-2c1d-4e5f-8a7b-6c9d2e1f4a5b"));
-            when(scopeTaskWrite.getName()).thenReturn("offline_access");
+            when(scopeTaskWrite.getName()).thenReturn("task.write");
             when(accessTokenDraft.getScopes()).thenReturn(List.of(scopeTaskWrite));
             when(accessTokenDraft.getAudiences()).thenReturn(List.of("api.example.com"));
             when(accessTokenDraft.getIssuer()).thenReturn("https://auth.example.com");
@@ -488,7 +494,7 @@ public class ExchangeTokenTest {
             assertEquals(3600L, outputExpiresInCaptor.getValue());
             assertEquals("stored-refresh-token", outputRefreshTokenCaptor.getValue());
             assertNull(outputIdTokenCaptor.getValue());
-            assertEquals(List.of("offline_access"), outputScopesCaptor.getValue());
+            assertEquals(List.of("task.write"), outputScopesCaptor.getValue());
             assertEquals(List.of("api.example.com"), outputAudiencesCaptor.getValue());
         }
     }
@@ -504,6 +510,8 @@ public class ExchangeTokenTest {
             when(authorizationCode.getChallenge()).thenReturn("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855");
             when(authorizationCode.getAccessTokenDraftCode()).thenReturn(UUID.fromString("0ad217c3-0018-6627-0500-e9d315f74e32"));
             when(authorizationCode.getIdTokenDraftCode()).thenReturn(UUID.fromString("2896437a-4cec-7cb4-43af-bf5efa279f61"));
+            when(authorizationCode.isEnableOpenid()).thenReturn(false);
+            when(authorizationCode.isEnableOfflineAccess()).thenReturn(false);
 
             when(getCurrentInstantPort.getCurrent()).thenReturn(Instant.parse("2025-06-01T00:00:00Z"));
 
@@ -516,7 +524,7 @@ public class ExchangeTokenTest {
             when(findAccessTokenDraftByIdPort.findById(any())).thenReturn(accessTokenDraft);
             when(accessTokenDraft.getSubject()).thenReturn(UUID.fromString("f47ac10b-58cc-4372-a567-0e02b2c3d479"));
             when(scopeTaskRead.getCode()).thenReturn(UUID.fromString("a8b9c7d2-4f5e-4a1b-9c8d-7e6f5a4b3c2d"));
-            when(scopeTaskRead.getName()).thenReturn("read");
+            when(scopeTaskRead.getName()).thenReturn("task.read");
             when(accessTokenDraft.getScopes()).thenReturn(List.of(scopeTaskRead));
             when(accessTokenDraft.getAudiences()).thenReturn(List.of("api.example.com"));
             when(accessTokenDraft.getIssuer()).thenReturn("https://auth.example.com");
@@ -559,7 +567,7 @@ public class ExchangeTokenTest {
             assertEquals(3600L, outputExpiresInCaptor.getValue());
             assertNull(outputRefreshTokenCaptor.getValue());
             assertNull(outputIdTokenCaptor.getValue());
-            assertEquals(List.of("read"), outputScopesCaptor.getValue());
+            assertEquals(List.of("task.read"), outputScopesCaptor.getValue());
             assertEquals(List.of("api.example.com"), outputAudiencesCaptor.getValue());
         }
     }
