@@ -20,17 +20,16 @@ public class UserProfileDao implements IFindUserProfileByEmailPort {
 
     @Override
     public UserProfileData findByEmail(String email) {
-        final String sql = """
-            SELECT users.code, users.name, users.email, files.url as image_url
-             FROM users
-             JOIN files ON users.image_file_code = files.code
-             WHERE users.email = :email;
-        """;
-
         final Map<String, String> parameters = Map.of("email", email);
 
         try {
-            final Map<String, Object> userRecord = jdbcTemplate.queryForMap(sql, parameters);
+            final Map<String, Object> userRecord = jdbcTemplate.queryForMap("""
+                SELECT users.code, users.name, users.email, files.url as image_url
+                FROM users
+                JOIN files ON users.image_file_code = files.code
+                WHERE users.email = :email;
+            """, parameters);
+
             return UserProfileData.of(
                 (UUID) userRecord.get("code"),
                 (String) userRecord.get("name"),

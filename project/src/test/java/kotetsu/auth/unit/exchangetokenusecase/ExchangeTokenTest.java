@@ -25,6 +25,7 @@ import kotetsu.auth.application.dto.data.AccessTokenDraftData;
 import kotetsu.auth.application.dto.data.AuthorizationCodeData;
 import kotetsu.auth.application.dto.data.ClientInformationData;
 import kotetsu.auth.application.dto.data.IdTokenDraftData;
+import kotetsu.auth.application.dto.data.ResourceServerData;
 import kotetsu.auth.application.dto.data.ScopeData;
 import kotetsu.auth.application.dto.input.ExchangeTokenInput;
 import kotetsu.auth.application.dto.output.TokenOutput;
@@ -36,7 +37,7 @@ import kotetsu.auth.application.exception.ClientCheckIOException;
 import kotetsu.auth.application.exception.ClientNotFoundIOException;
 import kotetsu.auth.application.persistence.IDeleteAuthorizationCodePort;
 import kotetsu.auth.application.persistence.IFindAccessTokenDraftByIdPort;
-import kotetsu.auth.application.persistence.IFindAuthorizationCodeByCodePort;
+import kotetsu.auth.application.persistence.IFindAuthorizationCodeByValuePort;
 import kotetsu.auth.application.persistence.IFindClientInformationByIdPort;
 import kotetsu.auth.application.persistence.IFindIdTokenDraftByCodePort;
 import kotetsu.auth.application.persistence.IStoreAccessTokenPort;
@@ -53,7 +54,7 @@ public class ExchangeTokenTest {
     private ExchangeTokenUsecase exchangeTokenUsecase;
 
     @Mock
-    private IFindAuthorizationCodeByCodePort findAuthorizationCodeByCodePort;
+    private IFindAuthorizationCodeByValuePort findAuthorizationCodeByCodePort;
 
     @Mock
     private IFindClientInformationByIdPort findClientInformationByIdPort;
@@ -106,6 +107,12 @@ public class ExchangeTokenTest {
     @Mock
     private ScopeData scopeTaskWrite;
 
+    @Mock
+    private ResourceServerData apiResourceServer;
+
+    @Mock
+    private ResourceServerData resourceResourceServer;
+
     @BeforeEach
     public void setUp() {
         exchangeTokenUsecase = new ExchangeTokenUsecase(
@@ -130,7 +137,7 @@ public class ExchangeTokenTest {
             MockedStatic<AccessTokenStore> accessTokenStoreStatic = mockStatic(AccessTokenStore.class);
             MockedStatic<RefreshTokenStore> refreshTokenStoreStatic = mockStatic(RefreshTokenStore.class);
         ) {
-            when(findAuthorizationCodeByCodePort.findByCode(anyString())).thenReturn(authorizationCode);
+            when(findAuthorizationCodeByCodePort.findByValue(anyString())).thenReturn(authorizationCode);
             when(authorizationCode.getExpiredAt()).thenReturn(Date.from(Instant.parse("2025-06-01T00:10:00Z")));
             when(authorizationCode.getChallenge()).thenReturn("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855");
             when(authorizationCode.getAccessTokenDraftCode()).thenReturn(UUID.fromString("0ad217c3-0018-6627-0500-e9d315f74e32"));
@@ -153,7 +160,9 @@ public class ExchangeTokenTest {
             when(scopeTaskWrite.getCode()).thenReturn(UUID.fromString("3e7f8a9b-2c1d-4e5f-8a7b-6c9d2e1f4a5b"));
             when(scopeTaskWrite.getName()).thenReturn("task.write");
             when(accessTokenDraft.getScopes()).thenReturn(List.of(scopeTaskRead, scopeTaskWrite));
-            when(accessTokenDraft.getAudiences()).thenReturn(List.of("api.example.com", "resource.example.com"));
+            when(apiResourceServer.getUrl()).thenReturn("api.example.com");
+            when(resourceResourceServer.getUrl()).thenReturn("resource.example.com");
+            when(accessTokenDraft.getAudiences()).thenReturn(List.of(apiResourceServer, resourceResourceServer));
             when(accessTokenDraft.getIssuer()).thenReturn("https://auth.example.com");
 
             when(findIdTokenDraftByIdPort.findByCode(any())).thenReturn(idTokenDraft);
@@ -251,7 +260,7 @@ public class ExchangeTokenTest {
         when(findClientInformationByIdPort.findById(anyString())).thenReturn(clientInformation);
         when(clientInformation.getSecret()).thenReturn("client-secret");
         when(clientInformation.getRedirectUri()).thenReturn("https://app.example.com/oauth2/callback");
-        when(findAuthorizationCodeByCodePort.findByCode(anyString())).thenReturn(null);
+        when(findAuthorizationCodeByCodePort.findByValue(anyString())).thenReturn(null);
         when(input.getClientId()).thenReturn("client-id");
         when(input.getClientSecret()).thenReturn("client-secret");
         when(input.getRedirectUri()).thenReturn("https://app.example.com/oauth2/callback");
@@ -269,7 +278,7 @@ public class ExchangeTokenTest {
         when(findClientInformationByIdPort.findById(anyString())).thenReturn(clientInformation);
         when(clientInformation.getSecret()).thenReturn("client-secret");
         when(clientInformation.getRedirectUri()).thenReturn("https://app.example.com/oauth2/callback");
-        when(findAuthorizationCodeByCodePort.findByCode(anyString())).thenReturn(authorizationCode);
+        when(findAuthorizationCodeByCodePort.findByValue(anyString())).thenReturn(authorizationCode);
         when(authorizationCode.getExpiredAt()).thenReturn(Date.from(Instant.parse("2025-05-31T23:59:00Z")));
         when(getCurrentInstantPort.getCurrent()).thenReturn(Instant.parse("2025-06-01T00:00:00Z"));
         when(input.getClientId()).thenReturn("client-id");
@@ -328,7 +337,7 @@ public class ExchangeTokenTest {
 
     @Test
     public void throwClientCheckIOExceptionIfCodeVerifierMismatch() {
-        when(findAuthorizationCodeByCodePort.findByCode(anyString())).thenReturn(authorizationCode);
+        when(findAuthorizationCodeByCodePort.findByValue(anyString())).thenReturn(authorizationCode);
         when(authorizationCode.getExpiredAt()).thenReturn(Date.from(Instant.parse("2025-06-01T00:10:00Z")));
         when(authorizationCode.getChallenge()).thenReturn("correct-hash");
         when(getCurrentInstantPort.getCurrent()).thenReturn(Instant.parse("2025-06-01T00:00:00Z"));
@@ -355,7 +364,7 @@ public class ExchangeTokenTest {
             MockedStatic<TokenOutput> outputStatic = mockStatic(TokenOutput.class);
             MockedStatic<AccessTokenStore> accessTokenStoreStatic = mockStatic(AccessTokenStore.class);
         ) {
-            when(findAuthorizationCodeByCodePort.findByCode(anyString())).thenReturn(authorizationCode);
+            when(findAuthorizationCodeByCodePort.findByValue(anyString())).thenReturn(authorizationCode);
             when(authorizationCode.getExpiredAt()).thenReturn(Date.from(Instant.parse("2025-06-01T00:10:00Z")));
             when(authorizationCode.getChallenge()).thenReturn("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855");
             when(authorizationCode.getAccessTokenDraftCode()).thenReturn(UUID.fromString("0ad217c3-0018-6627-0500-e9d315f74e32"));
@@ -376,7 +385,8 @@ public class ExchangeTokenTest {
             when(scopeTaskRead.getCode()).thenReturn(UUID.fromString("a8b9c7d2-4f5e-4a1b-9c8d-7e6f5a4b3c2d"));
             when(scopeTaskRead.getName()).thenReturn("task.read");
             when(accessTokenDraft.getScopes()).thenReturn(List.of(scopeTaskRead));
-            when(accessTokenDraft.getAudiences()).thenReturn(List.of("api.example.com"));
+            when(apiResourceServer.getUrl()).thenReturn("api.example.com");
+            when(accessTokenDraft.getAudiences()).thenReturn(List.of(apiResourceServer));
             when(accessTokenDraft.getIssuer()).thenReturn("https://auth.example.com");
 
             when(findIdTokenDraftByIdPort.findByCode(any())).thenReturn(idTokenDraft);
@@ -430,7 +440,7 @@ public class ExchangeTokenTest {
             MockedStatic<AccessTokenStore> accessTokenStoreStatic = mockStatic(AccessTokenStore.class);
             MockedStatic<RefreshTokenStore> refreshTokenStoreStatic = mockStatic(RefreshTokenStore.class);
         ) {
-            when(findAuthorizationCodeByCodePort.findByCode(anyString())).thenReturn(authorizationCode);
+            when(findAuthorizationCodeByCodePort.findByValue(anyString())).thenReturn(authorizationCode);
             when(authorizationCode.getExpiredAt()).thenReturn(Date.from(Instant.parse("2025-06-01T00:10:00Z")));
             when(authorizationCode.getChallenge()).thenReturn("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855");
             when(authorizationCode.getAccessTokenDraftCode()).thenReturn(UUID.fromString("0ad217c3-0018-6627-0500-e9d315f74e32"));
@@ -451,7 +461,8 @@ public class ExchangeTokenTest {
             when(scopeTaskWrite.getCode()).thenReturn(UUID.fromString("3e7f8a9b-2c1d-4e5f-8a7b-6c9d2e1f4a5b"));
             when(scopeTaskWrite.getName()).thenReturn("task.write");
             when(accessTokenDraft.getScopes()).thenReturn(List.of(scopeTaskWrite));
-            when(accessTokenDraft.getAudiences()).thenReturn(List.of("api.example.com"));
+            when(apiResourceServer.getUrl()).thenReturn("api.example.com");
+            when(accessTokenDraft.getAudiences()).thenReturn(List.of(apiResourceServer));
             when(accessTokenDraft.getIssuer()).thenReturn("https://auth.example.com");
 
             when(findIdTokenDraftByIdPort.findByCode(any())).thenReturn(idTokenDraft);
@@ -505,7 +516,7 @@ public class ExchangeTokenTest {
             MockedStatic<TokenOutput> outputStatic = mockStatic(TokenOutput.class);
             MockedStatic<AccessTokenStore> accessTokenStoreStatic = mockStatic(AccessTokenStore.class);
         ) {
-            when(findAuthorizationCodeByCodePort.findByCode(anyString())).thenReturn(authorizationCode);
+            when(findAuthorizationCodeByCodePort.findByValue(anyString())).thenReturn(authorizationCode);
             when(authorizationCode.getExpiredAt()).thenReturn(Date.from(Instant.parse("2025-06-01T00:10:00Z")));
             when(authorizationCode.getChallenge()).thenReturn("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855");
             when(authorizationCode.getAccessTokenDraftCode()).thenReturn(UUID.fromString("0ad217c3-0018-6627-0500-e9d315f74e32"));
@@ -526,7 +537,8 @@ public class ExchangeTokenTest {
             when(scopeTaskRead.getCode()).thenReturn(UUID.fromString("a8b9c7d2-4f5e-4a1b-9c8d-7e6f5a4b3c2d"));
             when(scopeTaskRead.getName()).thenReturn("task.read");
             when(accessTokenDraft.getScopes()).thenReturn(List.of(scopeTaskRead));
-            when(accessTokenDraft.getAudiences()).thenReturn(List.of("api.example.com"));
+            when(apiResourceServer.getUrl()).thenReturn("api.example.com");
+            when(accessTokenDraft.getAudiences()).thenReturn(List.of(apiResourceServer));
             when(accessTokenDraft.getIssuer()).thenReturn("https://auth.example.com");
 
             when(findIdTokenDraftByIdPort.findByCode(any())).thenReturn(idTokenDraft);

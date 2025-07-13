@@ -24,7 +24,7 @@ import kotetsu.auth.application.exception.ClientNotFoundIOException;
 import kotetsu.auth.application.exception.InputNullException;
 import kotetsu.auth.application.persistence.IDeleteAuthorizationCodePort;
 import kotetsu.auth.application.persistence.IFindAccessTokenDraftByIdPort;
-import kotetsu.auth.application.persistence.IFindAuthorizationCodeByCodePort;
+import kotetsu.auth.application.persistence.IFindAuthorizationCodeByValuePort;
 import kotetsu.auth.application.persistence.IFindClientInformationByIdPort;
 import kotetsu.auth.application.persistence.IFindIdTokenDraftByCodePort;
 import kotetsu.auth.application.persistence.IStoreAccessTokenPort;
@@ -35,7 +35,7 @@ import kotetsu.auth.application.util.IGetCurrentInstantPort;
 import kotetsu.auth.application.util.IHashStringPort;
 
 public class ExchangeTokenUsecase {
-    private final IFindAuthorizationCodeByCodePort findAuthorizationCodeByCodePort;
+    private final IFindAuthorizationCodeByValuePort findAuthorizationCodeByCodePort;
     private final IFindClientInformationByIdPort findClientInformationByIdPort;
     private final IFindAccessTokenDraftByIdPort findAccessTokenDraftByIdPort;
     private final IFindIdTokenDraftByCodePort findIdTokenDraftByIdPort;
@@ -48,7 +48,7 @@ public class ExchangeTokenUsecase {
     private final IGetCurrentInstantPort getCurrentInstantPort;
 
     public ExchangeTokenUsecase(
-        final IFindAuthorizationCodeByCodePort findAuthorizationCodeByCodePort,
+        final IFindAuthorizationCodeByValuePort findAuthorizationCodeByCodePort,
         final IFindClientInformationByIdPort findClientInformationByIdPort,
         final IFindAccessTokenDraftByIdPort findAccessTokenDraftByIdPort,
         final IFindIdTokenDraftByCodePort findIdTokenDraftByIdPort,
@@ -94,7 +94,7 @@ public class ExchangeTokenUsecase {
             throw new ClientCheckIOException("redirectUriが登録情報と一致しません。");
         }
 
-        final AuthorizationCodeData authorizationCode = findAuthorizationCodeByCodePort.findByCode(input.getCode());
+        final AuthorizationCodeData authorizationCode = findAuthorizationCodeByCodePort.findByValue(input.getCode());
         if (authorizationCode == null) {
             throw new AuthorizationCodeNotFoundIOException("認可コードが見つかりません。");
         }
@@ -110,7 +110,6 @@ public class ExchangeTokenUsecase {
         }
 
         final AccessTokenDraftData accessTokenDraft = findAccessTokenDraftByIdPort.findById(authorizationCode.getAccessTokenDraftCode());
-        final IdTokenDraftData idTokenDraft = findIdTokenDraftByIdPort.findByCode(authorizationCode.getIdTokenDraftCode());
 
         final List<UUID> scopeCodes = accessTokenDraft.getScopes()
             .stream()
@@ -120,6 +119,11 @@ public class ExchangeTokenUsecase {
         final List<String> scopeNames = accessTokenDraft.getScopes()
             .stream()
             .map(scope -> scope.getName())
+            .toList();
+        
+        final List<String> audienceNames = accessTokenDraft.getAudiences()
+            .stream()
+            .map(audience -> audience.getUrl())
             .toList();
 
         final String accessTokenValue = storeAccessTokenPort.store(AccessTokenStore.of(
@@ -132,6 +136,7 @@ public class ExchangeTokenUsecase {
         ));
 
         // else ifでの分岐を避けるためにあらかじめnullを格納し条件に応じてセットする方式にしている
+        final IdTokenDraftData idTokenDraft = findIdTokenDraftByIdPort.findByCode(authorizationCode.getIdTokenDraftCode());
         String idToken = null;
         if (authorizationCode.isEnableOpenid()) {
             idToken = generateIdTokenFromDraftPort.generate(idTokenDraft);
@@ -157,7 +162,7 @@ public class ExchangeTokenUsecase {
             refreshTokenValue,
             idToken,
             scopeNames,
-            accessTokenDraft.getAudiences()
+            audienceNames
         );
     }
 }

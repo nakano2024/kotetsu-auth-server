@@ -9,10 +9,10 @@ public class IdTokenDraftData {
     private final UUID code;
 
     @Getter
-    private final String subject;
+    private final UUID subject;
 
     @Getter
-    private final String audience;
+    private final UUID audience;
 
     @Getter
     private final IdTokenProfileData profile;
@@ -22,8 +22,8 @@ public class IdTokenDraftData {
 
     private IdTokenDraftData(
         final UUID code,
-        final String subject,
-        final String audience,
+        final UUID subject,
+        final UUID audience,
         final IdTokenProfileData profile,
         final String nonce
     ) {
@@ -36,8 +36,8 @@ public class IdTokenDraftData {
 
     public static IdTokenDraftData of(
         final UUID code,
-        final String subject,
-        final String audience,
+        final UUID subject,
+        final UUID audience,
         final IdTokenProfileData profile,
         final String nonce
     ) {

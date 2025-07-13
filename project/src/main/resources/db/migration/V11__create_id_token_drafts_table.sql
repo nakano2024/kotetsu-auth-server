@@ -3,6 +3,7 @@ CREATE TABLE id_token_drafts (
     issuer VARCHAR(255) NOT NULL,
     subject UUID NOT NULL,
     audience UUID NOT NULL,
+    nonce VARCHAR(128) NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (subject) REFERENCES users(code),

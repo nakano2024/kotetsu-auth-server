@@ -1,5 +1,7 @@
 package kotetsu.auth.application.dto.data;
 
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.UUID;
 
@@ -19,14 +21,14 @@ public class AccessTokenDraftData {
     private final List<ScopeData> scopes;
 
     @Getter
-    private final List<String> audiences;
+    private final List<ResourceServerData> audiences;
 
     private AccessTokenDraftData(
         final UUID code,
         final String issuer,
         final UUID subject,
         final List<ScopeData> scopes,
-        final List<String> audiences
+        final List<ResourceServerData> audiences
     ) {
         this.code = code;
         this.issuer = issuer;
@@ -40,14 +42,14 @@ public class AccessTokenDraftData {
         final String issuer,
         final UUID subject,
         final List<ScopeData> scopes,
-        final List<String> audiences
+        final List<ResourceServerData> resourceServers
     ) {
         return new AccessTokenDraftData(
             code,
             issuer,
             subject,
             scopes,
-            audiences
+            new ArrayList<>(new LinkedHashSet<>(resourceServers)) // 重複を取りのぞくためにLinkedHashSetする
         );
     }
 }
