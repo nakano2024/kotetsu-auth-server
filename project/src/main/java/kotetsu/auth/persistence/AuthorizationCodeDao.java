@@ -23,9 +23,9 @@ public class AuthorizationCodeDao implements IDeleteAuthorizationCodePort, IFind
     }
 
     @Override
-    public void deleteByCode(final String code) {
+    public void deleteByValue(final String value) {
         Map<String, Object> params = new HashMap<>();
-        params.put("code", code);
+        params.put("code", value);
 
         jdbcTemplate.update("""
             DELETE FROM authorization_codes WHERE value = :code

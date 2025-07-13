@@ -115,7 +115,7 @@ public class DeleteByCodeTest {
         assertEquals(1, countBefore);
 
         // Delete the authorization code
-        authorizationCodeDao.deleteByCode("test-authorization-code-value");
+        authorizationCodeDao.deleteByValue("test-authorization-code-value");
 
         // Verify data was deleted
         Integer countAfter = jdbcTemplate.queryForObject(
@@ -129,7 +129,7 @@ public class DeleteByCodeTest {
     @Test
     public void canDeleteNonExistentCode() throws SQLException {
         // Delete non-existent authorization code (should not throw exception)
-        authorizationCodeDao.deleteByCode("nonexistent-authorization-code");
+        authorizationCodeDao.deleteByValue("nonexistent-authorization-code");
 
         // Verify existing data is still there
         Integer count = jdbcTemplate.queryForObject(

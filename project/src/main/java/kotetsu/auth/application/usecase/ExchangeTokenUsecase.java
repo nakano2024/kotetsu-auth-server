@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.annotation.Validated;
 
 import kotetsu.auth.application.dto.data.AccessTokenDraftData;
 import kotetsu.auth.application.dto.data.AuthorizationCodeData;
@@ -74,7 +73,7 @@ public class ExchangeTokenUsecase {
     }
 
     @Transactional
-    public TokenOutput exchangeToken(final @Validated ExchangeTokenInput input)
+    public TokenOutput exchangeToken(final ExchangeTokenInput input)
         throws ClientNotFoundIOException, ClientCheckIOException, AuthorizationCodeNotFoundIOException, AuthorizationCodeExpiredIOException
     {
         if (input == null) {
@@ -153,7 +152,7 @@ public class ExchangeTokenUsecase {
             ));
         }
 
-        deleteAuthorizationCodePort.deleteByCode(authorizationCode.getValue());
+        deleteAuthorizationCodePort.deleteByValue(authorizationCode.getValue());
 
         return TokenOutput.of(
             accessTokenValue,
