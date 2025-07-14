@@ -44,7 +44,7 @@ import kotetsu.auth.application.persistence.IStoreAccessTokenPort;
 import kotetsu.auth.application.persistence.IStoreRefreshTokenPort;
 import kotetsu.auth.application.usecase.ExchangeTokenUsecase;
 import kotetsu.auth.application.util.IGenerateIdTokenFromDraftPort;
-import kotetsu.auth.application.util.IGenerateRandomStringPort;
+import kotetsu.auth.application.util.IGenerateOpaqueTokenPort;
 import kotetsu.auth.application.util.IGetCurrentInstantPort;
 import kotetsu.auth.application.util.IHashStringPort;
 
@@ -78,7 +78,7 @@ public class ExchangeTokenTest {
     private IHashStringPort hashStringPort;
 
     @Mock
-    private IGenerateRandomStringPort generateRandomStringPort;
+    private IGenerateOpaqueTokenPort generateOpaqueTokenPort;
 
     @Mock
     private IGenerateIdTokenFromDraftPort generateIdTokenFromDraftPort;
@@ -124,7 +124,7 @@ public class ExchangeTokenTest {
             storeRefreshTokenPort,
             deleteAuthorizationCodePort,
             hashStringPort,
-            generateRandomStringPort,
+            generateOpaqueTokenPort,
             generateIdTokenFromDraftPort,
             getCurrentInstantPort
         );
@@ -167,8 +167,8 @@ public class ExchangeTokenTest {
 
             when(findIdTokenDraftByIdPort.findByCode(any())).thenReturn(idTokenDraft);
 
-            when(generateRandomStringPort.generate(512)).thenReturn("access-token-512-chars");
-            when(generateRandomStringPort.generate(256)).thenReturn("refresh-token-256-chars");
+            when(generateOpaqueTokenPort.generate(512)).thenReturn("access-token-512-chars");
+            when(generateOpaqueTokenPort.generate(256)).thenReturn("refresh-token-256-chars");
 
             when(storeAccessTokenPort.store(any())).thenReturn("stored-access-token");
             when(storeRefreshTokenPort.store(any())).thenReturn("stored-refresh-token");
@@ -391,7 +391,7 @@ public class ExchangeTokenTest {
 
             when(findIdTokenDraftByIdPort.findByCode(any())).thenReturn(idTokenDraft);
 
-            when(generateRandomStringPort.generate(512)).thenReturn("access-token-512-chars");
+            when(generateOpaqueTokenPort.generate(512)).thenReturn("access-token-512-chars");
             when(storeAccessTokenPort.store(any())).thenReturn("stored-access-token");
             when(generateIdTokenFromDraftPort.generate(any())).thenReturn("generated-id-token");
 
@@ -467,8 +467,8 @@ public class ExchangeTokenTest {
 
             when(findIdTokenDraftByIdPort.findByCode(any())).thenReturn(idTokenDraft);
 
-            when(generateRandomStringPort.generate(512)).thenReturn("access-token-512-chars");
-            when(generateRandomStringPort.generate(256)).thenReturn("refresh-token-256-chars");
+            when(generateOpaqueTokenPort.generate(512)).thenReturn("access-token-512-chars");
+            when(generateOpaqueTokenPort.generate(256)).thenReturn("refresh-token-256-chars");
             when(storeAccessTokenPort.store(any())).thenReturn("stored-access-token");
             when(storeRefreshTokenPort.store(any())).thenReturn("stored-refresh-token");
 
@@ -543,7 +543,7 @@ public class ExchangeTokenTest {
 
             when(findIdTokenDraftByIdPort.findByCode(any())).thenReturn(idTokenDraft);
 
-            when(generateRandomStringPort.generate(512)).thenReturn("access-token-512-chars");
+            when(generateOpaqueTokenPort.generate(512)).thenReturn("access-token-512-chars");
             when(storeAccessTokenPort.store(any())).thenReturn("stored-access-token");
 
             when(input.getCode()).thenReturn("authorization-code");

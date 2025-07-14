@@ -37,7 +37,7 @@ import kotetsu.auth.application.persistence.IStoreAccessTokenDraftPort;
 import kotetsu.auth.application.persistence.IStoreAuthorizationCodePort;
 import kotetsu.auth.application.persistence.IStoreIdTokenDraftPort;
 import kotetsu.auth.application.usecase.GetAuthorizationCodeUsecase;
-import kotetsu.auth.application.util.IGenerateRandomStringPort;
+import kotetsu.auth.application.util.IGenerateOpaqueTokenPort;
 import kotetsu.auth.application.util.IGetCurrentInstantPort;
 import kotetsu.auth.application.util.IGetSelfUrlPort;
 
@@ -65,7 +65,7 @@ public class GetAuthorizationCodeTest {
     IFindClientInformationByIdPort findClientInformationByIdPort;
 
     @Mock
-    IGenerateRandomStringPort generateRandomStringPort;
+    IGenerateOpaqueTokenPort generateRandomStringPort;
 
     @Mock
     IGetSelfUrlPort getSelfUrlPort;

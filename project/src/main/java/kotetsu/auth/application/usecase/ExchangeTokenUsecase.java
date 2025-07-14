@@ -29,7 +29,7 @@ import kotetsu.auth.application.persistence.IFindIdTokenDraftByCodePort;
 import kotetsu.auth.application.persistence.IStoreAccessTokenPort;
 import kotetsu.auth.application.persistence.IStoreRefreshTokenPort;
 import kotetsu.auth.application.util.IGenerateIdTokenFromDraftPort;
-import kotetsu.auth.application.util.IGenerateRandomStringPort;
+import kotetsu.auth.application.util.IGenerateOpaqueTokenPort;
 import kotetsu.auth.application.util.IGetCurrentInstantPort;
 import kotetsu.auth.application.util.IHashStringPort;
 
@@ -42,7 +42,7 @@ public class ExchangeTokenUsecase {
     private final IStoreRefreshTokenPort storeRefreshTokenPort;
     private final IDeleteAuthorizationCodePort deleteAuthorizationCodePort;
     private final IHashStringPort hashStringPort;
-    private final IGenerateRandomStringPort generateRandomStringPort;
+    private final IGenerateOpaqueTokenPort generateRandomStringPort;
     private final IGenerateIdTokenFromDraftPort generateIdTokenFromDraftPort;
     private final IGetCurrentInstantPort getCurrentInstantPort;
 
@@ -55,7 +55,7 @@ public class ExchangeTokenUsecase {
         final IStoreRefreshTokenPort storeRefreshTokenPort,
         final IDeleteAuthorizationCodePort deleteAuthorizationCodePort,
         final IHashStringPort hashStringPort,
-        final IGenerateRandomStringPort generateRandomStringPort,
+        final IGenerateOpaqueTokenPort generateRandomStringPort,
         final IGenerateIdTokenFromDraftPort generateIdTokenFromDraftPort,
         final IGetCurrentInstantPort getCurrentInstantPort
     ) {

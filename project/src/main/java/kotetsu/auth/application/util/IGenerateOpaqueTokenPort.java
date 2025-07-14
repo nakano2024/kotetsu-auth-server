@@ -1,5 +1,5 @@
 package kotetsu.auth.application.util;
 
-public interface IGenerateRandomStringPort {
+public interface IGenerateOpaqueTokenPort {
     String generate(int length);
 }

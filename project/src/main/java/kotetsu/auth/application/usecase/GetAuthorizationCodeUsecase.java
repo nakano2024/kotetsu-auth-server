@@ -31,7 +31,7 @@ import kotetsu.auth.application.persistence.IFindScopeListByScopeNameListPort;
 import kotetsu.auth.application.persistence.IStoreAccessTokenDraftPort;
 import kotetsu.auth.application.persistence.IStoreAuthorizationCodePort;
 import kotetsu.auth.application.persistence.IStoreIdTokenDraftPort;
-import kotetsu.auth.application.util.IGenerateRandomStringPort;
+import kotetsu.auth.application.util.IGenerateOpaqueTokenPort;
 import kotetsu.auth.application.util.IGetCurrentInstantPort;
 import kotetsu.auth.application.util.IGetSelfUrlPort;
 
@@ -48,7 +48,7 @@ public class GetAuthorizationCodeUsecase {
 
     private final IStoreAuthorizationCodePort storeAuthorizationCodePort;
 
-    private final IGenerateRandomStringPort generateRandomStringPort;
+    private final IGenerateOpaqueTokenPort generateOpaqueTokenPort;
 
     private final IGetSelfUrlPort getSelfUrlport;
 
@@ -61,7 +61,7 @@ public class GetAuthorizationCodeUsecase {
         final IFindScopeListByScopeNameListPort findScopeListByScopeNameList,
         final IFindPermittedScopeListByClientCodePort findPermittedScopeListByClientCodePort,
         final IFindClientInformationByIdPort findClientInformationByIdPort,
-        final IGenerateRandomStringPort generateRandomStringPort,
+        final IGenerateOpaqueTokenPort generateOpaqueTokenPort,
         final IGetSelfUrlPort getSelfUrlport,
         final IGetCurrentInstantPort getCurrentInstantPort
     ) {
@@ -71,7 +71,7 @@ public class GetAuthorizationCodeUsecase {
         this.findScopeListByScopeNameList = findScopeListByScopeNameList;
         this.findPermittedScopeListByClientCodePort = findPermittedScopeListByClientCodePort;
         this.findClientInformationByIdPort = findClientInformationByIdPort;
-        this.generateRandomStringPort = generateRandomStringPort;
+        this.generateOpaqueTokenPort = generateOpaqueTokenPort;
         this.getSelfUrlport = getSelfUrlport;
         this.getCurrentInstantPort = getCurrentInstantPort;
     }
@@ -123,7 +123,7 @@ public class GetAuthorizationCodeUsecase {
         ));
         final Instant current = getCurrentInstantPort.getCurrent();
         final String authorizationCode = storeAuthorizationCodePort.store(AuthorizationCodeStore.of(
-            generateRandomStringPort.generate(64),
+            generateOpaqueTokenPort.generate(64),
             input.getCodeChallenge(),
             accessTokenDraftCode,
             idTokenDraftCode,
