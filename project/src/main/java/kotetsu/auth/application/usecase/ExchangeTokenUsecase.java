@@ -28,8 +28,9 @@ import kotetsu.auth.application.persistence.IFindClientInformationByIdPort;
 import kotetsu.auth.application.persistence.IFindIdTokenDraftByCodePort;
 import kotetsu.auth.application.persistence.IStoreAccessTokenPort;
 import kotetsu.auth.application.persistence.IStoreRefreshTokenPort;
+import kotetsu.auth.application.util.IGenerateAccessTokenValuePort;
 import kotetsu.auth.application.util.IGenerateIdTokenFromDraftPort;
-import kotetsu.auth.application.util.IGenerateOpaqueTokenPort;
+import kotetsu.auth.application.util.IGenerateRefreshTokenValuePort;
 import kotetsu.auth.application.util.IGetCurrentInstantPort;
 import kotetsu.auth.application.util.IHashStringPort;
 
@@ -42,7 +43,8 @@ public class ExchangeTokenUsecase {
     private final IStoreRefreshTokenPort storeRefreshTokenPort;
     private final IDeleteAuthorizationCodePort deleteAuthorizationCodePort;
     private final IHashStringPort hashStringPort;
-    private final IGenerateOpaqueTokenPort generateRandomStringPort;
+    private final IGenerateAccessTokenValuePort generateAccessTokenValuePort;
+    private final IGenerateRefreshTokenValuePort generateRefreshTokenValuePort;
     private final IGenerateIdTokenFromDraftPort generateIdTokenFromDraftPort;
     private final IGetCurrentInstantPort getCurrentInstantPort;
 
@@ -55,7 +57,8 @@ public class ExchangeTokenUsecase {
         final IStoreRefreshTokenPort storeRefreshTokenPort,
         final IDeleteAuthorizationCodePort deleteAuthorizationCodePort,
         final IHashStringPort hashStringPort,
-        final IGenerateOpaqueTokenPort generateRandomStringPort,
+        final IGenerateAccessTokenValuePort generateAccessTokenValuePort,
+        final IGenerateRefreshTokenValuePort generateRefreshTokenValuePort,
         final IGenerateIdTokenFromDraftPort generateIdTokenFromDraftPort,
         final IGetCurrentInstantPort getCurrentInstantPort
     ) {
@@ -67,7 +70,8 @@ public class ExchangeTokenUsecase {
         this.storeRefreshTokenPort = storeRefreshTokenPort;
         this.deleteAuthorizationCodePort = deleteAuthorizationCodePort;
         this.hashStringPort = hashStringPort;
-        this.generateRandomStringPort = generateRandomStringPort;
+        this.generateAccessTokenValuePort = generateAccessTokenValuePort;
+        this.generateRefreshTokenValuePort = generateRefreshTokenValuePort;
         this.generateIdTokenFromDraftPort = generateIdTokenFromDraftPort;
         this.getCurrentInstantPort = getCurrentInstantPort;
     }
@@ -126,7 +130,7 @@ public class ExchangeTokenUsecase {
             .toList();
 
         final String accessTokenValue = storeAccessTokenPort.store(AccessTokenStore.of(
-            generateRandomStringPort.generate(512),
+            generateAccessTokenValuePort.generate(),
             accessTokenDraft.getIssuer(),
             accessTokenDraft.getSubject(),
             scopeCodes,
@@ -144,7 +148,7 @@ public class ExchangeTokenUsecase {
         String refreshTokenValue = null;
         if (authorizationCode.isEnableOfflineAccess()) {
             refreshTokenValue = storeRefreshTokenPort.store(RefreshTokenStore.of(
-                generateRandomStringPort.generate(256),
+                generateRefreshTokenValuePort.generate(),
                 authorizationCode.getAccessTokenDraftCode(),
                 authorizationCode.getIdTokenDraftCode(),
                 Date.from(current),

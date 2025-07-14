@@ -37,7 +37,7 @@ import kotetsu.auth.application.persistence.IStoreAccessTokenDraftPort;
 import kotetsu.auth.application.persistence.IStoreAuthorizationCodePort;
 import kotetsu.auth.application.persistence.IStoreIdTokenDraftPort;
 import kotetsu.auth.application.usecase.GetAuthorizationCodeUsecase;
-import kotetsu.auth.application.util.IGenerateOpaqueTokenPort;
+import kotetsu.auth.application.util.IGenerateAuthorizationCodeValuePort;
 import kotetsu.auth.application.util.IGetCurrentInstantPort;
 import kotetsu.auth.application.util.IGetSelfUrlPort;
 
@@ -65,7 +65,7 @@ public class GetAuthorizationCodeTest {
     IFindClientInformationByIdPort findClientInformationByIdPort;
 
     @Mock
-    IGenerateOpaqueTokenPort generateRandomStringPort;
+    IGenerateAuthorizationCodeValuePort generateAuthorizationCodeValuePort;
 
     @Mock
     IGetSelfUrlPort getSelfUrlPort;
@@ -103,7 +103,7 @@ public class GetAuthorizationCodeTest {
             findScopeListByScopeNameListPort,
             findPermittedScopeListByClientCodePort,
             findClientInformationByIdPort,
-            generateRandomStringPort,
+            generateAuthorizationCodeValuePort,
             getSelfUrlPort,
             getCurrentInstantPort
         );
@@ -141,7 +141,7 @@ public class GetAuthorizationCodeTest {
             when(clientInformation.getRedirectUri()).thenReturn("https://app.example.com/oauth2/callback");
             when(findClientInformationByIdPort.findById(anyString())).thenReturn(clientInformation);
 
-            when(generateRandomStringPort.generate(64)).thenReturn("YKovutYoVp2MttO7EBmVSLidrOHEvWrlCwpFjhSHjaqtWxIc3eB0g5K367Hi6vjW");
+            when(generateAuthorizationCodeValuePort.generate()).thenReturn("YKovutYoVp2MttO7EBmVSLidrOHEvWrlCwpFjhSHjaqtWxIc3eB0g5K367Hi6vjW");
 
             when(getSelfUrlPort.getUrl()).thenReturn("https://auth.example.com");
 
