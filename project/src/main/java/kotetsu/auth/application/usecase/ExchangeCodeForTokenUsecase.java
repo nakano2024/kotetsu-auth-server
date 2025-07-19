@@ -8,6 +8,7 @@ import java.util.UUID;
 
 import org.springframework.transaction.annotation.Transactional;
 
+import kotetsu.auth.application.constant.GrantTypeConstant;
 import kotetsu.auth.application.dto.data.AccessTokenDraftData;
 import kotetsu.auth.application.dto.data.AuthorizationCodeData;
 import kotetsu.auth.application.dto.data.ClientInformationData;
@@ -21,6 +22,7 @@ import kotetsu.auth.application.exception.AuthorizationCodeNotFoundIOException;
 import kotetsu.auth.application.exception.ClientCheckIOException;
 import kotetsu.auth.application.exception.ClientNotFoundIOException;
 import kotetsu.auth.application.exception.InputNullException;
+import kotetsu.auth.application.exception.InvalidGrantTypeIOException;
 import kotetsu.auth.application.persistence.IDeleteAuthorizationCodePort;
 import kotetsu.auth.application.persistence.IFindAccessTokenDraftByIdPort;
 import kotetsu.auth.application.persistence.IFindAuthorizationCodeByValuePort;
@@ -34,7 +36,7 @@ import kotetsu.auth.application.util.IGenerateRefreshTokenValuePort;
 import kotetsu.auth.application.util.IGetCurrentInstantPort;
 import kotetsu.auth.application.util.IHashStringPort;
 
-public class ExchangeTokenUsecase {
+public class ExchangeCodeForTokenUsecase {
     private final IFindAuthorizationCodeByValuePort findAuthorizationCodeByCodePort;
     private final IFindClientInformationByIdPort findClientInformationByIdPort;
     private final IFindAccessTokenDraftByIdPort findAccessTokenDraftByIdPort;
@@ -48,7 +50,7 @@ public class ExchangeTokenUsecase {
     private final IGenerateIdTokenFromDraftPort generateIdTokenFromDraftPort;
     private final IGetCurrentInstantPort getCurrentInstantPort;
 
-    public ExchangeTokenUsecase(
+    public ExchangeCodeForTokenUsecase(
         final IFindAuthorizationCodeByValuePort findAuthorizationCodeByCodePort,
         final IFindClientInformationByIdPort findClientInformationByIdPort,
         final IFindAccessTokenDraftByIdPort findAccessTokenDraftByIdPort,
@@ -78,7 +80,11 @@ public class ExchangeTokenUsecase {
 
     @Transactional
     public TokenOutput exchangeToken(final ExchangeCodeForTokenInput input)
-        throws ClientNotFoundIOException, ClientCheckIOException, AuthorizationCodeNotFoundIOException, AuthorizationCodeExpiredIOException
+        throws ClientNotFoundIOException,
+        ClientCheckIOException,
+        AuthorizationCodeNotFoundIOException,
+        AuthorizationCodeExpiredIOException,
+        InvalidGrantTypeIOException
     {
         if (input == null) {
             throw new InputNullException();
@@ -95,6 +101,10 @@ public class ExchangeTokenUsecase {
 
         if (!clientInformation.getRedirectUri().equals(input.getRedirectUri())) {
             throw new ClientCheckIOException("redirectUriが登録情報と一致しません。");
+        }
+
+        if (input.getGrantType() != GrantTypeConstant.AUTORIZATION_CODE) {
+            throw new InvalidGrantTypeIOException("grantTypeがauthorization_codeではありません。");
         }
 
         final AuthorizationCodeData authorizationCode = findAuthorizationCodeByCodePort.findByValue(input.getCode());

@@ -1,4 +1,4 @@
-package kotetsu.auth.unit.getuserprofilebyemailusecase;
+package kotetsu.auth.unit.getinternaltokenbyemailusecase;
 
 import java.time.Instant;
 import java.util.Date;
@@ -22,24 +22,24 @@ import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import kotetsu.auth.application.dto.data.UserProfileData;
-import kotetsu.auth.application.dto.input.GetUserProfileEmailInput;
+import kotetsu.auth.application.dto.input.GetInternalTokenInput;
 import kotetsu.auth.application.dto.output.IdTokenOutput;
 import kotetsu.auth.application.exception.UserProfileNotFoundIOException;
 import kotetsu.auth.application.persistence.IFindUserProfileByEmailPort;
-import kotetsu.auth.application.usecase.GetIdTokenByEmailUsecase;
-import kotetsu.auth.application.util.IGenerateIdTokenPort;
+import kotetsu.auth.application.usecase.GetInternalTokenByEmailUsecase;
+import kotetsu.auth.application.util.IGenerateIInternalAuthTokenPort;
 import kotetsu.auth.application.util.IGetCurrentInstantPort;
 
 @ExtendWith(MockitoExtension.class)
-public class GetUserProfileTest {
+public class GetInternalTokenTest {
     @Mock
-    GetUserProfileEmailInput input;
+    GetInternalTokenInput input;
 
     @Mock
     IFindUserProfileByEmailPort findUserProfileByEmailPort;
 
     @Mock
-    IGenerateIdTokenPort generateIdTokenPort;
+    IGenerateIInternalAuthTokenPort generateIdTokenPort;
 
     @Mock
     IGetCurrentInstantPort getCurrentDatePort;
@@ -47,11 +47,11 @@ public class GetUserProfileTest {
     @Mock
     UserProfileData userProfile;
 
-    GetIdTokenByEmailUsecase getUserProfileByEmailUsecase;
+    GetInternalTokenByEmailUsecase getInternalTokenUsecase;
 
     @BeforeEach
     public void setUpForEach() {
-        getUserProfileByEmailUsecase = new GetIdTokenByEmailUsecase(
+        getInternalTokenUsecase = new GetInternalTokenByEmailUsecase(
             findUserProfileByEmailPort,
             generateIdTokenPort,
             getCurrentDatePort
@@ -72,7 +72,7 @@ public class GetUserProfileTest {
             when(getCurrentDatePort.getCurrent()).thenReturn(Instant.parse("2025-06-01T00:00:00Z"));
             
             assertDoesNotThrow(() -> {
-                getUserProfileByEmailUsecase.getUserProfile(input);
+                getInternalTokenUsecase.getInternalToken(input);
             });
 
             ArgumentCaptor<String> subjectCaptor = ArgumentCaptor.forClass(String.class);
@@ -113,7 +113,7 @@ public class GetUserProfileTest {
             when(input.getEmail()).thenReturn("tanaka@example.com");
 
             assertThrows(UserProfileNotFoundIOException.class, () -> {
-                getUserProfileByEmailUsecase.getUserProfile(input);
+                getInternalTokenUsecase.getInternalToken(input);
             }, "UserProfile Not Found");
         }
     }

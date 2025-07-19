@@ -7,10 +7,10 @@ import java.util.Map;
 import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Jwts;
-import kotetsu.auth.application.util.IGenerateIdTokenPort;
+import kotetsu.auth.application.util.IGenerateIInternalAuthTokenPort;
 
 @Component
-public class JwtGenerator implements IGenerateIdTokenPort {
+public class JwtGenerator implements IGenerateIInternalAuthTokenPort {
     private final PrivateKeyGetter privateKeyGetter;
 
     public JwtGenerator(PrivateKeyGetter privateKeyGetter) {

@@ -9,32 +9,32 @@ import java.util.Map;
 import org.springframework.stereotype.Component;
 
 import kotetsu.auth.application.dto.data.UserProfileData;
-import kotetsu.auth.application.dto.input.GetUserProfileEmailInput;
+import kotetsu.auth.application.dto.input.GetInternalTokenInput;
 import kotetsu.auth.application.dto.output.IdTokenOutput;
 import kotetsu.auth.application.exception.InputNullException;
 import kotetsu.auth.application.exception.UserProfileNotFoundIOException;
 import kotetsu.auth.application.persistence.IFindUserProfileByEmailPort;
-import kotetsu.auth.application.util.IGenerateIdTokenPort;
+import kotetsu.auth.application.util.IGenerateIInternalAuthTokenPort;
 import kotetsu.auth.application.util.IGetCurrentInstantPort;
 
 @Component
-public class GetIdTokenByEmailUsecase {
+public class GetInternalTokenByEmailUsecase {
 
     final IFindUserProfileByEmailPort findUserProfileByEmailPort;
-    final IGenerateIdTokenPort generateIdTokenPort;
+    final IGenerateIInternalAuthTokenPort generateInternalTokenPort;
     final IGetCurrentInstantPort getCurrentInstantPort;
 
-    public GetIdTokenByEmailUsecase(
+    public GetInternalTokenByEmailUsecase(
         final IFindUserProfileByEmailPort findUserProfileByEmailPort,
-        final IGenerateIdTokenPort generateIdTokenPort,
+        final IGenerateIInternalAuthTokenPort generateInternalTokenPort,
         final IGetCurrentInstantPort getCurrentInstantPort
     ) {
         this.findUserProfileByEmailPort = findUserProfileByEmailPort;
-        this.generateIdTokenPort = generateIdTokenPort;
+        this.generateInternalTokenPort = generateInternalTokenPort;
         this.getCurrentInstantPort = getCurrentInstantPort;
     }
 
-    public IdTokenOutput getUserProfile(GetUserProfileEmailInput input) throws UserProfileNotFoundIOException {
+    public IdTokenOutput getInternalToken(GetInternalTokenInput input) throws UserProfileNotFoundIOException {
         if (input == null) {
             throw new InputNullException();
         }
@@ -48,7 +48,7 @@ public class GetIdTokenByEmailUsecase {
         Instant current = getCurrentInstantPort.getCurrent();
         Date issuedAt = Date.from(current);
         Date expiresAt = Date.from(current.plus(1, ChronoUnit.DAYS));
-        String idToken = generateIdTokenPort.generate(
+        String idToken = generateInternalTokenPort.generate(
             userProfile.getCode().toString(),
             issuedAt,
             expiresAt,

@@ -11,24 +11,24 @@ import jakarta.validation.constraints.Pattern;
 import kotetsu.auth.application.exception.InputException;
 import lombok.Getter;
 
-public class GetUserProfileEmailInput {
+public class GetInternalTokenInput {
     @Getter
     @NotNull
     @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")
     private final String email;
 
-    private GetUserProfileEmailInput(String email) {
+    private GetInternalTokenInput(String email) {
         this.email = email;
     }
 
-    public static GetUserProfileEmailInput of(String email) {
-        final GetUserProfileEmailInput input = new GetUserProfileEmailInput(email);
+    public static GetInternalTokenInput of(String email) {
+        final GetInternalTokenInput input = new GetInternalTokenInput(email);
 
         final ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
         final Validator validator = validatorFactory.getValidator();
-        final Set<ConstraintViolation<GetUserProfileEmailInput>> violations = validator.validate(input);
+        final Set<ConstraintViolation<GetInternalTokenInput>> violations = validator.validate(input);
 
-        for (final ConstraintViolation<GetUserProfileEmailInput> violation : violations) {
+        for (final ConstraintViolation<GetInternalTokenInput> violation : violations) {
             throw new InputException(violation.getMessage());
         }
 

@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.annotation.security.PermitAll;
-import kotetsu.auth.application.dto.input.GetUserProfileEmailInput;
+import kotetsu.auth.application.dto.input.GetInternalTokenInput;
 import kotetsu.auth.application.dto.output.IdTokenOutput;
 import kotetsu.auth.application.exception.UserProfileNotFoundIOException;
-import kotetsu.auth.application.usecase.GetIdTokenByEmailUsecase;
+import kotetsu.auth.application.usecase.GetInternalTokenByEmailUsecase;
 import kotetsu.auth.dto.request.PasswordAuthRequest;
 import kotetsu.auth.dto.resource.IdTokenResource;
 import kotetsu.auth.dto.response.PasswordAuthResponse;
@@ -24,11 +24,11 @@ public class PostPasswordAuthController {
 
     private final AuthenticationManager authenticationManager;
 
-    private final GetIdTokenByEmailUsecase getUserProfileByEmailUsecase;
+    private final GetInternalTokenByEmailUsecase getUserProfileByEmailUsecase;
 
     public PostPasswordAuthController(
         final AuthenticationManager authenticationManager,
-        final GetIdTokenByEmailUsecase getUserProfileByEmailUsecase
+        final GetInternalTokenByEmailUsecase getUserProfileByEmailUsecase
     ) {
         this.authenticationManager = authenticationManager;
         this.getUserProfileByEmailUsecase = getUserProfileByEmailUsecase;
@@ -42,7 +42,7 @@ public class PostPasswordAuthController {
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
             );
             
-            IdTokenOutput output = getUserProfileByEmailUsecase.getUserProfile(GetUserProfileEmailInput.of(authentication.getName()));
+            IdTokenOutput output = getUserProfileByEmailUsecase.getInternalToken(GetInternalTokenInput.of(authentication.getName()));
 
             return ResponseEntity.ok(new PasswordAuthResponse(new IdTokenResource(
                 output.getIdToken(),
