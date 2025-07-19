@@ -27,7 +27,7 @@ import kotetsu.auth.application.dto.data.ClientInformationData;
 import kotetsu.auth.application.dto.data.IdTokenDraftData;
 import kotetsu.auth.application.dto.data.ResourceServerData;
 import kotetsu.auth.application.dto.data.ScopeData;
-import kotetsu.auth.application.dto.input.ExchangeCodeForTokenInput;
+import kotetsu.auth.application.dto.input.ExchangeTokenInput;
 import kotetsu.auth.application.dto.output.TokenOutput;
 import kotetsu.auth.application.dto.store.AccessTokenStore;
 import kotetsu.auth.application.dto.store.RefreshTokenStore;
@@ -43,7 +43,7 @@ import kotetsu.auth.application.persistence.IFindClientInformationByIdPort;
 import kotetsu.auth.application.persistence.IFindIdTokenDraftByCodePort;
 import kotetsu.auth.application.persistence.IStoreAccessTokenPort;
 import kotetsu.auth.application.persistence.IStoreRefreshTokenPort;
-import kotetsu.auth.application.usecase.ExchangeCodeForTokenUsecase;
+import kotetsu.auth.application.usecase.ExchangeTokenUsecase;
 import kotetsu.auth.application.util.IGenerateAccessTokenValuePort;
 import kotetsu.auth.application.util.IGenerateIdTokenFromDraftPort;
 import kotetsu.auth.application.util.IGenerateRefreshTokenValuePort;
@@ -53,7 +53,7 @@ import kotetsu.auth.application.util.IHashStringPort;
 @ExtendWith(MockitoExtension.class)
 public class ExchangeTokenTest {
 
-    private ExchangeCodeForTokenUsecase exchangeTokenUsecase;
+    private ExchangeTokenUsecase exchangeTokenUsecase;
 
     @Mock
     private IFindAuthorizationCodeByValuePort findAuthorizationCodeByCodePort;
@@ -92,7 +92,7 @@ public class ExchangeTokenTest {
     private IGetCurrentInstantPort getCurrentInstantPort;
 
     @Mock
-    private ExchangeCodeForTokenInput input;
+    private ExchangeTokenInput input;
 
     @Mock
     private AuthorizationCodeData authorizationCode;
@@ -120,7 +120,7 @@ public class ExchangeTokenTest {
 
     @BeforeEach
     public void setUp() {
-        exchangeTokenUsecase = new ExchangeCodeForTokenUsecase(
+        exchangeTokenUsecase = new ExchangeTokenUsecase(
             findAuthorizationCodeByCodePort,
             findClientInformationByIdPort,
             findAccessTokenDraftByIdPort,
@@ -264,19 +264,13 @@ public class ExchangeTokenTest {
 
     @Test
     public void throwGrantTypeInvalidExceptionIfGrantTypeIsNotAuthorizationCode() {
-        when(findClientInformationByIdPort.findById(anyString())).thenReturn(clientInformation);
-        when(clientInformation.getSecret()).thenReturn("client-secret");
-        when(clientInformation.getRedirectUri()).thenReturn("https://app.example.com/oauth2/callback");
-        when(input.getClientId()).thenReturn("client-id");
-        when(input.getClientSecret()).thenReturn("client-secret");
-        when(input.getRedirectUri()).thenReturn("https://app.example.com/oauth2/callback");
         when(input.getGrantType()).thenReturn("invalid_type");
 
         InvalidGrantTypeIOException exception = assertThrows(InvalidGrantTypeIOException.class, () -> {
             exchangeTokenUsecase.exchangeToken(input);
         });
 
-        assertEquals("grantTypeがauthorization_codeではありません。", exception.getMessage());
+        assertEquals("無効なgrantTypeです。", exception.getMessage());
     }
 
     @Test
@@ -321,6 +315,7 @@ public class ExchangeTokenTest {
 
     @Test
     public void throwClientNotFoundIOExceptionIfClientNotFound() {
+        when(input.getGrantType()).thenReturn("authorization_code");
         when(findClientInformationByIdPort.findById(anyString())).thenReturn(null);
         when(input.getClientId()).thenReturn("nonexistent-client");
 
@@ -335,6 +330,8 @@ public class ExchangeTokenTest {
     public void throwClientCheckIOExceptionIfClientSecretMismatch() {
         when(findClientInformationByIdPort.findById(anyString())).thenReturn(clientInformation);
         when(clientInformation.getSecret()).thenReturn("correct-secret");
+
+        when(input.getGrantType()).thenReturn("authorization_code");
         when(input.getClientId()).thenReturn("client-id");
         when(input.getClientSecret()).thenReturn("wrong-secret");
 
@@ -351,6 +348,8 @@ public class ExchangeTokenTest {
         when(input.getClientId()).thenReturn("client-id");
         when(clientInformation.getSecret()).thenReturn("client-secret");
         when(clientInformation.getRedirectUri()).thenReturn("https://app.example.com/oauth2/callback");
+
+        when(input.getGrantType()).thenReturn("authorization_code");
         when(input.getClientSecret()).thenReturn("client-secret");
         when(input.getRedirectUri()).thenReturn("https://malicious.example.com/oauth2/callback");
 

@@ -8,11 +8,12 @@ import java.util.UUID;
 
 import org.springframework.transaction.annotation.Transactional;
 
+import kotetsu.auth.application.constant.GrantTypeConstant;
 import kotetsu.auth.application.dto.data.AccessTokenDraftData;
 import kotetsu.auth.application.dto.data.AuthorizationCodeData;
 import kotetsu.auth.application.dto.data.ClientInformationData;
 import kotetsu.auth.application.dto.data.IdTokenDraftData;
-import kotetsu.auth.application.dto.input.ExchangeCodeForTokenInput;
+import kotetsu.auth.application.dto.input.ExchangeTokenInput;
 import kotetsu.auth.application.dto.output.TokenOutput;
 import kotetsu.auth.application.dto.store.AccessTokenStore;
 import kotetsu.auth.application.dto.store.RefreshTokenStore;
@@ -21,6 +22,7 @@ import kotetsu.auth.application.exception.AuthorizationCodeNotFoundIOException;
 import kotetsu.auth.application.exception.ClientCheckIOException;
 import kotetsu.auth.application.exception.ClientNotFoundIOException;
 import kotetsu.auth.application.exception.InputNullException;
+import kotetsu.auth.application.exception.InvalidGrantTypeIOException;
 import kotetsu.auth.application.persistence.IDeleteAuthorizationCodePort;
 import kotetsu.auth.application.persistence.IFindAccessTokenDraftByIdPort;
 import kotetsu.auth.application.persistence.IFindAuthorizationCodeByValuePort;
@@ -77,8 +79,30 @@ public class ExchangeTokenUsecase {
     }
 
     @Transactional
-    public TokenOutput exchangeToken(final ExchangeCodeForTokenInput input)
-        throws ClientNotFoundIOException, ClientCheckIOException, AuthorizationCodeNotFoundIOException, AuthorizationCodeExpiredIOException
+    public TokenOutput exchangeToken(final ExchangeTokenInput input)
+        throws ClientNotFoundIOException,
+        ClientCheckIOException,
+        AuthorizationCodeNotFoundIOException,
+        AuthorizationCodeExpiredIOException,
+        InvalidGrantTypeIOException
+    {
+        if (input.getGrantType().equals(GrantTypeConstant.AUTORIZATION_CODE)) {
+            return exchangeCodeForToken(input);
+        }
+
+        if (input.getGrantType().equals(GrantTypeConstant.REFRESH)) {
+            return exchangeRefreshTokenForToken(input);
+        }
+
+        throw new InvalidGrantTypeIOException("無効なgrantTypeです。");
+    }
+
+    private TokenOutput exchangeCodeForToken(final ExchangeTokenInput input) 
+        throws ClientNotFoundIOException,
+        ClientCheckIOException,
+        AuthorizationCodeNotFoundIOException,
+        AuthorizationCodeExpiredIOException,
+        InvalidGrantTypeIOException
     {
         if (input == null) {
             throw new InputNullException();
@@ -157,7 +181,6 @@ public class ExchangeTokenUsecase {
         }
 
         deleteAuthorizationCodePort.deleteByValue(authorizationCode.getValue());
-
         return TokenOutput.of(
             accessTokenValue,
             "Bearer",
@@ -167,5 +190,9 @@ public class ExchangeTokenUsecase {
             scopeNames,
             audienceNames
         );
+    }
+
+    private TokenOutput exchangeRefreshTokenForToken(final ExchangeTokenInput input) {
+        return null;
     }
 }

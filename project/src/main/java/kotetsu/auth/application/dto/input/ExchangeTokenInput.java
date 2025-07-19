@@ -11,7 +11,7 @@ import jakarta.validation.constraints.Pattern;
 import kotetsu.auth.application.exception.InputException;
 import lombok.Getter;
 
-public class ExchangeCodeForTokenInput {
+public class ExchangeTokenInput {
     @Getter
     @NotBlank
     @Pattern(regexp = "[a-zA-Z0-9]+")
@@ -42,7 +42,7 @@ public class ExchangeCodeForTokenInput {
     @Pattern(regexp = "https?://[\\w.-]+(?:\\.[\\w\\.-]+)+[/\\w\\.-]*\\??[^\\s]*")
     private final String redirectUri;
 
-    private ExchangeCodeForTokenInput(
+    private ExchangeTokenInput(
         final String code,
         final String grantType,
         final String clientId,
@@ -58,7 +58,7 @@ public class ExchangeCodeForTokenInput {
         this.redirectUri = redirectUri;
     }
 
-    public static ExchangeCodeForTokenInput of(
+    public static ExchangeTokenInput of(
         final String code,
         final String grantType,
         final String clientId,
@@ -66,7 +66,7 @@ public class ExchangeCodeForTokenInput {
         final String codeVerifier,
         final String redirectUri
     ) {
-        final ExchangeCodeForTokenInput input = new ExchangeCodeForTokenInput(
+        final ExchangeTokenInput input = new ExchangeTokenInput(
             code,
             grantType,
             clientId,
@@ -77,9 +77,9 @@ public class ExchangeCodeForTokenInput {
 
         final ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
         final Validator validator = validatorFactory.getValidator();
-        final Set<ConstraintViolation<ExchangeCodeForTokenInput>> violations = validator.validate(input);
+        final Set<ConstraintViolation<ExchangeTokenInput>> violations = validator.validate(input);
 
-        for (final ConstraintViolation<ExchangeCodeForTokenInput> violation : violations) {
+        for (final ConstraintViolation<ExchangeTokenInput> violation : violations) {
             throw new InputException(violation.getMessage());
         }
 
