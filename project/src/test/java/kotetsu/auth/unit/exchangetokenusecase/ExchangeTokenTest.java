@@ -510,42 +510,82 @@ public class ExchangeTokenTest {
 
     @Test
     public void throwAuthorizationCodeNotFoundIOExceptionIfCodeNotFound() {
-        when(findClientInformationByIdPort.findById(anyString())).thenReturn(clientInformation);
-        when(clientInformation.getSecret()).thenReturn("client-secret");
-        when(clientInformation.getRedirectUri()).thenReturn("https://app.example.com/oauth2/callback");
-        when(findAuthorizationCodeByCodePort.findByValue(anyString())).thenReturn(null);
-        when(input.getClientId()).thenReturn("client-id");
-        when(input.getClientSecret()).thenReturn("client-secret");
-        when(input.getRedirectUri()).thenReturn("https://app.example.com/oauth2/callback");
-        when(input.getGrantType()).thenReturn("authorization_code");
-        when(input.getCode()).thenReturn("authorization-code");
+        try(
+            MockedStatic<CheckClientInput> checkClientInputStatic = mockStatic(CheckClientInput.class);
+            MockedStatic<AuthCodeExchangeInput> authCodeExchangeInputStatic = mockStatic(AuthCodeExchangeInput.class);
+        ) {        
+            when(input.getCode()).thenReturn("authorization-code");
+            when(input.getClientCredentialToken()).thenReturn(null);
+            when(input.getClientId()).thenReturn("client-id");
+            when(input.getClientSecret()).thenReturn("client-secret");
+            when(input.getCodeVerifier()).thenReturn("code-verifier");
+            when(input.getRedirectUri()).thenReturn("https://app.example.com/oauth2/callback");
+            when(input.getGrantType()).thenReturn("authorization_code");
 
-        AuthorizationCodeNotFoundIOException exception = assertThrows(AuthorizationCodeNotFoundIOException.class, () -> {
-            exchangeTokenUsecase.exchangeToken(input);
-        });
+            when(checkClientInput.getClientId()).thenReturn("client-id");
+            when(checkClientInput.getClientSecret()).thenReturn("client-secret");
+            when(checkClientInput.getRedirectUri()).thenReturn("https://app.example.com/oauth2/callback");
+            checkClientInputStatic.when(() -> CheckClientInput.of(anyString(), anyString(), anyString()))
+                .thenReturn(checkClientInput);
 
-        assertEquals("認可コードが見つかりません。", exception.getMessage());
+            when(findClientInformationByIdPort.findById(anyString())).thenReturn(clientInformation);
+            when(clientInformation.getSecret()).thenReturn("client-secret");
+            when(clientInformation.getRedirectUri()).thenReturn("https://app.example.com/oauth2/callback");
+            when(findAuthorizationCodeByCodePort.findByValue(anyString())).thenReturn(null);
+
+            when(authCodeExchangeInput.getCode()).thenReturn("authorization-code");
+            authCodeExchangeInputStatic.when(() -> AuthCodeExchangeInput.of(anyString(), anyString()))
+                .thenReturn(authCodeExchangeInput);
+            
+            AuthorizationCodeNotFoundIOException exception = assertThrows(AuthorizationCodeNotFoundIOException.class, () -> {
+                exchangeTokenUsecase.exchangeToken(input);
+            });
+        
+            assertEquals("認可コードが見つかりません。", exception.getMessage());
+        }
     }
 
     @Test
     public void throwAuthorizationCodeExpiredIOExceptionIfCodeExpired() {
-        when(findClientInformationByIdPort.findById(anyString())).thenReturn(clientInformation);
-        when(clientInformation.getSecret()).thenReturn("client-secret");
-        when(clientInformation.getRedirectUri()).thenReturn("https://app.example.com/oauth2/callback");
-        when(findAuthorizationCodeByCodePort.findByValue(anyString())).thenReturn(authorizationCode);
-        when(authorizationCode.getExpiredAt()).thenReturn(Date.from(Instant.parse("2025-05-31T23:59:00Z")));
-        when(getCurrentInstantPort.getCurrent()).thenReturn(Instant.parse("2025-06-01T00:00:00Z"));
-        when(input.getClientId()).thenReturn("client-id");
-        when(input.getClientSecret()).thenReturn("client-secret");
-        when(input.getRedirectUri()).thenReturn("https://app.example.com/oauth2/callback");
-        when(input.getGrantType()).thenReturn("authorization_code");
-        when(input.getCode()).thenReturn("expired-authorization-code");
+        try(
+            MockedStatic<CheckClientInput> checkClientInputStatic = mockStatic(CheckClientInput.class);
+            MockedStatic<AuthCodeExchangeInput> authCodeExchangeInputStatic = mockStatic(AuthCodeExchangeInput.class);
+        ) {    
+            when(findClientInformationByIdPort.findById(anyString())).thenReturn(clientInformation);
+            when(clientInformation.getSecret()).thenReturn("client-secret");
+            when(clientInformation.getRedirectUri()).thenReturn("https://app.example.com/oauth2/callback");
+            when(findAuthorizationCodeByCodePort.findByValue(anyString())).thenReturn(authorizationCode);
+            when(authorizationCode.getExpiredAt()).thenReturn(Date.from(Instant.parse("2025-05-31T23:59:00Z")));
+            when(getCurrentInstantPort.getCurrent()).thenReturn(Instant.parse("2025-06-01T00:00:00Z"));
 
-        AuthorizationCodeExpiredIOException exception = assertThrows(AuthorizationCodeExpiredIOException.class, () -> {
-            exchangeTokenUsecase.exchangeToken(input);
-        });
+            when(input.getCode()).thenReturn("authorization-code");
+            when(input.getClientCredentialToken()).thenReturn(null);
+            when(input.getClientId()).thenReturn("client-id");
+            when(input.getClientSecret()).thenReturn("client-secret");
+            when(input.getCodeVerifier()).thenReturn("code-verifier");
+            when(input.getRedirectUri()).thenReturn("https://app.example.com/oauth2/callback");
+            when(input.getGrantType()).thenReturn("authorization_code");
 
-        assertEquals("認可コードの有効期限が切れています。", exception.getMessage());
+            when(checkClientInput.getClientId()).thenReturn("client-id");
+            when(checkClientInput.getClientSecret()).thenReturn("client-secret");
+            when(checkClientInput.getRedirectUri()).thenReturn("https://app.example.com/oauth2/callback");
+            checkClientInputStatic.when(() -> CheckClientInput.of(anyString(), anyString(), anyString()))
+                .thenReturn(checkClientInput);
+            
+            when(findClientInformationByIdPort.findById(anyString())).thenReturn(clientInformation);
+            when(clientInformation.getSecret()).thenReturn("client-secret");
+            when(clientInformation.getRedirectUri()).thenReturn("https://app.example.com/oauth2/callback");
+            when(findAuthorizationCodeByCodePort.findByValue(anyString())).thenReturn(authorizationCode);
+            when(authCodeExchangeInput.getCode()).thenReturn("authorization-code");
+            authCodeExchangeInputStatic.when(() -> AuthCodeExchangeInput.of(anyString(), anyString()))
+                .thenReturn(authCodeExchangeInput);
+
+            AuthorizationCodeExpiredIOException exception = assertThrows(AuthorizationCodeExpiredIOException.class, () -> {
+                exchangeTokenUsecase.exchangeToken(input);
+            });
+
+            assertEquals("認可コードの有効期限が切れています。", exception.getMessage());
+        }
     }
 
     @Test
