@@ -13,49 +13,51 @@ import lombok.Getter;
 
 public class ExchangeTokenInput {
     @Getter
-    @NotBlank
-    @Pattern(regexp = "[a-zA-Z0-9]+")
-    private final String code;
-
-    @Getter
-    @NotBlank
     @Pattern(regexp = "[a-z_]+")
+    @NotBlank
     private final String grantType;
 
     @Getter
-    @NotBlank
     @Pattern(regexp = "[a-zA-Z0-9.]+")
+    @NotBlank
     private final String clientId;
 
     @Getter
-    @NotBlank
-    @Pattern(regexp = "[a-zA-Z0-9]+")
     private final String clientSecret;
 
     @Getter
-    @NotBlank
-    @Pattern(regexp = "[a-zA-Z0-9_-]+")
+    private final String clientCredentialToken;
+
+    @Getter
+    private final String redirectUri;
+
+    @Getter
+    private final String code;
+
+    @Getter
     private final String codeVerifier;
 
     @Getter
-    @NotBlank
-    @Pattern(regexp = "https?://[\\w.-]+(?:\\.[\\w\\.-]+)+[/\\w\\.-]*\\??[^\\s]*")
-    private final String redirectUri;
+    private final String refreshToken;
 
     private ExchangeTokenInput(
         final String code,
         final String grantType,
         final String clientId,
         final String clientSecret,
+        final String clientCredentialToken,
         final String codeVerifier,
-        final String redirectUri
+        final String redirectUri,
+        final String refreshToken
     ) {
         this.code = code;
         this.grantType = grantType;
         this.clientId = clientId;
         this.clientSecret = clientSecret;
+        this.clientCredentialToken = clientCredentialToken;
         this.codeVerifier = codeVerifier;
         this.redirectUri = redirectUri;
+        this.refreshToken = redirectUri;
     }
 
     public static ExchangeTokenInput of(
@@ -63,16 +65,20 @@ public class ExchangeTokenInput {
         final String grantType,
         final String clientId,
         final String clientSecret,
+        final String clientCredentialToken,
         final String codeVerifier,
-        final String redirectUri
+        final String redirectUri,
+        final String refreshToken
     ) {
         final ExchangeTokenInput input = new ExchangeTokenInput(
             code,
             grantType,
             clientId,
             clientSecret,
+            clientCredentialToken,
             codeVerifier,
-            redirectUri
+            redirectUri,
+            refreshToken
         );
 
         final ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();

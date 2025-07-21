@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -12,21 +13,30 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.ArgumentCaptor;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
+
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import kotetsu.auth.application.dto.data.AccessTokenDraftData;
 import kotetsu.auth.application.dto.data.AuthorizationCodeData;
+import kotetsu.auth.application.dto.data.ClientCredentialData;
 import kotetsu.auth.application.dto.data.ClientInformationData;
 import kotetsu.auth.application.dto.data.IdTokenDraftData;
 import kotetsu.auth.application.dto.data.ResourceServerData;
 import kotetsu.auth.application.dto.data.ScopeData;
+import kotetsu.auth.application.dto.input.AuthCodeExchangeInput;
+import kotetsu.auth.application.dto.input.CheckClientCredentialInput;
+import kotetsu.auth.application.dto.input.CheckClientInput;
 import kotetsu.auth.application.dto.input.ExchangeTokenInput;
 import kotetsu.auth.application.dto.output.TokenOutput;
 import kotetsu.auth.application.dto.store.AccessTokenStore;
@@ -45,6 +55,7 @@ import kotetsu.auth.application.persistence.IStoreAccessTokenPort;
 import kotetsu.auth.application.persistence.IStoreRefreshTokenPort;
 import kotetsu.auth.application.usecase.ExchangeTokenUsecase;
 import kotetsu.auth.application.util.IGenerateAccessTokenValuePort;
+import kotetsu.auth.application.util.IGenerateClientCredentialPort;
 import kotetsu.auth.application.util.IGenerateIdTokenFromDraftPort;
 import kotetsu.auth.application.util.IGenerateRefreshTokenValuePort;
 import kotetsu.auth.application.util.IGetCurrentInstantPort;
@@ -118,6 +129,21 @@ public class ExchangeTokenTest {
     @Mock
     private ResourceServerData resourceResourceServer;
 
+    @Mock
+    private IGenerateClientCredentialPort generateClientCredentialPort;
+
+    @Mock
+    private ClientCredentialData clientCredential;
+
+    @Mock
+    private CheckClientInput checkClientInput;
+
+    @Mock
+    private CheckClientCredentialInput checkClientCredentialInput;
+
+    @Mock
+    private AuthCodeExchangeInput authCodeExchangeInput;
+
     @BeforeEach
     public void setUp() {
         exchangeTokenUsecase = new ExchangeTokenUsecase(
@@ -132,16 +158,19 @@ public class ExchangeTokenTest {
             generateAccessTokenValuePort,
             generateRefreshTokenValuePort,
             generateIdTokenFromDraftPort,
-            getCurrentInstantPort
+            getCurrentInstantPort,
+            generateClientCredentialPort
         );
     }
 
     @Test
-    public void returnTokenIfAllConditionsValid() {
+    public void returnTokenIfAllConditionsValidWithNormalClientCheck() {
         try (
             MockedStatic<TokenOutput> outputStatic = mockStatic(TokenOutput.class);
             MockedStatic<AccessTokenStore> accessTokenStoreStatic = mockStatic(AccessTokenStore.class);
             MockedStatic<RefreshTokenStore> refreshTokenStoreStatic = mockStatic(RefreshTokenStore.class);
+            MockedStatic<CheckClientInput> checkClientInputStatic = mockStatic(CheckClientInput.class);
+            MockedStatic<AuthCodeExchangeInput> authCodeExchangeInputStatic = mockStatic(AuthCodeExchangeInput.class);
         ) {
             when(findAuthorizationCodeByCodePort.findByValue(anyString())).thenReturn(authorizationCode);
             when(authorizationCode.getExpiredAt()).thenReturn(Date.from(Instant.parse("2025-06-01T00:10:00Z")));
@@ -181,11 +210,23 @@ public class ExchangeTokenTest {
             when(generateIdTokenFromDraftPort.generate(any())).thenReturn("generated-id-token");
 
             when(input.getCode()).thenReturn("authorization-code");
+            when(input.getClientCredentialToken()).thenReturn(null);
             when(input.getClientId()).thenReturn("client-id");
             when(input.getClientSecret()).thenReturn("client-secret");
             when(input.getCodeVerifier()).thenReturn("code-verifier");
             when(input.getRedirectUri()).thenReturn("https://app.example.com/oauth2/callback");
             when(input.getGrantType()).thenReturn("authorization_code");
+
+            when(checkClientInput.getClientId()).thenReturn("client-id");
+            when(checkClientInput.getClientSecret()).thenReturn("client-secret");
+            when(checkClientInput.getRedirectUri()).thenReturn("https://app.example.com/oauth2/callback");
+            checkClientInputStatic.when(() -> CheckClientInput.of(anyString(), anyString(), anyString()))
+                .thenReturn(checkClientInput);
+
+            when(authCodeExchangeInput.getCode()).thenReturn("authorization-code");
+            when(authCodeExchangeInput.getCodeVerifier()).thenReturn("code-verifier");
+            authCodeExchangeInputStatic.when(() -> AuthCodeExchangeInput.of(anyString(), anyString()))
+                .thenReturn(authCodeExchangeInput);
 
             assertDoesNotThrow(() -> {
                 exchangeTokenUsecase.exchangeToken(input);
@@ -262,15 +303,209 @@ public class ExchangeTokenTest {
         }
     }
 
+    @ParameterizedTest
+    @MethodSource("provideVerifiedClientIdAndSecretInput")
+    public void returnTokenIfAllConditionsValidWithClientCredentialCheck(final String clientIdInput, final String clientSecretInput) {
+        try (
+            MockedStatic<TokenOutput> outputStatic = mockStatic(TokenOutput.class);
+            MockedStatic<AccessTokenStore> accessTokenStoreStatic = mockStatic(AccessTokenStore.class);
+            MockedStatic<RefreshTokenStore> refreshTokenStoreStatic = mockStatic(RefreshTokenStore.class);
+            MockedStatic<CheckClientCredentialInput> checkClientCredentialInputStatic = mockStatic(CheckClientCredentialInput.class);
+            MockedStatic<AuthCodeExchangeInput> authCodeExchangeInputStatic = mockStatic(AuthCodeExchangeInput.class);
+        ) {
+            when(findAuthorizationCodeByCodePort.findByValue(anyString())).thenReturn(authorizationCode);
+            when(authorizationCode.getExpiredAt()).thenReturn(Date.from(Instant.parse("2025-06-01T00:10:00Z")));
+            when(authorizationCode.getChallenge()).thenReturn("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855");
+            when(authorizationCode.getAccessTokenDraftCode()).thenReturn(UUID.fromString("0ad217c3-0018-6627-0500-e9d315f74e32"));
+            when(authorizationCode.getIdTokenDraftCode()).thenReturn(UUID.fromString("2896437a-4cec-7cb4-43af-bf5efa279f61"));
+            when(authorizationCode.isEnableOpenid()).thenReturn(true);
+            when(authorizationCode.isEnableOfflineAccess()).thenReturn(true);
+
+            when(getCurrentInstantPort.getCurrent()).thenReturn(Instant.parse("2025-06-01T00:00:00Z"));
+
+            when(findClientInformationByIdPort.findById(anyString())).thenReturn(clientInformation);
+            when(clientInformation.getSecret()).thenReturn("client-secret");
+            when(clientInformation.getRedirectUri()).thenReturn("https://app.example.com/oauth2/callback");
+
+            when(hashStringPort.hashSha256(anyString())).thenReturn("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855");
+
+            when(findAccessTokenDraftByIdPort.findById(any())).thenReturn(accessTokenDraft);
+            when(accessTokenDraft.getSubject()).thenReturn(UUID.fromString("f47ac10b-58cc-4372-a567-0e02b2c3d479"));
+            when(scopeTaskRead.getCode()).thenReturn(UUID.fromString("a8b9c7d2-4f5e-4a1b-9c8d-7e6f5a4b3c2d"));
+            when(scopeTaskRead.getName()).thenReturn("task.read");
+            when(scopeTaskWrite.getCode()).thenReturn(UUID.fromString("3e7f8a9b-2c1d-4e5f-8a7b-6c9d2e1f4a5b"));
+            when(scopeTaskWrite.getName()).thenReturn("task.write");
+            when(accessTokenDraft.getScopes()).thenReturn(List.of(scopeTaskRead, scopeTaskWrite));
+            when(apiResourceServer.getUrl()).thenReturn("api.example.com");
+            when(resourceResourceServer.getUrl()).thenReturn("resource.example.com");
+            when(accessTokenDraft.getAudiences()).thenReturn(List.of(apiResourceServer, resourceResourceServer));
+            when(accessTokenDraft.getIssuer()).thenReturn("https://auth.example.com");
+
+            when(findIdTokenDraftByIdPort.findByCode(any())).thenReturn(idTokenDraft);
+
+            when(generateAccessTokenValuePort.generate()).thenReturn("access-token-512-chars");
+            when(generateRefreshTokenValuePort.generate()).thenReturn("refresh-token-512-chars");
+
+            when(storeAccessTokenPort.store(any())).thenReturn("stored-access-token");
+            when(storeRefreshTokenPort.store(any())).thenReturn("stored-refresh-token");
+            when(generateIdTokenFromDraftPort.generate(any())).thenReturn("generated-id-token");
+
+            when(input.getCode()).thenReturn("authorization-code");
+            when(input.getClientCredentialToken()).thenReturn("client-credential-token");
+            // これらのスタブはパラメータとして渡されるテスト次第では呼ばれないパターンもあるためlenientとしてる。
+            lenient().when(input.getClientId()).thenReturn(clientIdInput);
+            lenient().when(input.getClientSecret()).thenReturn(clientSecretInput);
+            when(input.getCodeVerifier()).thenReturn("code-verifier");
+            when(input.getRedirectUri()).thenReturn("https://app.example.com/oauth2/callback");
+            when(input.getGrantType()).thenReturn("authorization_code");
+
+            when(checkClientCredentialInput.getCredentialToken()).thenReturn("client-credential-token");
+            when(checkClientCredentialInput.getRedirectUri()).thenReturn("https://app.example.com/oauth2/callback");
+            checkClientCredentialInputStatic.when(() -> CheckClientCredentialInput.of(anyString(), anyString()))
+                .thenReturn(checkClientCredentialInput);
+            
+            when(clientCredential.getClientId()).thenReturn("client-id");
+            when(clientCredential.getClientSecret()).thenReturn("client-secret");
+            when(generateClientCredentialPort.generate(anyString())).thenReturn(clientCredential);
+
+            when(authCodeExchangeInput.getCode()).thenReturn("authorization-code");
+            when(authCodeExchangeInput.getCodeVerifier()).thenReturn("code-verifier");
+            authCodeExchangeInputStatic.when(() -> AuthCodeExchangeInput.of(anyString(), anyString()))
+                .thenReturn(authCodeExchangeInput);
+
+            assertDoesNotThrow(() -> {
+                exchangeTokenUsecase.exchangeToken(input);
+            });
+
+            ArgumentCaptor<String> accessTokenValueCaptor = ArgumentCaptor.forClass(String.class);
+            ArgumentCaptor<String> accessTokenIssuerCaptor = ArgumentCaptor.forClass(String.class);
+            ArgumentCaptor<UUID> accessTokenSubjectCaptor = ArgumentCaptor.forClass(UUID.class);
+            @SuppressWarnings("unchecked")
+            ArgumentCaptor<List<UUID>> accessTokenScopeCodesCaptor = ArgumentCaptor.forClass(List.class);
+            ArgumentCaptor<Date> accessTokenIssuedAtCaptor = ArgumentCaptor.forClass(Date.class);
+            ArgumentCaptor<Date> accessTokenExpiredAtCaptor = ArgumentCaptor.forClass(Date.class);
+            accessTokenStoreStatic.verify(() -> AccessTokenStore.of(
+                accessTokenValueCaptor.capture(),
+                accessTokenIssuerCaptor.capture(),
+                accessTokenSubjectCaptor.capture(),
+                accessTokenScopeCodesCaptor.capture(),
+                accessTokenIssuedAtCaptor.capture(),
+                accessTokenExpiredAtCaptor.capture()
+            ));
+            assertEquals("access-token-512-chars", accessTokenValueCaptor.getValue());
+            assertEquals("https://auth.example.com", accessTokenIssuerCaptor.getValue());
+            assertEquals(UUID.fromString("f47ac10b-58cc-4372-a567-0e02b2c3d479"), accessTokenSubjectCaptor.getValue());
+            assertEquals(List.of(
+                UUID.fromString("a8b9c7d2-4f5e-4a1b-9c8d-7e6f5a4b3c2d"),
+                UUID.fromString("3e7f8a9b-2c1d-4e5f-8a7b-6c9d2e1f4a5b")
+            ), accessTokenScopeCodesCaptor.getValue());
+            assertEquals(Date.from(Instant.parse("2025-06-01T00:00:00Z")), accessTokenIssuedAtCaptor.getValue());
+            assertEquals(Date.from(Instant.parse("2025-06-01T01:00:00Z")), accessTokenExpiredAtCaptor.getValue());
+
+            ArgumentCaptor<String> refreshTokenValueCaptor = ArgumentCaptor.forClass(String.class);
+            ArgumentCaptor<UUID> refreshTokenAccessTokenDraftIdCaptor = ArgumentCaptor.forClass(UUID.class);
+            ArgumentCaptor<UUID> refreshTokenIdTokenDraftIdCaptor = ArgumentCaptor.forClass(UUID.class);
+            ArgumentCaptor<Date> refreshTokenIssuedAtCaptor = ArgumentCaptor.forClass(Date.class);
+            ArgumentCaptor<Date> refreshTokenExpiredAtCaptor = ArgumentCaptor.forClass(Date.class);
+            refreshTokenStoreStatic.verify(() -> RefreshTokenStore.of(
+                refreshTokenValueCaptor.capture(),
+                refreshTokenAccessTokenDraftIdCaptor.capture(),
+                refreshTokenIdTokenDraftIdCaptor.capture(),
+                refreshTokenIssuedAtCaptor.capture(),
+                refreshTokenExpiredAtCaptor.capture()
+            ));
+            assertEquals("refresh-token-512-chars", refreshTokenValueCaptor.getValue());
+            assertEquals(UUID.fromString("0ad217c3-0018-6627-0500-e9d315f74e32"), refreshTokenAccessTokenDraftIdCaptor.getValue());
+            assertEquals(UUID.fromString("2896437a-4cec-7cb4-43af-bf5efa279f61"), refreshTokenIdTokenDraftIdCaptor.getValue());
+            assertEquals(Date.from(Instant.parse("2025-06-01T00:00:00Z")), refreshTokenIssuedAtCaptor.getValue());
+            assertEquals(Date.from(Instant.parse("2025-07-01T00:00:00Z")), refreshTokenExpiredAtCaptor.getValue());
+
+            ArgumentCaptor<String> outputAccessTokenCaptor = ArgumentCaptor.forClass(String.class);
+            ArgumentCaptor<String> outputTokenTypeCaptor = ArgumentCaptor.forClass(String.class);
+            ArgumentCaptor<Long> outputExpiresInCaptor = ArgumentCaptor.forClass(Long.class);
+            ArgumentCaptor<String> outputRefreshTokenCaptor = ArgumentCaptor.forClass(String.class);
+            ArgumentCaptor<String> outputIdTokenCaptor = ArgumentCaptor.forClass(String.class);
+            @SuppressWarnings("unchecked")
+            ArgumentCaptor<List<String>> outputScopesCaptor = ArgumentCaptor.forClass(List.class);
+            @SuppressWarnings("unchecked")
+            ArgumentCaptor<List<String>> outputAudiencesCaptor = ArgumentCaptor.forClass(List.class);
+            outputStatic.verify(() -> TokenOutput.of(
+                outputAccessTokenCaptor.capture(),
+                outputTokenTypeCaptor.capture(),
+                outputExpiresInCaptor.capture(),
+                outputRefreshTokenCaptor.capture(),
+                outputIdTokenCaptor.capture(),
+                outputScopesCaptor.capture(),
+                outputAudiencesCaptor.capture()
+            ));
+            assertEquals("stored-access-token", outputAccessTokenCaptor.getValue());
+            assertEquals("Bearer", outputTokenTypeCaptor.getValue());
+            assertEquals(3600L, outputExpiresInCaptor.getValue());
+            assertEquals("stored-refresh-token", outputRefreshTokenCaptor.getValue());
+            assertEquals("generated-id-token", outputIdTokenCaptor.getValue());
+            assertEquals(List.of("task.read", "task.write"), outputScopesCaptor.getValue());
+            assertEquals(List.of("api.example.com", "resource.example.com"), outputAudiencesCaptor.getValue());
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideVerifiedClientIdAndSecretInput")
+    public void throwExceptionIfClientCheckInputsIsInvalidNullPattern(final String clientIdInput, final String clientSecretInput) {
+        when(input.getClientCredentialToken()).thenReturn(null);
+        // これらのスタブはパラメータとして渡されるテスト次第では呼ばれないパターンもあるためlenientとしてる。
+        lenient().when(input.getClientId()).thenReturn(clientIdInput);
+        lenient().when(input.getClientSecret()).thenReturn(clientSecretInput);
+
+        assertThrows(ClientCheckIOException.class, () -> {
+            exchangeTokenUsecase.exchangeToken(input);
+        }, "client認証情報の入力が不正です。");
+    }
+
+    public static Stream<Arguments> provideVerifiedClientIdAndSecretInput() {
+        return Stream.of(
+            Arguments.of(
+                "client-id",
+                null
+            ),
+            Arguments.of(
+                null,
+                "client-secret"
+            ),
+            Arguments.of(
+                null,
+                null
+            )
+        );
+    }
+
     @Test
     public void throwGrantTypeInvalidExceptionIfGrantTypeIsNotAuthorizationCode() {
-        when(input.getGrantType()).thenReturn("invalid_type");
+        try(
+            MockedStatic<CheckClientInput> checkClientInputStatic = mockStatic(CheckClientInput.class);
+        ) {
+            when(input.getClientCredentialToken()).thenReturn(null);
+            when(input.getClientId()).thenReturn("client-id");
+            when(input.getClientSecret()).thenReturn("client-secret");
+            when(input.getRedirectUri()).thenReturn("https://app.example.com/oauth2/callback");
+            
+            when(checkClientInput.getClientId()).thenReturn("client-id");
+            when(checkClientInput.getClientSecret()).thenReturn("client-secret");
+            when(checkClientInput.getRedirectUri()).thenReturn("https://app.example.com/oauth2/callback");
 
-        InvalidGrantTypeIOException exception = assertThrows(InvalidGrantTypeIOException.class, () -> {
-            exchangeTokenUsecase.exchangeToken(input);
-        });
+            when(findClientInformationByIdPort.findById(anyString())).thenReturn(clientInformation);
+            when(clientInformation.getSecret()).thenReturn("client-secret");
+            when(clientInformation.getRedirectUri()).thenReturn("https://app.example.com/oauth2/callback");
 
-        assertEquals("無効なgrantTypeです。", exception.getMessage());
+            checkClientInputStatic.when(() -> CheckClientInput.of(anyString(), anyString(), anyString()))
+                .thenReturn(checkClientInput);
+            when(input.getGrantType()).thenReturn("invalid_type");
+
+            InvalidGrantTypeIOException exception = assertThrows(InvalidGrantTypeIOException.class, () -> {
+                exchangeTokenUsecase.exchangeToken(input);
+            });
+        
+            assertEquals("無効なgrantTypeです。", exception.getMessage());
+        }
     }
 
     @Test

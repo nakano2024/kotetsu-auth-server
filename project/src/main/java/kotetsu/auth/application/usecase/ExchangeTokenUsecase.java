@@ -8,11 +8,16 @@ import java.util.UUID;
 
 import org.springframework.transaction.annotation.Transactional;
 
+import kotetsu.auth.application.constant.ClientCheckConstant;
 import kotetsu.auth.application.constant.GrantTypeConstant;
 import kotetsu.auth.application.dto.data.AccessTokenDraftData;
 import kotetsu.auth.application.dto.data.AuthorizationCodeData;
+import kotetsu.auth.application.dto.data.ClientCredentialData;
 import kotetsu.auth.application.dto.data.ClientInformationData;
 import kotetsu.auth.application.dto.data.IdTokenDraftData;
+import kotetsu.auth.application.dto.input.AuthCodeExchangeInput;
+import kotetsu.auth.application.dto.input.CheckClientCredentialInput;
+import kotetsu.auth.application.dto.input.CheckClientInput;
 import kotetsu.auth.application.dto.input.ExchangeTokenInput;
 import kotetsu.auth.application.dto.output.TokenOutput;
 import kotetsu.auth.application.dto.store.AccessTokenStore;
@@ -20,6 +25,7 @@ import kotetsu.auth.application.dto.store.RefreshTokenStore;
 import kotetsu.auth.application.exception.AuthorizationCodeExpiredIOException;
 import kotetsu.auth.application.exception.AuthorizationCodeNotFoundIOException;
 import kotetsu.auth.application.exception.ClientCheckIOException;
+import kotetsu.auth.application.exception.ClientCredentialDataNullException;
 import kotetsu.auth.application.exception.ClientNotFoundIOException;
 import kotetsu.auth.application.exception.InputNullException;
 import kotetsu.auth.application.exception.InvalidGrantTypeIOException;
@@ -31,6 +37,7 @@ import kotetsu.auth.application.persistence.IFindIdTokenDraftByCodePort;
 import kotetsu.auth.application.persistence.IStoreAccessTokenPort;
 import kotetsu.auth.application.persistence.IStoreRefreshTokenPort;
 import kotetsu.auth.application.util.IGenerateAccessTokenValuePort;
+import kotetsu.auth.application.util.IGenerateClientCredentialPort;
 import kotetsu.auth.application.util.IGenerateIdTokenFromDraftPort;
 import kotetsu.auth.application.util.IGenerateRefreshTokenValuePort;
 import kotetsu.auth.application.util.IGetCurrentInstantPort;
@@ -49,6 +56,7 @@ public class ExchangeTokenUsecase {
     private final IGenerateRefreshTokenValuePort generateRefreshTokenValuePort;
     private final IGenerateIdTokenFromDraftPort generateIdTokenFromDraftPort;
     private final IGetCurrentInstantPort getCurrentInstantPort;
+    private final IGenerateClientCredentialPort generateClientCredentialPort;
 
     public ExchangeTokenUsecase(
         final IFindAuthorizationCodeByValuePort findAuthorizationCodeByCodePort,
@@ -62,7 +70,8 @@ public class ExchangeTokenUsecase {
         final IGenerateAccessTokenValuePort generateAccessTokenValuePort,
         final IGenerateRefreshTokenValuePort generateRefreshTokenValuePort,
         final IGenerateIdTokenFromDraftPort generateIdTokenFromDraftPort,
-        final IGetCurrentInstantPort getCurrentInstantPort
+        final IGetCurrentInstantPort getCurrentInstantPort,
+        final IGenerateClientCredentialPort generateClientCredentialPort
     ) {
         this.findAuthorizationCodeByCodePort = findAuthorizationCodeByCodePort;
         this.findClientInformationByIdPort = findClientInformationByIdPort;
@@ -76,6 +85,7 @@ public class ExchangeTokenUsecase {
         this.generateRefreshTokenValuePort = generateRefreshTokenValuePort;
         this.generateIdTokenFromDraftPort = generateIdTokenFromDraftPort;
         this.getCurrentInstantPort = getCurrentInstantPort;
+        this.generateClientCredentialPort = generateClientCredentialPort;
     }
 
     @Transactional
@@ -86,8 +96,24 @@ public class ExchangeTokenUsecase {
         AuthorizationCodeExpiredIOException,
         InvalidGrantTypeIOException
     {
+        if (input == null) {
+            throw new InputNullException();
+        }
+
+        if ((input.getClientCredentialToken() == null && (input.getClientId() == null || input.getClientSecret() == null))) {
+            throw new ClientCheckIOException("client認証情報の入力が不正です。");
+        }
+
+        if (input.getClientCredentialToken() != null) {
+            checkClientCredential(CheckClientCredentialInput.of(input.getClientCredentialToken(), input.getRedirectUri()));
+        }
+
+        if (input.getClientCredentialToken() == null) {
+            checkClient(CheckClientInput.of(input.getClientId(), input.getClientSecret(), input.getRedirectUri()));
+        }
+
         if (input.getGrantType().equals(GrantTypeConstant.AUTORIZATION_CODE)) {
-            return exchangeCodeForToken(input);
+            return exchangeWithAuthCode(AuthCodeExchangeInput.of(input.getCode(), input.getCodeVerifier()));
         }
 
         if (input.getGrantType().equals(GrantTypeConstant.REFRESH)) {
@@ -97,7 +123,56 @@ public class ExchangeTokenUsecase {
         throw new InvalidGrantTypeIOException("無効なgrantTypeです。");
     }
 
-    private TokenOutput exchangeCodeForToken(final ExchangeTokenInput input) 
+    private void checkClient(final CheckClientInput input)
+        throws ClientNotFoundIOException,
+        ClientCheckIOException
+    {
+        if (input == null) {
+            throw new InputNullException();
+        }
+        
+        final ClientInformationData clientInformation = findClientInformationByIdPort.findById(input.getClientId());
+        if (clientInformation == null) {
+            throw new ClientNotFoundIOException();
+        }
+
+        if (!clientInformation.getSecret().equals(input.getClientSecret())) {
+            throw new ClientCheckIOException(ClientCheckConstant.CLIENT_SECRET_ERROR_MESSAGE);
+        }
+
+        if (!clientInformation.getRedirectUri().equals(input.getRedirectUri())) {
+            throw new ClientCheckIOException(ClientCheckConstant.REDIRECT_URI_ERROR_NESSAGE);
+        }        
+    }
+
+    private void checkClientCredential(final CheckClientCredentialInput input)
+        throws ClientNotFoundIOException,
+        ClientCheckIOException
+    {
+        if (input == null) {
+            throw new InputNullException();
+        }
+
+        final ClientCredentialData clientCredential = generateClientCredentialPort.generate(input.getCredentialToken());
+        if (clientCredential == null) {
+            throw new ClientCredentialDataNullException();
+        }
+        
+        final ClientInformationData clientInformation = findClientInformationByIdPort.findById(clientCredential.getClientId());
+        if (clientInformation == null) {
+            throw new ClientNotFoundIOException();
+        }
+
+        if (!clientInformation.getSecret().equals(clientCredential.getClientSecret())) {
+            throw new ClientCheckIOException(ClientCheckConstant.CLIENT_SECRET_ERROR_MESSAGE);
+        }
+
+        if (!clientInformation.getRedirectUri().equals(input.getRedirectUri())) {
+            throw new ClientCheckIOException(ClientCheckConstant.REDIRECT_URI_ERROR_NESSAGE);
+        }  
+    }
+
+    private TokenOutput exchangeWithAuthCode(final AuthCodeExchangeInput input) 
         throws ClientNotFoundIOException,
         ClientCheckIOException,
         AuthorizationCodeNotFoundIOException,
@@ -106,19 +181,6 @@ public class ExchangeTokenUsecase {
     {
         if (input == null) {
             throw new InputNullException();
-        }
-
-        final ClientInformationData clientInformation = findClientInformationByIdPort.findById(input.getClientId());
-        if (clientInformation == null) {
-            throw new ClientNotFoundIOException();
-        }
-
-        if (!clientInformation.getSecret().equals(input.getClientSecret())) {
-            throw new ClientCheckIOException("クライアントシークレットが一致しません。");
-        }
-
-        if (!clientInformation.getRedirectUri().equals(input.getRedirectUri())) {
-            throw new ClientCheckIOException("redirectUriが登録情報と一致しません。");
         }
 
         final AuthorizationCodeData authorizationCode = findAuthorizationCodeByCodePort.findByValue(input.getCode());
