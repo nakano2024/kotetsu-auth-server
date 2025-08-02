@@ -1,71 +1,70 @@
 package kotetsu.auth.application.domain.entity;
 
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.security.auth.Subject;
 
-import kotetsu.auth.application.domain.value.Audience;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
+import jakarta.validation.constraints.NotNull;
+import kotetsu.auth.application.domain.exception.AccessTokenDraftValidationException;
 import kotetsu.auth.application.domain.value.Code;
 import kotetsu.auth.application.domain.value.Issuer;
 import lombok.Getter;
 
 public class AccessTokenDraft {
     @Getter
+    @NotNull
     private final Code code;
 
     @Getter
+    @NotNull
     private final Issuer issuer;
 
     @Getter
-    private final List<Audience> audiences;
-
-    @Getter
+    @NotNull
     private final Subject subject;
 
     @Getter
-    private final List<Scope> scopes;
+    @NotNull
+    private final ScopeAudienceList scopesAudiencesSet;
 
     private AccessTokenDraft(
         final Code code,
         final Issuer issuer,
-        final List<Audience> audiences,
         final Subject subject,
-        final List<Scope> scopes
+        final ScopeAudienceList scopesAudiencesSet
     ) {
         this.code = code;
         this.issuer = issuer;
-        this.audiences = audiences;
         this.subject = subject;
-        this.scopes = scopes;
+        this.scopesAudiencesSet = scopesAudiencesSet;
     }
 
     public static AccessTokenDraft of(
         final Code code,
         final Issuer issuer,
-        final List<Audience> audiences,
         final Subject subject,
-        final List<Scope> scopes        
+        final ScopeAudienceList scopesAudiencesSet 
     ) {
-        final List<Audience> uniqueAudiences = removeAudienceDuplicates(audiences);
 
         final AccessTokenDraft accessTokenDraft = new AccessTokenDraft(
             code,
             issuer,
-            uniqueAudiences,
             subject,
-            scopes
+            scopesAudiencesSet
         );
+
+        final ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+        final Validator validator = factory.getValidator();
+        Set<ConstraintViolation<AccessTokenDraft>> violations = validator.validate(accessTokenDraft);
+
+        for (final ConstraintViolation<AccessTokenDraft> violation : violations) {
+            throw new AccessTokenDraftValidationException(violation.getMessage());
+        }
+
         return accessTokenDraft;
-    }
-
-    private static List<Audience> removeAudienceDuplicates(final List<Audience> audiences) {
-        final Set<String> seen = new HashSet<>();
-
-        return audiences.stream()
-            .filter(audience -> seen.add(audience.getValue()))
-            .collect(Collectors.toList());
     }
 }
