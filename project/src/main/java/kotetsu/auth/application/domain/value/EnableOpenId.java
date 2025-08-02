@@ -5,15 +5,17 @@ import java.util.List;
 import jakarta.validation.constraints.NotNull;
 import kotetsu.auth.application.constant.ScopeNameConstant;
 import kotetsu.auth.application.domain.exception.EnableOpenIdValidationException;
-import lombok.Getter;
 
 public class EnableOpenId {
-    @Getter
     @NotNull
     private final boolean value;
 
     private EnableOpenId(final boolean value) {
         this.value = value;
+    }
+
+    public boolean isEnabled() {
+        return value;
     }
 
     public static EnableOpenId of(RequestedScopeNameListToken requestedScopeNameListToken) {

@@ -60,11 +60,13 @@ public class GetAuthorizationCodeUsecaseV2 {
             throw new InvalidPendingScopesIOException("許可されていないscopeが含まれています。");
         }
 
+        final EnableOpenId enableOpenId = EnableOpenId.of(requestedScopeNameListToken);
+        final EnableOfflineAccess enableOfflineAccess = EnableOfflineAccess.of(requestedScopeNameListToken);
         AuthorizationInformation authorizationInformation = createAuthorizationInformationService.create(
             Id.of("authinfoid"),
             AuthorizationCodeChallenge.of(input.getCodeChallenge()),
-            EnableOpenId.of(requestedScopeNameListToken),
-            EnableOfflineAccess.of(requestedScopeNameListToken)
+            enableOpenId,
+            enableOfflineAccess
         );
 
         AccessTokenBody accessTokenBody = AccessTokenBody.of(
@@ -74,6 +76,14 @@ public class GetAuthorizationCodeUsecaseV2 {
             scopeAudienceList
         );
         storeAccessTokenDraftPort.store(accessTokenBody);
+
+        if (enableOpenId.isEnabled()) {
+            // TODO: IDトークンのBodyを保存
+        }
+
+        if (enableOfflineAccess.isEnabled()) {
+            // TODO: RefreshTokenのBodyを保存
+        }
 
         return AuthorizationCodeOutput.of(authorizationInformation.getAuthorizationCode().getToken().getValue());
     }

@@ -16,6 +16,10 @@ public class EnableOfflineAccess {
         this.value = value;
     }
 
+    public boolean isEnabled() {
+        return value;
+    }
+
     public static EnableOfflineAccess of(RequestedScopeNameListToken requestedScopeNameListToken) {
         if (requestedScopeNameListToken == null) {
             throw new EnableOfflineAccessValidationException("requestedScopeNameListTokenは、nullが許容されていません。");
