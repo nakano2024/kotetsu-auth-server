@@ -16,7 +16,7 @@ public class RequestedScopeNameListToken {
         this.value = value;
     }
 
-    public RequestedScopeNameListToken of(final String value) {
+    public static RequestedScopeNameListToken of(final String value) {
         RequestedScopeNameListToken requestedScopeNameListToken = new RequestedScopeNameListToken(value);
 
         return requestedScopeNameListToken;

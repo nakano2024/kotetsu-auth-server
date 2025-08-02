@@ -2,22 +2,21 @@ package kotetsu.auth.application.domain.entity;
 
 import java.util.Set;
 
-import javax.security.auth.Subject;
-
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 import jakarta.validation.constraints.NotNull;
 import kotetsu.auth.application.domain.exception.AccessTokenDraftValidationException;
-import kotetsu.auth.application.domain.value.Code;
+import kotetsu.auth.application.domain.value.Id;
 import kotetsu.auth.application.domain.value.Issuer;
+import kotetsu.auth.application.domain.value.Subject;
 import lombok.Getter;
 
-public class AccessTokenDraft {
-    @Getter
+public class AccessTokenBody {
     @NotNull
-    private final Code code;
+    @Getter
+    private final Id authorizationInformationId;
 
     @Getter
     @NotNull
@@ -29,42 +28,42 @@ public class AccessTokenDraft {
 
     @Getter
     @NotNull
-    private final ScopeAudienceList scopesAudiencesSet;
+    private final ScopeAudienceList scopeAudienceList;
 
-    private AccessTokenDraft(
-        final Code code,
+    private AccessTokenBody(
+        final Id authorizationInformationId,
         final Issuer issuer,
         final Subject subject,
-        final ScopeAudienceList scopesAudiencesSet
+        final ScopeAudienceList scopeAudienceList
     ) {
-        this.code = code;
+        this.authorizationInformationId = authorizationInformationId;
         this.issuer = issuer;
         this.subject = subject;
-        this.scopesAudiencesSet = scopesAudiencesSet;
+        this.scopeAudienceList = scopeAudienceList;
     }
 
-    public static AccessTokenDraft of(
-        final Code code,
+    public static AccessTokenBody of(
+        final Id authorizationInformationId,
         final Issuer issuer,
         final Subject subject,
-        final ScopeAudienceList scopesAudiencesSet 
+        final ScopeAudienceList scopeAudienceList 
     ) {
 
-        final AccessTokenDraft accessTokenDraft = new AccessTokenDraft(
-            code,
+        final AccessTokenBody accessTokenBody = new AccessTokenBody(
+            authorizationInformationId,
             issuer,
             subject,
-            scopesAudiencesSet
+            scopeAudienceList
         );
 
         final ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         final Validator validator = factory.getValidator();
-        Set<ConstraintViolation<AccessTokenDraft>> violations = validator.validate(accessTokenDraft);
+        Set<ConstraintViolation<AccessTokenBody>> violations = validator.validate(accessTokenBody);
 
-        for (final ConstraintViolation<AccessTokenDraft> violation : violations) {
+        for (final ConstraintViolation<AccessTokenBody> violation : violations) {
             throw new AccessTokenDraftValidationException(violation.getMessage());
         }
 
-        return accessTokenDraft;
+        return accessTokenBody;
     }
 }

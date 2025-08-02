@@ -4,16 +4,16 @@ import java.util.Objects;
 
 import lombok.Getter;
 
-public class Code {
+public class Id {
     @Getter
     private final String value;
 
-    private Code(final String value) {
+    private Id(final String value) {
         this.value = value;
     }
 
-    public static Code of(final String value) {
-        final Code code = new Code(value);
+    public static Id of(final String value) {
+        final Id code = new Id(value);
         return code;
     }
 
@@ -36,7 +36,7 @@ public class Code {
             return false;
         }
 
-        Code anotherCode = (Code) objct;
+        Id anotherCode = (Id) objct;
         return this.equals(anotherCode);
     }
 }

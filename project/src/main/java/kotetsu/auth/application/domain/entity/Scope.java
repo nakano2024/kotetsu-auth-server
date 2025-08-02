@@ -2,24 +2,24 @@ package kotetsu.auth.application.domain.entity;
 
 import java.util.Objects;
 
-import kotetsu.auth.application.domain.value.Code;
+import kotetsu.auth.application.domain.value.Id;
 import kotetsu.auth.application.domain.value.ScopeName;
 import lombok.Getter;
 
 public class Scope {
     @Getter
-    private final Code code;
+    private final Id id;
 
     @Getter
     private final ScopeName name;
 
-    private Scope(final Code code, final ScopeName name) {
-        this.code = code;
+    private Scope(final Id id, final ScopeName name) {
+        this.id = id;
         this.name = name;
     }
 
-    public static Scope of(final Code code, final ScopeName name) {
-        final Scope scope = new Scope(code, name);
+    public static Scope of(final Id id, final ScopeName name) {
+        final Scope scope = new Scope(id, name);
         return scope;
     }
 
@@ -44,6 +44,6 @@ public class Scope {
 
     @Override
     public int hashCode() {
-        return Objects.hash(code, name);
+        return Objects.hash(id, name);
     }
 }
