@@ -5,18 +5,17 @@ import org.springframework.transaction.annotation.Transactional;
 import kotetsu.auth.application.domain.entity.AccessTokenBody;
 import kotetsu.auth.application.domain.entity.AuthorizationInformation;
 import kotetsu.auth.application.domain.entity.PermittedScopeList;
-import kotetsu.auth.application.domain.entity.ResourceScopeNameList;
-import kotetsu.auth.application.domain.entity.ScopeAudienceList;
+import kotetsu.auth.application.domain.entity.RequestedScopeAudienceWrapper;
 import kotetsu.auth.application.domain.repository.IFetchPermittedScopeListPort;
 import kotetsu.auth.application.domain.repository.IFetchScopeAudienceListPort;
 import kotetsu.auth.application.domain.repository.IStoreAccessTokenDraftPort;
 import kotetsu.auth.application.domain.service.CreateAuthorizationInformationService;
 import kotetsu.auth.application.domain.util.IFetchServerUrlPort;
+import kotetsu.auth.application.domain.value.AccessType;
 import kotetsu.auth.application.domain.value.AuthorizationCodeChallenge;
-import kotetsu.auth.application.domain.value.EnableOfflineAccess;
-import kotetsu.auth.application.domain.value.EnableOpenId;
 import kotetsu.auth.application.domain.value.Id;
 import kotetsu.auth.application.domain.value.Issuer;
+import kotetsu.auth.application.domain.value.RequestedScopeNameList;
 import kotetsu.auth.application.domain.value.RequestedScopeNameListToken;
 import kotetsu.auth.application.domain.value.Subject;
 import kotetsu.auth.application.dto.input.GetAuthorizationCodeInput;
@@ -51,39 +50,38 @@ public class GetAuthorizationCodeUsecaseV2 {
             throw new InputNullException();
         }
 
-        final RequestedScopeNameListToken requestedScopeNameListToken = RequestedScopeNameListToken.of(input.getPendingScopeString());
+        final RequestedScopeNameList requestedScopeNameList = RequestedScopeNameList.of(RequestedScopeNameListToken.of(input.getScopeListToken()));
         
-        ResourceScopeNameList requestedResourceScopeNameList = ResourceScopeNameList.of(requestedScopeNameListToken);
-        ScopeAudienceList scopeAudienceList = fetchScopeAudienceListPort.fetch(requestedResourceScopeNameList);
+        RequestedScopeAudienceWrapper requestedScopeAudienceList = fetchScopeAudienceListPort.fetch(requestedScopeNameList);
         PermittedScopeList permittedScopeList =  permittedScopeListPort.fetch(Id.of("clientCode"));
-        if(!permittedScopeList.containsAll(scopeAudienceList.getScopes())) {
+        if(!permittedScopeList.containsAll(requestedScopeAudienceList.getRequestedScopeList().getScopes())) {
             throw new InvalidPendingScopesIOException("許可されていないscopeが含まれています。");
         }
 
-        final EnableOpenId enableOpenId = EnableOpenId.of(requestedScopeNameListToken);
-        final EnableOfflineAccess enableOfflineAccess = EnableOfflineAccess.of(requestedScopeNameListToken);
         AuthorizationInformation authorizationInformation = createAuthorizationInformationService.create(
             Id.of("authinfoid"),
             AuthorizationCodeChallenge.of(input.getCodeChallenge()),
-            enableOpenId,
-            enableOfflineAccess
+            AccessType.of(input.getAccessType())
         );
 
         AccessTokenBody accessTokenBody = AccessTokenBody.of(
             authorizationInformation.getId(),
             Issuer.of(fetchServerUrlPort.fetch()),
             Subject.of(input.getResourceOwnerCode()),
-            scopeAudienceList
+            requestedScopeAudienceList.getRequestedScopeList(),
+            requestedScopeAudienceList.getRequestedScopeRelatedAudienceList()
+            
         );
-        storeAccessTokenDraftPort.store(accessTokenBody);
 
-        if (enableOpenId.isEnabled()) {
+        if (requestedScopeAudienceList.getRequestedScopeList().hasOpenid()) {
             // TODO: IDトークンのBodyを保存
         }
 
-        if (enableOfflineAccess.isEnabled()) {
+        if (authorizationInformation.getAccessType().isOnline()) {
             // TODO: RefreshTokenのBodyを保存
         }
+
+        storeAccessTokenDraftPort.store(accessTokenBody);
 
         return AuthorizationCodeOutput.of(authorizationInformation.getAuthorizationCode().getToken().getValue());
     }

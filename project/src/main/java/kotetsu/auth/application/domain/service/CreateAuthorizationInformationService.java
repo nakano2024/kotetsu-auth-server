@@ -7,11 +7,10 @@ import kotetsu.auth.application.constant.AuthorizationCodeConstant;
 import kotetsu.auth.application.domain.entity.AuthorizationInformation;
 import kotetsu.auth.application.domain.util.IFetchCurrentDatePort;
 import kotetsu.auth.application.domain.util.IGenerateRandomStringPort;
+import kotetsu.auth.application.domain.value.AccessType;
 import kotetsu.auth.application.domain.value.AuthorizationCode;
 import kotetsu.auth.application.domain.value.AuthorizationCodeChallenge;
 import kotetsu.auth.application.domain.value.AuthorizationCodeToken;
-import kotetsu.auth.application.domain.value.EnableOfflineAccess;
-import kotetsu.auth.application.domain.value.EnableOpenId;
 import kotetsu.auth.application.domain.value.ExpiredAt;
 import kotetsu.auth.application.domain.value.Id;
 
@@ -31,8 +30,7 @@ public class CreateAuthorizationInformationService {
     public AuthorizationInformation create(
         final Id id,
         final AuthorizationCodeChallenge challenge,
-        final EnableOpenId enableOpenId,
-        final EnableOfflineAccess enableOfflineAccess
+        final AccessType accessType
     ) {
         final Date current = fetchCurrentInstantPort.fetch();
 
@@ -43,8 +41,7 @@ public class CreateAuthorizationInformationService {
                 challenge,
                 ExpiredAt.of(Date.from(current.toInstant().plus(AuthorizationCodeConstant.EXPIRES_MIN, ChronoUnit.MINUTES)))
             ),
-            enableOpenId,
-            enableOfflineAccess
+            accessType
         );
     }
 }

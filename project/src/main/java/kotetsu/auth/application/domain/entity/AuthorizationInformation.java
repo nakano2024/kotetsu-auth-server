@@ -1,8 +1,7 @@
 package kotetsu.auth.application.domain.entity;
 
+import kotetsu.auth.application.domain.value.AccessType;
 import kotetsu.auth.application.domain.value.AuthorizationCode;
-import kotetsu.auth.application.domain.value.EnableOfflineAccess;
-import kotetsu.auth.application.domain.value.EnableOpenId;
 import kotetsu.auth.application.domain.value.Id;
 import lombok.Getter;
 
@@ -14,34 +13,27 @@ public class AuthorizationInformation {
     private final AuthorizationCode authorizationCode;
 
     @Getter
-    private final EnableOpenId enableOpenId;
-
-    @Getter
-    private final EnableOfflineAccess enableOfflineAccess;
+    private final AccessType accessType;
 
     private AuthorizationInformation(
         final Id id,
         final AuthorizationCode authorizationCode,
-        final EnableOpenId enableOpenId,
-        final EnableOfflineAccess enableOfflineAccess
+        final AccessType accessType
     ) {
         this.id = id;
         this.authorizationCode = authorizationCode;
-        this.enableOpenId = enableOpenId;
-        this.enableOfflineAccess = enableOfflineAccess;
+        this.accessType = accessType;
     }
 
     public static AuthorizationInformation of(
         final Id id,
         final AuthorizationCode authorizationCode,
-        final EnableOpenId enableOpenId,
-        final EnableOfflineAccess enableOfflineAccess
+        final AccessType accessType
     ) {
         AuthorizationInformation authorizationInformation = new AuthorizationInformation(
             id,
             authorizationCode,
-            enableOpenId, 
-            enableOfflineAccess
+            accessType
         );
 
         return authorizationInformation;

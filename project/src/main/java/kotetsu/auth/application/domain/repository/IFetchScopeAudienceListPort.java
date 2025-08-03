@@ -1,8 +1,8 @@
 package kotetsu.auth.application.domain.repository;
 
-import kotetsu.auth.application.domain.entity.ResourceScopeNameList;
-import kotetsu.auth.application.domain.entity.ScopeAudienceList;
+import kotetsu.auth.application.domain.entity.RequestedScopeAudienceWrapper;
+import kotetsu.auth.application.domain.value.RequestedScopeNameList;
 
 public interface  IFetchScopeAudienceListPort {
-    ScopeAudienceList fetch(ResourceScopeNameList scopeNameList);
+    RequestedScopeAudienceWrapper fetch(RequestedScopeNameList scopeNameList);
 }

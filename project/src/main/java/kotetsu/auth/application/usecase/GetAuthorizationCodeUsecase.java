@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
-import kotetsu.auth.application.constant.ScopeNameConstant;
+import kotetsu.auth.application.constant.ScopeConstant;
 import kotetsu.auth.application.dto.data.ClientInformationData;
 import kotetsu.auth.application.dto.data.ScopeData;
 import kotetsu.auth.application.dto.input.GetAuthorizationCodeInput;
@@ -92,9 +92,9 @@ public class GetAuthorizationCodeUsecase {
             throw new ClientCheckIOException("redirectUriが登録情報と一致しません。");
         }
 
-        final List<String> allPendingScopeNames = Arrays.asList(input.getPendingScopeString().split(" "));
+        final List<String> allPendingScopeNames = Arrays.asList(input.getScopeListToken().split(" "));
         final List<String> oauth2PendingScopeNames = allPendingScopeNames.stream()
-            .filter(scope -> !scope.equals(ScopeNameConstant.OPENID) && !scope.equals(ScopeNameConstant.OFFLINE_ACCESS))
+            .filter(scope -> !scope.equals(ScopeConstant.OPENID) && !scope.equals(ScopeConstant.OFFLINE_ACCESS))
             .collect(Collectors.toList());
         final List<ScopeData> permittedScopes = findPermittedScopeListByClientCodePort.findByClientCode(clientInformation.getCode());
         final Set<String> permittedScopeNames = permittedScopes.stream()
@@ -129,8 +129,8 @@ public class GetAuthorizationCodeUsecase {
             idTokenDraftCode,
             Date.from(current),
             Date.from(current.plus(1, ChronoUnit.MINUTES)),
-            allPendingScopeNames.contains(ScopeNameConstant.OPENID),
-            allPendingScopeNames.contains(ScopeNameConstant.OFFLINE_ACCESS)
+            allPendingScopeNames.contains(ScopeConstant.OPENID),
+            allPendingScopeNames.contains(ScopeConstant.OFFLINE_ACCESS)
         ));
         return AuthorizationCodeOutput.of(authorizationCode);
     }

@@ -30,7 +30,7 @@ public class GetAuthorizationCodeInput {
     @Getter
     @NotBlank
     @Pattern(regexp = "^([a-zA-Z0-9]+(\\.[a-zA-Z0-9]+)*)( ([a-zA-Z0-9]+(\\.[a-zA-Z0-9]+)*))*$")
-    private final String pendingScopeString;
+    private final String scopeListToken;
 
     @Getter
     @NotBlank
@@ -40,37 +40,44 @@ public class GetAuthorizationCodeInput {
     @Getter
     private final String nonce;
 
+    @Getter
+    private final String accessType;
+
     private GetAuthorizationCodeInput(
         final String resourceOwnerCode,
         final String clientId,
         final String redirectUri,
-        final String pendingScopeString,
+        final String scopeListToken,
         final String codeChallenge,
-        final String nonce
+        final String nonce,
+        final String accessType
     ) {
         this.resourceOwnerCode = resourceOwnerCode;
         this.clientId = clientId;
         this.redirectUri = redirectUri;
-        this.pendingScopeString = pendingScopeString;
+        this.scopeListToken = scopeListToken;
         this.codeChallenge = codeChallenge;
         this.nonce = nonce;
+        this.accessType = accessType;
     }
 
     public static  GetAuthorizationCodeInput of(
         final String resourceOwnerCode,
         final String clientId,
         final String redirectUri,
-        final String pendingScopeString,
+        final String scopeListToken,
         final String codeChallenge,
-        final String nonce
+        final String nonce,
+        final String accessType
     ) {
         final GetAuthorizationCodeInput input = new GetAuthorizationCodeInput(
             resourceOwnerCode,
             clientId,
             redirectUri,
-            pendingScopeString,
+            scopeListToken,
             codeChallenge,
-            nonce
+            nonce,
+            accessType
         );
 
         final ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();

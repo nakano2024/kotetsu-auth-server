@@ -1,9 +1,9 @@
 package kotetsu.auth.application.domain.value;
 
-import java.util.List;
+import java.util.Set;
 
 import jakarta.validation.constraints.NotNull;
-import kotetsu.auth.application.constant.ScopeNameConstant;
+import kotetsu.auth.application.constant.ScopeConstant;
 import kotetsu.auth.application.domain.exception.EnableOpenIdValidationException;
 
 public class EnableOpenId {
@@ -14,22 +14,22 @@ public class EnableOpenId {
         this.value = value;
     }
 
-    public boolean isEnabled() {
+    public boolean getValue() {
         return value;
     }
 
-    public static EnableOpenId of(RequestedScopeNameListToken requestedScopeNameListToken) {
-        if (requestedScopeNameListToken == null) {
+    public static EnableOpenId of(RequestedScopeNameList requestedScopeNameList) {
+        if (requestedScopeNameList == null) {
             throw new EnableOpenIdValidationException("requestedScopeNameListTokenは、nullが許容されていません。");
         }
-        final List<ScopeName> requestedScopeNames = requestedScopeNameListToken.toScopeNameList();
+        final Set<ScopeName> requestedScopeNames = requestedScopeNameList.getValue();
 
         if (requestedScopeNames == null) {
             throw new EnableOpenIdValidationException("requestedScopeNamesは、nullが許容されていません。");
         }
 
         final EnableOpenId enableOpenId = new EnableOpenId(
-            requestedScopeNames.contains(ScopeName.of(ScopeNameConstant.OPENID))
+            requestedScopeNames.contains(ScopeName.of(ScopeConstant.OPENID))
         );
 
         return enableOpenId;

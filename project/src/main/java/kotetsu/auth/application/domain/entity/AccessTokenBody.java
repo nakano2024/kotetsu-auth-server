@@ -28,32 +28,40 @@ public class AccessTokenBody {
 
     @Getter
     @NotNull
-    private final ScopeAudienceList scopeAudienceList;
+    private final RequestedScopeList scopeList;
+
+    @Getter
+    @NotNull
+    private final RequestedScopeRelatedAudienceList relatedAudienceList;
 
     private AccessTokenBody(
         final Id authorizationInformationId,
         final Issuer issuer,
         final Subject subject,
-        final ScopeAudienceList scopeAudienceList
+        final RequestedScopeList scopeList,
+        final RequestedScopeRelatedAudienceList relatedAudienceList
     ) {
         this.authorizationInformationId = authorizationInformationId;
         this.issuer = issuer;
         this.subject = subject;
-        this.scopeAudienceList = scopeAudienceList;
+        this.scopeList = scopeList;
+        this.relatedAudienceList = relatedAudienceList;
     }
 
     public static AccessTokenBody of(
         final Id authorizationInformationId,
         final Issuer issuer,
         final Subject subject,
-        final ScopeAudienceList scopeAudienceList 
+        final RequestedScopeList scopeList,
+        final RequestedScopeRelatedAudienceList relatedAudienceList
     ) {
 
         final AccessTokenBody accessTokenBody = new AccessTokenBody(
             authorizationInformationId,
             issuer,
             subject,
-            scopeAudienceList
+            scopeList,
+            relatedAudienceList
         );
 
         final ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
