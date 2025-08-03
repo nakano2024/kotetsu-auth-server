@@ -8,7 +8,7 @@ import kotetsu.auth.application.domain.value.Nonce;
 import kotetsu.auth.application.domain.value.Subject;
 import lombok.Getter;
 
-public class IdTokenBody {
+public class IdTokenDraft {
     @NotNull
     @Getter
     private final Id authorizationInformationId;
@@ -29,7 +29,7 @@ public class IdTokenBody {
     @NotNull
     private final Nonce nonce;
 
-    private IdTokenBody(
+    private IdTokenDraft(
         final Id authorizationInformationId,
         final Issuer issuer,
         final Subject subject,
@@ -43,20 +43,20 @@ public class IdTokenBody {
         this.nonce = nonce;
     }
 
-    public static IdTokenBody of(
+    public static IdTokenDraft of(
         final Id authorizationInformationId,
         final Issuer issuer,
         final Subject subject,
         final IdTokenProfile profile,
         final Nonce nonce
     ) {
-        IdTokenBody idTokenBody = new IdTokenBody(
+        IdTokenDraft idTokenDraft = new IdTokenDraft(
             authorizationInformationId,
             issuer,
             subject,
             profile,
             nonce
         );
-        return idTokenBody;
+        return idTokenDraft;
     }
 }

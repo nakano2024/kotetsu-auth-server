@@ -2,7 +2,7 @@ package kotetsu.auth.application.usecase;
 
 import org.springframework.transaction.annotation.Transactional;
 
-import kotetsu.auth.application.domain.entity.AccessTokenBody;
+import kotetsu.auth.application.domain.entity.AccessTokenDraft;
 import kotetsu.auth.application.domain.entity.AuthorizationInformation;
 import kotetsu.auth.application.domain.entity.PermittedScopeList;
 import kotetsu.auth.application.domain.entity.RequestedScopeAudienceWrapper;
@@ -64,7 +64,7 @@ public class GetAuthorizationCodeUsecaseV2 {
             AccessType.of(input.getAccessType())
         );
 
-        AccessTokenBody accessTokenBody = AccessTokenBody.of(
+        AccessTokenDraft accessTokenDraft = AccessTokenDraft.of(
             authorizationInformation.getId(),
             Issuer.of(fetchServerUrlPort.fetch()),
             Subject.of(input.getResourceOwnerCode()),
@@ -74,14 +74,14 @@ public class GetAuthorizationCodeUsecaseV2 {
         );
 
         if (requestedScopeAudienceList.getRequestedScopeList().hasOpenid()) {
-            // TODO: IDトークンのBodyを保存
+            // TODO: IDトークンのDraftを保存
         }
 
         if (authorizationInformation.getAccessType().isOnline()) {
-            // TODO: RefreshTokenのBodyを保存
+            // TODO: RefreshTokenのDraftを保存
         }
 
-        storeAccessTokenDraftPort.store(accessTokenBody);
+        storeAccessTokenDraftPort.store(accessTokenDraft);
 
         return AuthorizationCodeOutput.of(authorizationInformation.getAuthorizationCode().getToken().getValue());
     }

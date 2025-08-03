@@ -13,7 +13,7 @@ import kotetsu.auth.application.domain.value.Issuer;
 import kotetsu.auth.application.domain.value.Subject;
 import lombok.Getter;
 
-public class AccessTokenBody {
+public class AccessTokenDraft {
     @NotNull
     @Getter
     private final Id authorizationInformationId;
@@ -34,7 +34,7 @@ public class AccessTokenBody {
     @NotNull
     private final RequestedScopeRelatedAudienceList relatedAudienceList;
 
-    private AccessTokenBody(
+    private AccessTokenDraft(
         final Id authorizationInformationId,
         final Issuer issuer,
         final Subject subject,
@@ -48,7 +48,7 @@ public class AccessTokenBody {
         this.relatedAudienceList = relatedAudienceList;
     }
 
-    public static AccessTokenBody of(
+    public static AccessTokenDraft of(
         final Id authorizationInformationId,
         final Issuer issuer,
         final Subject subject,
@@ -56,7 +56,7 @@ public class AccessTokenBody {
         final RequestedScopeRelatedAudienceList relatedAudienceList
     ) {
 
-        final AccessTokenBody accessTokenBody = new AccessTokenBody(
+        final AccessTokenDraft accessTokenDraft = new AccessTokenDraft(
             authorizationInformationId,
             issuer,
             subject,
@@ -66,12 +66,12 @@ public class AccessTokenBody {
 
         final ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         final Validator validator = factory.getValidator();
-        Set<ConstraintViolation<AccessTokenBody>> violations = validator.validate(accessTokenBody);
+        Set<ConstraintViolation<AccessTokenDraft>> violations = validator.validate(accessTokenDraft);
 
-        for (final ConstraintViolation<AccessTokenBody> violation : violations) {
+        for (final ConstraintViolation<AccessTokenDraft> violation : violations) {
             throw new AccessTokenDraftValidationException(violation.getMessage());
         }
 
-        return accessTokenBody;
+        return accessTokenDraft;
     }
 }
