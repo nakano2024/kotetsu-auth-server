@@ -13,10 +13,10 @@ import kotetsu.auth.application.domain.value.Issuer;
 import kotetsu.auth.application.domain.value.Subject;
 import lombok.Getter;
 
-public class AccessTokenDraft {
+public class AccessTokenBody {
     @NotNull
     @Getter
-    private final Id authorizationInformationId;
+    private final Id id;
 
     @Getter
     @NotNull
@@ -34,30 +34,30 @@ public class AccessTokenDraft {
     @NotNull
     private final RequestedScopeRelatedAudienceList relatedAudienceList;
 
-    private AccessTokenDraft(
-        final Id authorizationInformationId,
+    private AccessTokenBody(
+        final Id id,
         final Issuer issuer,
         final Subject subject,
         final RequestedScopeList scopeList,
         final RequestedScopeRelatedAudienceList relatedAudienceList
     ) {
-        this.authorizationInformationId = authorizationInformationId;
+        this.id = id;
         this.issuer = issuer;
         this.subject = subject;
         this.scopeList = scopeList;
         this.relatedAudienceList = relatedAudienceList;
     }
 
-    public static AccessTokenDraft of(
-        final Id authorizationInformationId,
+    public static AccessTokenBody of(
+        final Id id,
         final Issuer issuer,
         final Subject subject,
         final RequestedScopeList scopeList,
         final RequestedScopeRelatedAudienceList relatedAudienceList
     ) {
 
-        final AccessTokenDraft accessTokenDraft = new AccessTokenDraft(
-            authorizationInformationId,
+        final AccessTokenBody accessTokenBody = new AccessTokenBody(
+            id,
             issuer,
             subject,
             scopeList,
@@ -66,12 +66,12 @@ public class AccessTokenDraft {
 
         final ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         final Validator validator = factory.getValidator();
-        Set<ConstraintViolation<AccessTokenDraft>> violations = validator.validate(accessTokenDraft);
+        Set<ConstraintViolation<AccessTokenBody>> violations = validator.validate(accessTokenBody);
 
-        for (final ConstraintViolation<AccessTokenDraft> violation : violations) {
+        for (final ConstraintViolation<AccessTokenBody> violation : violations) {
             throw new AccessTokenDraftValidationException(violation.getMessage());
         }
 
-        return accessTokenDraft;
+        return accessTokenBody;
     }
 }

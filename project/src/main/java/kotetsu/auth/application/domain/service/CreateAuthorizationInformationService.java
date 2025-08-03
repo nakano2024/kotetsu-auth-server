@@ -3,8 +3,7 @@ package kotetsu.auth.application.domain.service;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
-import kotetsu.auth.application.constant.AuthorizationCodeConstant;
-import kotetsu.auth.application.domain.entity.AuthorizationInformation;
+import kotetsu.auth.application.domain.entity.Authorization;
 import kotetsu.auth.application.domain.util.IFetchCurrentDatePort;
 import kotetsu.auth.application.domain.util.IGenerateRandomStringPort;
 import kotetsu.auth.application.domain.value.AccessType;
@@ -27,21 +26,27 @@ public class CreateAuthorizationInformationService {
         this.fetchCurrentInstantPort = fetchCurrentInstantPort;
     }
 
-    public AuthorizationInformation create(
+    public Authorization create(
         final Id id,
         final AuthorizationCodeChallenge challenge,
-        final AccessType accessType
+        final AccessType accessType,
+        final Id accessTokenBodyId,
+        final Id idTokenBoduyId,
+        final Id refreshTokenBodyId
     ) {
-        final Date current = fetchCurrentInstantPort.fetch();
+        final Date currentDate = fetchCurrentInstantPort.fetch();
 
-        return AuthorizationInformation.of(
+        return Authorization.of(
             id,
             AuthorizationCode.of(
-                AuthorizationCodeToken.of(generateRandomStringPort.generate(32)),
+                AuthorizationCodeToken.of(generateRandomStringPort.generate(AuthorizationCodeToken.LENGTH)),
                 challenge,
-                ExpiredAt.of(Date.from(current.toInstant().plus(AuthorizationCodeConstant.EXPIRES_MIN, ChronoUnit.MINUTES)))
+                ExpiredAt.of(Date.from(currentDate.toInstant().plus(AuthorizationCode.EXPIRES_MIN, ChronoUnit.MINUTES)))
             ),
-            accessType
+            accessType,
+            accessTokenBodyId,
+            idTokenBoduyId,
+            refreshTokenBodyId
         );
     }
 }

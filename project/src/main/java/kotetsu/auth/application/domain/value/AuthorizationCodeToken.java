@@ -3,6 +3,8 @@ package kotetsu.auth.application.domain.value;
 import lombok.Getter;
 
 public class AuthorizationCodeToken {
+    public static final int LENGTH = 32;
+
     @Getter
     private final String value;
 

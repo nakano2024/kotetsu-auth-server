@@ -3,6 +3,8 @@ package kotetsu.auth.application.domain.value;
 import lombok.Getter;
 
 public class AuthorizationCode {
+    public static final int EXPIRES_MIN = 1;
+
     @Getter
     private final AuthorizationCodeToken token;
 

@@ -1,0 +1,8 @@
+package kotetsu.auth.application.domain.repository;
+
+import kotetsu.auth.application.domain.entity.AccessTokenBody;
+import kotetsu.auth.application.domain.value.Id;
+
+public interface IFetchAccessTokenBodyPort {
+    AccessTokenBody fetch(Id code);
+}
