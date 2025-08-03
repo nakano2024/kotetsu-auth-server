@@ -11,31 +11,31 @@ public class RefreshTokenBody {
 
     @Getter
     @NotNull
-    private final Id accessTokenBodyId;
+    private final AccessTokenBody accessTokenBody;
 
     @Getter
     @NotNull
-    private final Id idTokenBodyId;
+    private final IdTokenBody idTokenBody;
 
     private RefreshTokenBody(
         final Id id,
-        final Id accessTokenBodyId,
-        final Id idTokenBodyId
+        final AccessTokenBody accessTokenBody,
+        final IdTokenBody idTokenBody
     ) {
         this.id = id;
-        this.accessTokenBodyId = accessTokenBodyId;
-        this.idTokenBodyId = idTokenBodyId;
+        this.accessTokenBody= accessTokenBody;
+        this.idTokenBody = idTokenBody;
     }
 
     public static RefreshTokenBody of(
         final Id id,
-        final Id accessTokenBodyId,
-        final Id idTokenBodyId
+        final AccessTokenBody accessTokenBody,
+        final IdTokenBody idTokenBody
     ) {
         RefreshTokenBody refreshTokenBody = new RefreshTokenBody(
             id,
-            accessTokenBodyId,
-            idTokenBodyId
+            accessTokenBody,
+            idTokenBody
         );
 
         return refreshTokenBody;

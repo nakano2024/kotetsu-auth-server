@@ -21,47 +21,47 @@ public class Authorization {
 
     @Getter
     @NotNull
-    private final Id accessTokenBodyId;
+    private final AccessTokenBody accessTokenBody;
 
     @Getter
     @NotNull
-    private final Id idTokenBodyId;
+    private final IdTokenBody idTokenBody;
 
     @Getter
     @NotNull
-    private final Id refreshTokenBodyId;
+    private final RefreshTokenBody refreshTokenBody;
 
     private Authorization(
         final Id id,
         final AuthorizationCode authorizationCode,
         final AccessType accessType,
-        final Id accessTokenBodyId,
-        final Id idTokenBodyId,
-        final Id refreshTokenBodyId
+        final AccessTokenBody accessTokenBody,
+        final IdTokenBody idTokenBody,
+        final RefreshTokenBody refreshTokenBody
     ) {
         this.id = id;
         this.authorizationCode = authorizationCode;
         this.accessType = accessType;
-        this.accessTokenBodyId = accessTokenBodyId;
-        this.idTokenBodyId = idTokenBodyId;
-        this.refreshTokenBodyId = refreshTokenBodyId;
+        this.accessTokenBody = accessTokenBody;
+        this.idTokenBody = idTokenBody;
+        this.refreshTokenBody = refreshTokenBody;
     }
 
     public static Authorization of(
         final Id id,
         final AuthorizationCode authorizationCode,
         final AccessType accessType,
-        final Id accessTokenBodyId,
-        final Id idTokenBodyId,
-        final Id refreshTokenBodyId
+        final AccessTokenBody accessTokenBody,
+        final IdTokenBody idTokenBody,
+        final RefreshTokenBody refreshTokenBody
     ) {
         Authorization authorization = new Authorization(
             id,
             authorizationCode,
             accessType,
-            accessTokenBodyId,
-            idTokenBodyId,
-            refreshTokenBodyId
+            accessTokenBody,
+            idTokenBody,
+            refreshTokenBody
         );
 
         return authorization;

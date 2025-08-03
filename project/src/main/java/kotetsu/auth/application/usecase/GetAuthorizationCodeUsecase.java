@@ -105,17 +105,17 @@ public class GetAuthorizationCodeUsecase {
 
         final RefreshTokenBody refreshTokenBody = RefreshTokenBody.of(
             Id.of(generateUuidPort.generate()),
-            accessTokenBody.getId(), 
-            idTokenBody.getId()
+            accessTokenBody, 
+            idTokenBody
         );
 
         Authorization authorization = createAuthorizationInformationService.create(
             Id.of(generateUuidPort.generate()),
             AuthorizationCodeChallenge.of(input.getCodeChallenge()),
             AccessType.of(input.getAccessType()),
-            accessTokenBody.getId(),
-            idTokenBody.getId(),
-            refreshTokenBody.getId()
+            accessTokenBody,
+            idTokenBody,
+            refreshTokenBody
         );
 
         storeAccessTokenBodyPort.store(accessTokenBody);
