@@ -2,6 +2,8 @@ package kotetsu.auth.application.domain.entity;
 
 import jakarta.validation.constraints.NotNull;
 import kotetsu.auth.application.domain.value.Id;
+import kotetsu.auth.application.domain.value.LinkedAccessTokenBodyId;
+import kotetsu.auth.application.domain.value.LinkedIdTokenBodyId;
 import lombok.Getter;
 
 public class RefreshTokenBody {
@@ -11,31 +13,31 @@ public class RefreshTokenBody {
 
     @Getter
     @NotNull
-    private final AccessTokenBody accessTokenBody;
+    private final LinkedAccessTokenBodyId linkedAccessTokenBodyId;
 
     @Getter
     @NotNull
-    private final IdTokenBody idTokenBody;
+    private final LinkedIdTokenBodyId linkedIdTokenBodyId;
 
     private RefreshTokenBody(
         final Id id,
-        final AccessTokenBody accessTokenBody,
-        final IdTokenBody idTokenBody
+        final LinkedAccessTokenBodyId linkedAccessTokenBodyId,
+        final LinkedIdTokenBodyId linkedIdTokenBodyId
     ) {
         this.id = id;
-        this.accessTokenBody= accessTokenBody;
-        this.idTokenBody = idTokenBody;
+        this.linkedAccessTokenBodyId = linkedAccessTokenBodyId;
+        this.linkedIdTokenBodyId = linkedIdTokenBodyId;
     }
 
     public static RefreshTokenBody of(
         final Id id,
-        final AccessTokenBody accessTokenBody,
-        final IdTokenBody idTokenBody
+        final LinkedAccessTokenBodyId linkedAccessTokenBodyId,
+        final LinkedIdTokenBodyId linkedIdTokenBodyId
     ) {
         RefreshTokenBody refreshTokenBody = new RefreshTokenBody(
             id,
-            accessTokenBody,
-            idTokenBody
+            linkedAccessTokenBodyId,
+            linkedIdTokenBodyId
         );
 
         return refreshTokenBody;

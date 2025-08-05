@@ -25,6 +25,9 @@ import kotetsu.auth.application.domain.value.ClientId;
 import kotetsu.auth.application.domain.value.Id;
 import kotetsu.auth.application.domain.value.IdTokenAudience;
 import kotetsu.auth.application.domain.value.Issuer;
+import kotetsu.auth.application.domain.value.LinkedAccessTokenBodyId;
+import kotetsu.auth.application.domain.value.LinkedIdTokenBodyId;
+import kotetsu.auth.application.domain.value.LinkedRefreshTokenBodyId;
 import kotetsu.auth.application.domain.value.Nonce;
 import kotetsu.auth.application.domain.value.RequestedScopeNameList;
 import kotetsu.auth.application.domain.value.RequestedScopeNameListToken;
@@ -105,17 +108,17 @@ public class GetAuthorizationCodeUsecase {
 
         final RefreshTokenBody refreshTokenBody = RefreshTokenBody.of(
             Id.of(generateUuidPort.generate()),
-            accessTokenBody, 
-            idTokenBody
+            LinkedAccessTokenBodyId.of(accessTokenBody.getId().getValue()), 
+            LinkedIdTokenBodyId.of(idTokenBody.getId().getValue())
         );
 
-        Authorization authorization = createAuthorizationInformationService.create(
+        final Authorization authorization = createAuthorizationInformationService.create(
             Id.of(generateUuidPort.generate()),
             AuthorizationCodeChallenge.of(input.getCodeChallenge()),
             AccessType.of(input.getAccessType()),
-            accessTokenBody,
-            idTokenBody,
-            refreshTokenBody
+            LinkedAccessTokenBodyId.of(accessTokenBody.getId().getValue()),
+            LinkedIdTokenBodyId.of(idTokenBody.getId().getValue()),
+            LinkedRefreshTokenBodyId.of(refreshTokenBody.getId().getValue())
         );
 
         storeAccessTokenBodyPort.store(accessTokenBody);

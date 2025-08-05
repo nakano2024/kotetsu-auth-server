@@ -4,6 +4,9 @@ import jakarta.validation.constraints.NotNull;
 import kotetsu.auth.application.domain.value.AccessType;
 import kotetsu.auth.application.domain.value.AuthorizationCode;
 import kotetsu.auth.application.domain.value.Id;
+import kotetsu.auth.application.domain.value.LinkedAccessTokenBodyId;
+import kotetsu.auth.application.domain.value.LinkedIdTokenBodyId;
+import kotetsu.auth.application.domain.value.LinkedRefreshTokenBodyId;
 import lombok.Getter;
 
 public class Authorization {
@@ -21,47 +24,47 @@ public class Authorization {
 
     @Getter
     @NotNull
-    private final AccessTokenBody accessTokenBody;
+    private final LinkedAccessTokenBodyId linkedAccessTokenBodyId;
 
     @Getter
     @NotNull
-    private final IdTokenBody idTokenBody;
+    private final LinkedIdTokenBodyId linkedIdTokenBodyId;
 
     @Getter
     @NotNull
-    private final RefreshTokenBody refreshTokenBody;
+    private final LinkedRefreshTokenBodyId linkedRefreshTokenBodyId;
 
     private Authorization(
         final Id id,
         final AuthorizationCode authorizationCode,
         final AccessType accessType,
-        final AccessTokenBody accessTokenBody,
-        final IdTokenBody idTokenBody,
-        final RefreshTokenBody refreshTokenBody
+        final LinkedAccessTokenBodyId linkedAccessTokenBodyId,
+        final LinkedIdTokenBodyId linkedIdTokenBodyId,
+        final LinkedRefreshTokenBodyId linkedRefreshTokenBodyId
     ) {
         this.id = id;
         this.authorizationCode = authorizationCode;
         this.accessType = accessType;
-        this.accessTokenBody = accessTokenBody;
-        this.idTokenBody = idTokenBody;
-        this.refreshTokenBody = refreshTokenBody;
+        this.linkedAccessTokenBodyId = linkedAccessTokenBodyId;
+        this.linkedIdTokenBodyId = linkedIdTokenBodyId;
+        this.linkedRefreshTokenBodyId = linkedRefreshTokenBodyId;
     }
 
     public static Authorization of(
         final Id id,
         final AuthorizationCode authorizationCode,
         final AccessType accessType,
-        final AccessTokenBody accessTokenBody,
-        final IdTokenBody idTokenBody,
-        final RefreshTokenBody refreshTokenBody
+        final LinkedAccessTokenBodyId linkedAccessTokenBodyId,
+        final LinkedIdTokenBodyId linkedIdTokenBodyId,
+        final LinkedRefreshTokenBodyId linkedRefreshTokenBodyId
     ) {
         Authorization authorization = new Authorization(
             id,
             authorizationCode,
             accessType,
-            accessTokenBody,
-            idTokenBody,
-            refreshTokenBody
+            linkedAccessTokenBodyId,
+            linkedIdTokenBodyId,
+            linkedRefreshTokenBodyId
         );
 
         return authorization;

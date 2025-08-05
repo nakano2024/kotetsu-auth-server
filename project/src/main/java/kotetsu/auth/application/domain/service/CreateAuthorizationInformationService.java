@@ -3,10 +3,7 @@ package kotetsu.auth.application.domain.service;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
-import kotetsu.auth.application.domain.entity.AccessTokenBody;
 import kotetsu.auth.application.domain.entity.Authorization;
-import kotetsu.auth.application.domain.entity.IdTokenBody;
-import kotetsu.auth.application.domain.entity.RefreshTokenBody;
 import kotetsu.auth.application.domain.util.IFetchCurrentDatePort;
 import kotetsu.auth.application.domain.util.IGenerateRandomStringPort;
 import kotetsu.auth.application.domain.value.AccessType;
@@ -15,6 +12,9 @@ import kotetsu.auth.application.domain.value.AuthorizationCodeChallenge;
 import kotetsu.auth.application.domain.value.AuthorizationCodeToken;
 import kotetsu.auth.application.domain.value.ExpiredAt;
 import kotetsu.auth.application.domain.value.Id;
+import kotetsu.auth.application.domain.value.LinkedAccessTokenBodyId;
+import kotetsu.auth.application.domain.value.LinkedIdTokenBodyId;
+import kotetsu.auth.application.domain.value.LinkedRefreshTokenBodyId;
 
 public class CreateAuthorizationInformationService {
 
@@ -33,9 +33,9 @@ public class CreateAuthorizationInformationService {
         final Id id,
         final AuthorizationCodeChallenge challenge,
         final AccessType accessType,
-        final AccessTokenBody accessTokenBody,
-        final IdTokenBody idTokenBody,
-        final RefreshTokenBody refreshTokenBody
+        final LinkedAccessTokenBodyId linkedAccessTokenBodyId,
+        final LinkedIdTokenBodyId linkedIdTokenBodyId,
+        final LinkedRefreshTokenBodyId linkedRefreshTokenBodyId
     ) {
         final Date currentDate = fetchCurrentInstantPort.fetch();
 
@@ -47,9 +47,9 @@ public class CreateAuthorizationInformationService {
                 ExpiredAt.of(Date.from(currentDate.toInstant().plus(AuthorizationCode.EXPIRES_MIN, ChronoUnit.MINUTES)))
             ),
             accessType,
-            accessTokenBody,
-            idTokenBody,
-            refreshTokenBody
+            linkedAccessTokenBodyId,
+            linkedIdTokenBodyId,
+            linkedRefreshTokenBodyId
         );
     }
 }
