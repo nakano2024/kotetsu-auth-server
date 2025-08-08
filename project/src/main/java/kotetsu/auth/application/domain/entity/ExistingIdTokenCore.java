@@ -1,17 +1,17 @@
 package kotetsu.auth.application.domain.entity;
 
 import jakarta.validation.constraints.NotNull;
-import kotetsu.auth.application.domain.value.Id;
-import kotetsu.auth.application.domain.value.IdTokenAudience;
+import kotetsu.auth.application.domain.value.IdTokenProfile;
 import kotetsu.auth.application.domain.value.Issuer;
+import kotetsu.auth.application.domain.value.Key;
 import kotetsu.auth.application.domain.value.Nonce;
 import kotetsu.auth.application.domain.value.Subject;
 import lombok.Getter;
 
-public class IdTokenBody {
+public class ExistingIdTokenCore {
     @NotNull
     @Getter
-    private final Id id;
+    private final Key key;
 
     @Getter
     @NotNull
@@ -27,36 +27,37 @@ public class IdTokenBody {
 
     @Getter
     @NotNull
-    private final IdTokenAudience audience;
+    private final IdTokenProfile profile;
 
-    private IdTokenBody(
-        final Id id,
+    private ExistingIdTokenCore(
+        final Key key,
         final Issuer issuer,
         final Subject subject,
         final Nonce nonce,
-        final IdTokenAudience audience
+        final IdTokenProfile profile
     ) {
-        this.id = id;
+        this.key = key;
         this.issuer = issuer;
         this.subject = subject;
         this.nonce = nonce;
-        this.audience = audience;
+        this.profile = profile;
     }
 
-    public static IdTokenBody of(
-        final Id id,
+    public static ExistingIdTokenCore of(
+        final Key key,
+        final Key authorizationInformationId,
         final Issuer issuer,
         final Subject subject,
         final Nonce nonce,
-        final IdTokenAudience audience
+        final IdTokenProfile profile
     ) {
-        final IdTokenBody idTokenBody = new IdTokenBody(
-            id,
+        ExistingIdTokenCore idTokenCore = new ExistingIdTokenCore(
+            key,
             issuer,
             subject,
             nonce,
-            audience
+            profile
         );
-        return idTokenBody;
+        return idTokenCore;
     }
 }

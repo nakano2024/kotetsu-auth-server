@@ -18,7 +18,7 @@ public class ExpiredAt {
         return value.before(today);
     }
 
-    public Long getUnixTime() {
+    public Long getUnixSec() {
         return (value.getTime() / 1000);
     }
 }

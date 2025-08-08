@@ -2,7 +2,10 @@ package kotetsu.auth.application.domain.value;
 
 import java.util.Date;
 
+import lombok.Getter;
+
 public class IssuedAt {
+    @Getter
     private final Date value;
 
     private IssuedAt(final Date value) {
@@ -14,7 +17,7 @@ public class IssuedAt {
         return issuedAt;
     }
 
-    public Long getUnixTime() {
+    public Long getUnixSec() {
         return (value.getTime() / 1000);
     }
 }

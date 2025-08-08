@@ -1,8 +1,8 @@
 package kotetsu.auth.application.domain.repository;
 
 import kotetsu.auth.application.domain.entity.PermittedScopeList;
-import kotetsu.auth.application.domain.value.Id;
+import kotetsu.auth.application.domain.value.Key;
 
 public interface IFetchPermittedScopeListPort {
-    PermittedScopeList fetch(Id clientCode);
+    PermittedScopeList fetch(Key clientKey);
 }

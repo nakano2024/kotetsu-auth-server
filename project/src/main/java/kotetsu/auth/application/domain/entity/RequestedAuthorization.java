@@ -3,17 +3,12 @@ package kotetsu.auth.application.domain.entity;
 import jakarta.validation.constraints.NotNull;
 import kotetsu.auth.application.domain.value.AccessType;
 import kotetsu.auth.application.domain.value.AuthorizationCode;
-import kotetsu.auth.application.domain.value.Id;
-import kotetsu.auth.application.domain.value.LinkedAccessTokenBodyId;
-import kotetsu.auth.application.domain.value.LinkedIdTokenBodyId;
-import kotetsu.auth.application.domain.value.LinkedRefreshTokenBodyId;
+import kotetsu.auth.application.domain.value.LinkedAccessTokenCoreKey;
+import kotetsu.auth.application.domain.value.LinkedIdTokenCoreKey;
+import kotetsu.auth.application.domain.value.LinkedRefreshTokenCoreKey;
 import lombok.Getter;
 
-public class Authorization {
-    @Getter
-    @NotNull
-    private final Id id;
-
+public class RequestedAuthorization {
     @Getter
     @NotNull
     private final AuthorizationCode authorizationCode;
@@ -24,25 +19,23 @@ public class Authorization {
 
     @Getter
     @NotNull
-    private final LinkedAccessTokenBodyId linkedAccessTokenBodyId;
+    private final LinkedAccessTokenCoreKey linkedAccessTokenBodyId;
 
     @Getter
     @NotNull
-    private final LinkedIdTokenBodyId linkedIdTokenBodyId;
+    private final LinkedIdTokenCoreKey linkedIdTokenBodyId;
 
     @Getter
     @NotNull
-    private final LinkedRefreshTokenBodyId linkedRefreshTokenBodyId;
+    private final LinkedRefreshTokenCoreKey linkedRefreshTokenBodyId;
 
-    private Authorization(
-        final Id id,
+    private RequestedAuthorization(
         final AuthorizationCode authorizationCode,
         final AccessType accessType,
-        final LinkedAccessTokenBodyId linkedAccessTokenBodyId,
-        final LinkedIdTokenBodyId linkedIdTokenBodyId,
-        final LinkedRefreshTokenBodyId linkedRefreshTokenBodyId
+        final LinkedAccessTokenCoreKey linkedAccessTokenBodyId,
+        final LinkedIdTokenCoreKey linkedIdTokenBodyId,
+        final LinkedRefreshTokenCoreKey linkedRefreshTokenBodyId
     ) {
-        this.id = id;
         this.authorizationCode = authorizationCode;
         this.accessType = accessType;
         this.linkedAccessTokenBodyId = linkedAccessTokenBodyId;
@@ -50,16 +43,14 @@ public class Authorization {
         this.linkedRefreshTokenBodyId = linkedRefreshTokenBodyId;
     }
 
-    public static Authorization of(
-        final Id id,
+    public static RequestedAuthorization of(
         final AuthorizationCode authorizationCode,
         final AccessType accessType,
-        final LinkedAccessTokenBodyId linkedAccessTokenBodyId,
-        final LinkedIdTokenBodyId linkedIdTokenBodyId,
-        final LinkedRefreshTokenBodyId linkedRefreshTokenBodyId
+        final LinkedAccessTokenCoreKey linkedAccessTokenBodyId,
+        final LinkedIdTokenCoreKey linkedIdTokenBodyId,
+        final LinkedRefreshTokenCoreKey linkedRefreshTokenBodyId
     ) {
-        Authorization authorization = new Authorization(
-            id,
+        RequestedAuthorization authorization = new RequestedAuthorization(
             authorizationCode,
             accessType,
             linkedAccessTokenBodyId,

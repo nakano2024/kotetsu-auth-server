@@ -6,7 +6,7 @@ public class AuthorizationCode {
     public static final int EXPIRES_MIN = 1;
 
     @Getter
-    private final AuthorizationCodeToken token;
+    private final AuthorizationCodeValue value;
 
     @Getter
     private final AuthorizationCodeChallenge challenge;
@@ -14,14 +14,14 @@ public class AuthorizationCode {
     @Getter
     private final ExpiredAt expiredAt;
 
-    private AuthorizationCode(final AuthorizationCodeToken token, final AuthorizationCodeChallenge challenge, final ExpiredAt expiredAt) {
-        this.token = token;
+    private AuthorizationCode(final AuthorizationCodeValue value, final AuthorizationCodeChallenge challenge, final ExpiredAt expiredAt) {
+        this.value = value;
         this.challenge = challenge;
         this.expiredAt = expiredAt;
     }
 
-    public static AuthorizationCode of(final AuthorizationCodeToken token, final AuthorizationCodeChallenge challenge, final ExpiredAt expiredAt) {
-        final AuthorizationCode authorizationCode = new AuthorizationCode(token, challenge, expiredAt);
+    public static AuthorizationCode of(final AuthorizationCodeValue value, final AuthorizationCodeChallenge challenge, final ExpiredAt expiredAt) {
+        final AuthorizationCode authorizationCode = new AuthorizationCode(value, challenge, expiredAt);
         return authorizationCode;
     }
 }

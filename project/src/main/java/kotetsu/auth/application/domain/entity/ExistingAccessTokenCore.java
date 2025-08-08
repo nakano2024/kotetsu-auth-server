@@ -8,15 +8,15 @@ import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 import jakarta.validation.constraints.NotNull;
 import kotetsu.auth.application.domain.exception.AccessTokenDraftValidationException;
-import kotetsu.auth.application.domain.value.Id;
 import kotetsu.auth.application.domain.value.Issuer;
+import kotetsu.auth.application.domain.value.Key;
 import kotetsu.auth.application.domain.value.Subject;
 import lombok.Getter;
 
-public class AccessTokenBody {
+public class ExistingAccessTokenCore {
     @NotNull
     @Getter
-    private final Id id;
+    private final Key key;
 
     @Getter
     @NotNull
@@ -34,30 +34,30 @@ public class AccessTokenBody {
     @NotNull
     private final RequestedScopeRelatedAudienceList relatedAudienceList;
 
-    private AccessTokenBody(
-        final Id id,
+    private ExistingAccessTokenCore(
+        final Key key,
         final Issuer issuer,
         final Subject subject,
         final RequestedScopeList scopeList,
         final RequestedScopeRelatedAudienceList relatedAudienceList
     ) {
-        this.id = id;
+        this.key = key;
         this.issuer = issuer;
         this.subject = subject;
         this.scopeList = scopeList;
         this.relatedAudienceList = relatedAudienceList;
     }
 
-    public static AccessTokenBody of(
-        final Id id,
+    public static ExistingAccessTokenCore of(
+        final Key key,
         final Issuer issuer,
         final Subject subject,
         final RequestedScopeList scopeList,
         final RequestedScopeRelatedAudienceList relatedAudienceList
     ) {
 
-        final AccessTokenBody accessTokenBody = new AccessTokenBody(
-            id,
+        final ExistingAccessTokenCore accessTokenCore = new ExistingAccessTokenCore(
+            key,
             issuer,
             subject,
             scopeList,
@@ -66,12 +66,12 @@ public class AccessTokenBody {
 
         final ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         final Validator validator = factory.getValidator();
-        Set<ConstraintViolation<AccessTokenBody>> violations = validator.validate(accessTokenBody);
+        Set<ConstraintViolation<ExistingAccessTokenCore>> violations = validator.validate(accessTokenCore);
 
-        for (final ConstraintViolation<AccessTokenBody> violation : violations) {
+        for (final ConstraintViolation<ExistingAccessTokenCore> violation : violations) {
             throw new AccessTokenDraftValidationException(violation.getMessage());
         }
 
-        return accessTokenBody;
+        return accessTokenCore;
     }
 }

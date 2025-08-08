@@ -1,6 +1,7 @@
 package kotetsu.auth.application.dto.output;
 
 import java.util.List;
+
 import lombok.Getter;
 
 public class TokenOutput {
@@ -20,7 +21,7 @@ public class TokenOutput {
     private final String idToken;
 
     @Getter
-    private final List<String> scopes;
+    private final String scopeToken;
 
     @Getter
     private final List<String> audiences;
@@ -31,7 +32,7 @@ public class TokenOutput {
         final Long expiresIn,
         final String refreshToken,
         final String idToken,
-        final List<String> scopes,
+        final String scopeToken,
         final List<String> audiences
     ) {
         this.accessToken = accessToken;
@@ -39,7 +40,7 @@ public class TokenOutput {
         this.expiresIn = expiresIn;
         this.refreshToken = refreshToken;
         this.idToken = idToken;
-        this.scopes = scopes;
+        this.scopeToken = scopeToken;
         this.audiences = audiences;
     }
 
@@ -49,9 +50,9 @@ public class TokenOutput {
         final Long expiresIn,
         final String refreshToken,
         final String idToken,
-        final List<String> scopes,
+        final String scopeToken,
         final List<String> audiences
     ) {
-        return new TokenOutput(accessToken, tokenType, expiresIn, refreshToken, idToken, scopes, audiences);
+        return new TokenOutput(accessToken, tokenType, expiresIn, refreshToken, idToken, scopeToken, audiences);
     }
 }

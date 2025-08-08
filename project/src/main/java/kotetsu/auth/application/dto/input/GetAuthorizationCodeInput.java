@@ -19,8 +19,8 @@ public class GetAuthorizationCodeInput {
 
     @Getter
     @NotBlank
-    @Pattern(regexp = "[a-zA-Z0-9]+")
-    private final String clientId;
+    @Pattern(regexp = "^([a-zA-Z0-9]+(\\.[a-zA-Z0-9]+)*)( ([a-zA-Z0-9]+(\\.[a-zA-Z0-9]+)*))*$")
+    private final String clientKey;
 
     @Getter
     @NotBlank
@@ -45,7 +45,7 @@ public class GetAuthorizationCodeInput {
 
     private GetAuthorizationCodeInput(
         final String resourceOwnerCode,
-        final String clientId,
+        final String clientKey,
         final String redirectUri,
         final String scopeListToken,
         final String codeChallenge,
@@ -53,7 +53,7 @@ public class GetAuthorizationCodeInput {
         final String accessType
     ) {
         this.resourceOwnerCode = resourceOwnerCode;
-        this.clientId = clientId;
+        this.clientKey = clientKey;
         this.redirectUri = redirectUri;
         this.scopeListToken = scopeListToken;
         this.codeChallenge = codeChallenge;
@@ -63,7 +63,7 @@ public class GetAuthorizationCodeInput {
 
     public static  GetAuthorizationCodeInput of(
         final String resourceOwnerCode,
-        final String clientId,
+        final String clientKey,
         final String redirectUri,
         final String scopeListToken,
         final String codeChallenge,
@@ -72,7 +72,7 @@ public class GetAuthorizationCodeInput {
     ) {
         final GetAuthorizationCodeInput input = new GetAuthorizationCodeInput(
             resourceOwnerCode,
-            clientId,
+            clientKey,
             redirectUri,
             scopeListToken,
             codeChallenge,

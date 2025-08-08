@@ -1,33 +1,36 @@
 package kotetsu.auth.application.usecase;
 
+import java.util.Date;
+
 import org.springframework.transaction.annotation.Transactional;
 
-import kotetsu.auth.application.domain.entity.AccessTokenBody;
-import kotetsu.auth.application.domain.entity.Authorization;
-import kotetsu.auth.application.domain.entity.ClientBasicInformation;
-import kotetsu.auth.application.domain.entity.IdTokenBody;
+import kotetsu.auth.application.domain.entity.PendingAccessTokenCore;
+import kotetsu.auth.application.domain.entity.PendingIdTokenCore;
+import kotetsu.auth.application.domain.entity.PendingRefreshTokenCore;
 import kotetsu.auth.application.domain.entity.PermittedScopeList;
-import kotetsu.auth.application.domain.entity.RefreshTokenBody;
+import kotetsu.auth.application.domain.entity.RequestedAuthorization;
 import kotetsu.auth.application.domain.entity.RequestedScopeAudienceWrapper;
-import kotetsu.auth.application.domain.repository.IFetchClientBasicInformationPort;
+import kotetsu.auth.application.domain.entity.RequesterClient;
 import kotetsu.auth.application.domain.repository.IFetchPermittedScopeListPort;
+import kotetsu.auth.application.domain.repository.IFetchRequesterClientPort;
 import kotetsu.auth.application.domain.repository.IFetchScopeAudienceWrapperPort;
-import kotetsu.auth.application.domain.repository.IStoreAccessTokenBodyPort;
-import kotetsu.auth.application.domain.repository.IStoreAuthorizationPort;
-import kotetsu.auth.application.domain.repository.IStoreIdTokenBodyPort;
-import kotetsu.auth.application.domain.repository.IStoreRefreshTokenBodyPort;
-import kotetsu.auth.application.domain.service.CreateAuthorizationInformationService;
+import kotetsu.auth.application.domain.repository.IStoreAccessTokenCorePort;
+import kotetsu.auth.application.domain.repository.IStoreIdTokenCorePort;
+import kotetsu.auth.application.domain.repository.IStoreRefreshTokenCorePort;
+import kotetsu.auth.application.domain.repository.IStoreRequestedAuthorizationPort;
+import kotetsu.auth.application.domain.service.CreateAuthorizationService;
+import kotetsu.auth.application.domain.util.IFetchCurrentDatePort;
 import kotetsu.auth.application.domain.util.IFetchServerUrlPort;
 import kotetsu.auth.application.domain.util.IGenerateUuidPort;
 import kotetsu.auth.application.domain.value.AccessType;
 import kotetsu.auth.application.domain.value.AuthorizationCodeChallenge;
-import kotetsu.auth.application.domain.value.ClientId;
-import kotetsu.auth.application.domain.value.Id;
 import kotetsu.auth.application.domain.value.IdTokenAudience;
+import kotetsu.auth.application.domain.value.IssuedAt;
 import kotetsu.auth.application.domain.value.Issuer;
-import kotetsu.auth.application.domain.value.LinkedAccessTokenBodyId;
-import kotetsu.auth.application.domain.value.LinkedIdTokenBodyId;
-import kotetsu.auth.application.domain.value.LinkedRefreshTokenBodyId;
+import kotetsu.auth.application.domain.value.Key;
+import kotetsu.auth.application.domain.value.LinkedAccessTokenCoreKey;
+import kotetsu.auth.application.domain.value.LinkedIdTokenCoreKey;
+import kotetsu.auth.application.domain.value.LinkedRefreshTokenCoreKey;
 import kotetsu.auth.application.domain.value.Nonce;
 import kotetsu.auth.application.domain.value.RequestedScopeNameList;
 import kotetsu.auth.application.domain.value.RequestedScopeNameListToken;
@@ -40,30 +43,32 @@ import kotetsu.auth.application.exception.InvalidRequestedScopesIOException;
 public class GetAuthorizationCodeUsecase {
     final IFetchPermittedScopeListPort permittedScopeListPort;
     final IFetchScopeAudienceWrapperPort fetchScopeAudienceWrapperPort;
-    final IFetchClientBasicInformationPort fetchClientBasicInformationPort;
-    final IStoreAccessTokenBodyPort storeAccessTokenBodyPort;
-    final IStoreIdTokenBodyPort storeIdTokenBodyPort;
-    final IStoreRefreshTokenBodyPort storeRefreshTokenBodyPort;
-    final IStoreAuthorizationPort storeAuthorizationPort;
-    final CreateAuthorizationInformationService createAuthorizationInformationService;
+    final IFetchRequesterClientPort fetchRequeterClientPort;
+    final IStoreAccessTokenCorePort storeAccessTokenBodyPort;
+    final IStoreIdTokenCorePort storeIdTokenBodyPort;
+    final IStoreRefreshTokenCorePort storeRefreshTokenBodyPort;
+    final IStoreRequestedAuthorizationPort storeAuthorizationPort;
+    final CreateAuthorizationService createAuthorizationInformationService;
     final IFetchServerUrlPort fetchServerUrlPort;
     final IGenerateUuidPort generateUuidPort;
+    final IFetchCurrentDatePort fetchCurrentDatePort;
 
     public GetAuthorizationCodeUsecase(
         final IFetchPermittedScopeListPort permittedScopeListPort,
         final IFetchScopeAudienceWrapperPort fetchScopeAudienceWrapperPort,
-        final IFetchClientBasicInformationPort fetchClientBasicInformationPort,
-        final IStoreAccessTokenBodyPort storeAccessTokenBodyPort,
-        final IStoreIdTokenBodyPort storeIdTokenBodyPort,
-        final IStoreRefreshTokenBodyPort storeRefreshTokenBodyPort,
-        final IStoreAuthorizationPort storeAuthorizationPort,
-        final CreateAuthorizationInformationService createAuthorizationInformationService,
+        final IFetchRequesterClientPort fetchRequeterClientPort,
+        final IStoreAccessTokenCorePort storeAccessTokenBodyPort,
+        final IStoreIdTokenCorePort storeIdTokenBodyPort,
+        final IStoreRefreshTokenCorePort storeRefreshTokenBodyPort,
+        final IStoreRequestedAuthorizationPort storeAuthorizationPort,
+        final CreateAuthorizationService createAuthorizationInformationService,
         final IFetchServerUrlPort fetchServerUrlPort,
-        final IGenerateUuidPort generateUuidPort
+        final IGenerateUuidPort generateUuidPort,
+        final IFetchCurrentDatePort fetchCurrentDatePort
     ) {
         this.permittedScopeListPort = permittedScopeListPort;
         this.fetchScopeAudienceWrapperPort = fetchScopeAudienceWrapperPort;
-        this.fetchClientBasicInformationPort = fetchClientBasicInformationPort;
+        this.fetchRequeterClientPort = fetchRequeterClientPort;
         this.storeAccessTokenBodyPort = storeAccessTokenBodyPort;
         this.storeIdTokenBodyPort = storeIdTokenBodyPort;
         this.storeRefreshTokenBodyPort = storeRefreshTokenBodyPort;
@@ -71,26 +76,29 @@ public class GetAuthorizationCodeUsecase {
         this.createAuthorizationInformationService = createAuthorizationInformationService;
         this.fetchServerUrlPort = fetchServerUrlPort;
         this.generateUuidPort = generateUuidPort;
+        this.fetchCurrentDatePort = fetchCurrentDatePort;
     }
 
     @Transactional
-    public AuthorizationCodeOutput execute(GetAuthorizationCodeInput input) {
+    public AuthorizationCodeOutput execute(final GetAuthorizationCodeInput input) {
+        final Date currentDate = fetchCurrentDatePort.fetch();
+
         if (input == null) {
             throw new InputNullException();
         }
 
-        final ClientBasicInformation client = fetchClientBasicInformationPort.fetch(ClientId.of(input.getClientId()));
+        final RequesterClient requesterClient = fetchRequeterClientPort.fetch(Key.of(input.getClientKey()));
 
         final RequestedScopeNameList requestedScopeNameList = RequestedScopeNameList.of(RequestedScopeNameListToken.of(input.getScopeListToken()));
         
-        RequestedScopeAudienceWrapper requestedScopeAudienceWrapper = fetchScopeAudienceWrapperPort.fetch(requestedScopeNameList);
-        PermittedScopeList permittedScopeList =  permittedScopeListPort.fetch(Id.of(client.getId().getValue()));
+        final RequestedScopeAudienceWrapper requestedScopeAudienceWrapper = fetchScopeAudienceWrapperPort.fetch(requestedScopeNameList);
+        final PermittedScopeList permittedScopeList =  permittedScopeListPort.fetch(Key.of(requesterClient.getKey().getValue()));
         if(!permittedScopeList.containsAll(requestedScopeAudienceWrapper.getRequestedScopeList().getScopes())) {
             throw new InvalidRequestedScopesIOException("許可されていないscopeが含まれています。");
         }
 
-        final AccessTokenBody accessTokenBody = AccessTokenBody.of(
-            Id.of(generateUuidPort.generate()),
+        final PendingAccessTokenCore accessTokenCore = PendingAccessTokenCore.of(
+            Key.of(generateUuidPort.generate()),
             Issuer.of(fetchServerUrlPort.fetch()),
             Subject.of(input.getResourceOwnerCode()),
             requestedScopeAudienceWrapper.getRequestedScopeList(),
@@ -98,34 +106,34 @@ public class GetAuthorizationCodeUsecase {
             
         );
 
-        final IdTokenBody idTokenBody = IdTokenBody.of(
-            Id.of((generateUuidPort.generate())),
+        final PendingIdTokenCore idTokenCore = PendingIdTokenCore.of(
+            Key.of((generateUuidPort.generate())),
             Issuer.of(fetchServerUrlPort.fetch()),
             Subject.of(input.getResourceOwnerCode()),
             Nonce.of(input.getNonce()),
-            IdTokenAudience.of(client.getClientId().getValue())
+            IdTokenAudience.of(requesterClient.getClientId().getValue())
         );
 
-        final RefreshTokenBody refreshTokenBody = RefreshTokenBody.of(
-            Id.of(generateUuidPort.generate()),
-            LinkedAccessTokenBodyId.of(accessTokenBody.getId().getValue()), 
-            LinkedIdTokenBodyId.of(idTokenBody.getId().getValue())
+        final PendingRefreshTokenCore refreshTokenCore = PendingRefreshTokenCore.of(
+            Key.of(generateUuidPort.generate()),
+            LinkedAccessTokenCoreKey.of(accessTokenCore.getKey().getValue()), 
+            LinkedIdTokenCoreKey.of(idTokenCore.getKey().getValue())
         );
 
-        final Authorization authorization = createAuthorizationInformationService.create(
-            Id.of(generateUuidPort.generate()),
+        final RequestedAuthorization authorization = createAuthorizationInformationService.create(
             AuthorizationCodeChallenge.of(input.getCodeChallenge()),
             AccessType.of(input.getAccessType()),
-            LinkedAccessTokenBodyId.of(accessTokenBody.getId().getValue()),
-            LinkedIdTokenBodyId.of(idTokenBody.getId().getValue()),
-            LinkedRefreshTokenBodyId.of(refreshTokenBody.getId().getValue())
+            LinkedAccessTokenCoreKey.of(accessTokenCore.getKey().getValue()),
+            LinkedIdTokenCoreKey.of(idTokenCore.getKey().getValue()),
+            LinkedRefreshTokenCoreKey.of(refreshTokenCore.getKey().getValue()),
+            IssuedAt.of(currentDate)
         );
 
-        storeAccessTokenBodyPort.store(accessTokenBody);
-        storeIdTokenBodyPort.store(idTokenBody);
-        storeRefreshTokenBodyPort.store(refreshTokenBody);
+        storeAccessTokenBodyPort.store(accessTokenCore);
+        storeIdTokenBodyPort.store(idTokenCore);
+        storeRefreshTokenBodyPort.store(refreshTokenCore);
         storeAuthorizationPort.store(authorization);
 
-        return AuthorizationCodeOutput.of(authorization.getAuthorizationCode().getToken().getValue());
+        return AuthorizationCodeOutput.of(authorization.getAuthorizationCode().getValue().getValue());
     }
 }

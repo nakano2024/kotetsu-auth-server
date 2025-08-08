@@ -3,6 +3,7 @@ package kotetsu.auth.application.domain.entity;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
@@ -11,10 +12,8 @@ import jakarta.validation.ValidatorFactory;
 import jakarta.validation.constraints.NotNull;
 import kotetsu.auth.application.domain.exception.RequestedScopeRelatedAudienceListValidationException;
 import kotetsu.auth.application.domain.value.AccessTokenAudience;
-import lombok.Getter;
 
 public class RequestedScopeRelatedAudienceList {
-    @Getter
     @NotNull
     private final Set<AccessTokenAudience> audiences;
 
@@ -35,5 +34,11 @@ public class RequestedScopeRelatedAudienceList {
         }
 
         return requestedScopeRelatedAudienceList;
+    }
+
+    public List<String> toStringList() {
+        return audiences.stream()
+            .map(AccessTokenAudience::getValue)
+            .collect(Collectors.toList());
     }
 }

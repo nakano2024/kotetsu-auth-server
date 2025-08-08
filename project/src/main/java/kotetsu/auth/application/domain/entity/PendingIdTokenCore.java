@@ -1,17 +1,17 @@
 package kotetsu.auth.application.domain.entity;
 
 import jakarta.validation.constraints.NotNull;
-import kotetsu.auth.application.domain.value.Id;
-import kotetsu.auth.application.domain.value.IdTokenProfile;
+import kotetsu.auth.application.domain.value.IdTokenAudience;
 import kotetsu.auth.application.domain.value.Issuer;
+import kotetsu.auth.application.domain.value.Key;
 import kotetsu.auth.application.domain.value.Nonce;
 import kotetsu.auth.application.domain.value.Subject;
 import lombok.Getter;
 
-public class IdTokenBodyView {
+public class PendingIdTokenCore {
     @NotNull
     @Getter
-    private final Id id;
+    private final Key key;
 
     @Getter
     @NotNull
@@ -27,37 +27,36 @@ public class IdTokenBodyView {
 
     @Getter
     @NotNull
-    private final IdTokenProfile profile;
+    private final IdTokenAudience audience;
 
-    private IdTokenBodyView(
-        final Id id,
+    private PendingIdTokenCore(
+        final Key key,
         final Issuer issuer,
         final Subject subject,
         final Nonce nonce,
-        final IdTokenProfile profile
+        final IdTokenAudience audience
     ) {
-        this.id = id;
+        this.key = key;
         this.issuer = issuer;
         this.subject = subject;
         this.nonce = nonce;
-        this.profile = profile;
+        this.audience = audience;
     }
 
-    public static IdTokenBodyView of(
-        final Id id,
-        final Id authorizationInformationId,
+    public static PendingIdTokenCore of(
+        final Key key,
         final Issuer issuer,
         final Subject subject,
         final Nonce nonce,
-        final IdTokenProfile profile
+        final IdTokenAudience audience
     ) {
-        IdTokenBodyView idTokenBodyView = new IdTokenBodyView(
-            id,
+        final PendingIdTokenCore idTokenCore = new PendingIdTokenCore(
+            key,
             issuer,
             subject,
             nonce,
-            profile
+            audience
         );
-        return idTokenBodyView;
+        return idTokenCore;
     }
 }

@@ -2,10 +2,10 @@ package kotetsu.auth.application.domain.entity;
 
 import kotetsu.auth.application.domain.value.Email;
 import kotetsu.auth.application.domain.value.HashedPassword;
-import kotetsu.auth.application.domain.value.Id;
+import kotetsu.auth.application.domain.value.Key;
 
 public class UserCredential {
-    Id id;
+    Key id;
     Email email;
     HashedPassword password;
     

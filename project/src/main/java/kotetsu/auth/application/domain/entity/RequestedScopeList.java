@@ -10,7 +10,7 @@ import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 import jakarta.validation.constraints.NotNull;
 import kotetsu.auth.application.domain.exception.RequestedScopeListValidationException;
-import kotetsu.auth.application.domain.value.Id;
+import kotetsu.auth.application.domain.value.Key;
 import kotetsu.auth.application.domain.value.ScopeName;
 import lombok.Getter;
 
@@ -37,7 +37,7 @@ public class RequestedScopeList {
     }
 
     public boolean hasOpenid() {
-        return scopes.contains(Scope.of(Id.of(Scope.ID_OPENID), ScopeName.of(Scope.NAME_OPENID)));
+        return scopes.contains(Scope.of(Key.of(Scope.KEY_OPENID), ScopeName.of(Scope.NAME_OPENID)));
     }
 
     public String toScopeListToken() {
