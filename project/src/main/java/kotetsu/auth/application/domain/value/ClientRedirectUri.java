@@ -5,18 +5,18 @@ import java.util.Objects;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 
-public class AuthorizationCodeChallenge {
+public class ClientRedirectUri {
     @Getter
     @NotBlank
     private final String value;
 
-    private AuthorizationCodeChallenge(final String value) {
+    private ClientRedirectUri(final String value) {
         this.value = value;
     }
 
-    public static AuthorizationCodeChallenge of(final String value) {
-        final AuthorizationCodeChallenge authorizationCodeChallenge = new AuthorizationCodeChallenge(value);
-        return authorizationCodeChallenge;
+    public static ClientRedirectUri of(final String value) {
+        final ClientRedirectUri clientRedirectUri = new ClientRedirectUri(value);
+        return clientRedirectUri;
     }
 
     @Override

@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 import kotetsu.auth.application.dto.data.UserProfileData;
 import kotetsu.auth.application.dto.input.GetInternalTokenInput;
 import kotetsu.auth.application.dto.output.IdTokenOutput;
-import kotetsu.auth.application.exception.InputNullException;
+import kotetsu.auth.application.exception.InputNullRuntimeException;
 import kotetsu.auth.application.exception.UserProfileNotFoundIOException;
 import kotetsu.auth.application.persistence.IFindUserProfileByEmailPort;
 import kotetsu.auth.application.util.IGenerateIInternalAuthTokenPort;
@@ -19,7 +19,6 @@ import kotetsu.auth.application.util.IGetCurrentInstantPort;
 
 @Component
 public class GetInternalTokenByEmailUsecase {
-
     final IFindUserProfileByEmailPort findUserProfileByEmailPort;
     final IGenerateIInternalAuthTokenPort generateInternalTokenPort;
     final IGetCurrentInstantPort getCurrentInstantPort;
@@ -36,7 +35,7 @@ public class GetInternalTokenByEmailUsecase {
 
     public IdTokenOutput getInternalToken(GetInternalTokenInput input) throws UserProfileNotFoundIOException {
         if (input == null) {
-            throw new InputNullException();
+            throw new InputNullRuntimeException();
         }
 
         final UserProfileData userProfile = findUserProfileByEmailPort.findByEmail(input.getEmail());

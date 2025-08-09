@@ -37,8 +37,11 @@ import kotetsu.auth.application.domain.value.RequestedScopeNameListToken;
 import kotetsu.auth.application.domain.value.Subject;
 import kotetsu.auth.application.dto.input.GetAuthorizationCodeInput;
 import kotetsu.auth.application.dto.output.AuthorizationCodeOutput;
-import kotetsu.auth.application.exception.InputNullException;
-import kotetsu.auth.application.exception.InvalidRequestedScopesIOException;
+import kotetsu.auth.application.exception.InputNullRuntimeException;
+import kotetsu.auth.application.exception.ClientNotPermittedScopesContainedException;
+import kotetsu.auth.application.exception.PermittedScopeListNullRuntimeException;
+import kotetsu.auth.application.exception.RequestedScopeAudienceWrapperNullRuntimeException;
+import kotetsu.auth.application.exception.RequesterClientNotFoundRuntimeException;
 
 public class GetAuthorizationCodeUsecase {
     final IFetchPermittedScopeListPort permittedScopeListPort;
@@ -80,21 +83,28 @@ public class GetAuthorizationCodeUsecase {
     }
 
     @Transactional
-    public AuthorizationCodeOutput execute(final GetAuthorizationCodeInput input) {
+    public AuthorizationCodeOutput execute(final GetAuthorizationCodeInput input)
+        throws ClientNotPermittedScopesContainedException
+    {
         final Date currentDate = fetchCurrentDatePort.fetch();
 
         if (input == null) {
-            throw new InputNullException();
+            throw new InputNullRuntimeException();
         }
 
-        final RequesterClient requesterClient = fetchRequeterClientPort.fetch(Key.of(input.getClientKey()));
+        final RequesterClient requesterClient = fetchRequeterClientPort.fetch(Key.of(input.getClientKey()))
+            .orElseThrow(() -> new RequesterClientNotFoundRuntimeException());
 
         final RequestedScopeNameList requestedScopeNameList = RequestedScopeNameList.of(RequestedScopeNameListToken.of(input.getScopeListToken()));
         
-        final RequestedScopeAudienceWrapper requestedScopeAudienceWrapper = fetchScopeAudienceWrapperPort.fetch(requestedScopeNameList);
-        final PermittedScopeList permittedScopeList =  permittedScopeListPort.fetch(Key.of(requesterClient.getKey().getValue()));
+        final RequestedScopeAudienceWrapper requestedScopeAudienceWrapper = fetchScopeAudienceWrapperPort.fetch(requestedScopeNameList)
+            .orElseThrow(() -> new RequestedScopeAudienceWrapperNullRuntimeException());
+
+        final PermittedScopeList permittedScopeList =  permittedScopeListPort.fetch(Key.of(requesterClient.getKey().getValue()))
+            .orElseThrow(() -> new PermittedScopeListNullRuntimeException());
+
         if(!permittedScopeList.containsAll(requestedScopeAudienceWrapper.getRequestedScopeList().getScopes())) {
-            throw new InvalidRequestedScopesIOException("許可されていないscopeが含まれています。");
+            throw new ClientNotPermittedScopesContainedException();
         }
 
         final PendingAccessTokenCore accessTokenCore = PendingAccessTokenCore.of(

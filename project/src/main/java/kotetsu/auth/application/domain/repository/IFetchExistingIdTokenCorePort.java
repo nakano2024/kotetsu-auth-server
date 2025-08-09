@@ -1,8 +1,10 @@
 package kotetsu.auth.application.domain.repository;
 
+import java.util.Optional;
+
 import kotetsu.auth.application.domain.entity.ExistingIdTokenCore;
 import kotetsu.auth.application.domain.value.Key;
 
 public interface IFetchExistingIdTokenCorePort {
-    ExistingIdTokenCore fetch(Key key);
+    Optional<ExistingIdTokenCore> fetch(Key key);
 }
