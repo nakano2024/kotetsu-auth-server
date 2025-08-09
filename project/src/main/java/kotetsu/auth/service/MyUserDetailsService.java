@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 import kotetsu.auth.application.dto.input.GetUserCredentialEmailInput;
 import kotetsu.auth.application.dto.output.UserCredentialsOutput;
-import kotetsu.auth.application.exception.UserCredentialNotFoundIOException;
+import kotetsu.auth.application.exception.UserCredentialNotFoundException;
 import kotetsu.auth.application.usecase.GetUserCredentialsByEmailUsecase;
 
 @Service
@@ -33,7 +33,7 @@ public class MyUserDetailsService implements UserDetailsService {
                 Collections.emptyList()
             );
         }
-        catch (UserCredentialNotFoundIOException exception) {
+        catch (UserCredentialNotFoundException exception) {
             throw new UsernameNotFoundException(exception.getMessage());
         }
     }

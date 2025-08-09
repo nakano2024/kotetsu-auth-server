@@ -22,11 +22,8 @@ public class GetUserCredentialsByEmailUsecase {
             throw new InputNullRuntimeException();
         }        
         
-        UserCredentialData userCredential = findUserCredentialByEmailPort.findByEmail(input.getEmail());
-
-        if (userCredential == null) {
-            throw new UserCredentialNotFoundException();
-        }
+        UserCredentialData userCredential = findUserCredentialByEmailPort.findByEmail(input.getEmail())
+            .orElseThrow(() -> new UserCredentialNotFoundException());
 
         return UserCredentialsOutput.of(
             userCredential.getEmail(),
