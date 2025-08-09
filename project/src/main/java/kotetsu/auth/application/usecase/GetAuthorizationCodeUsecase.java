@@ -14,9 +14,9 @@ import kotetsu.auth.application.domain.entity.RequesterClient;
 import kotetsu.auth.application.domain.repository.IFetchPermittedScopeListPort;
 import kotetsu.auth.application.domain.repository.IFetchRequesterClientPort;
 import kotetsu.auth.application.domain.repository.IFetchScopeAudienceWrapperPort;
-import kotetsu.auth.application.domain.repository.IStoreAccessTokenCorePort;
-import kotetsu.auth.application.domain.repository.IStoreIdTokenCorePort;
-import kotetsu.auth.application.domain.repository.IStoreRefreshTokenCorePort;
+import kotetsu.auth.application.domain.repository.IStorePendingAccessTokenCorePort;
+import kotetsu.auth.application.domain.repository.IStorePendingIdTokenCorePort;
+import kotetsu.auth.application.domain.repository.IStorePendingRefreshTokenCorePort;
 import kotetsu.auth.application.domain.repository.IStoreRequestedAuthorizationPort;
 import kotetsu.auth.application.domain.service.CreateAuthorizationService;
 import kotetsu.auth.application.domain.util.IFetchCurrentDatePort;
@@ -47,9 +47,9 @@ public class GetAuthorizationCodeUsecase {
     final IFetchPermittedScopeListPort permittedScopeListPort;
     final IFetchScopeAudienceWrapperPort fetchScopeAudienceWrapperPort;
     final IFetchRequesterClientPort fetchRequeterClientPort;
-    final IStoreAccessTokenCorePort storeAccessTokenBodyPort;
-    final IStoreIdTokenCorePort storeIdTokenBodyPort;
-    final IStoreRefreshTokenCorePort storeRefreshTokenBodyPort;
+    final IStorePendingAccessTokenCorePort storeAccessTokenBodyPort;
+    final IStorePendingIdTokenCorePort storeIdTokenBodyPort;
+    final IStorePendingRefreshTokenCorePort storeRefreshTokenBodyPort;
     final IStoreRequestedAuthorizationPort storeAuthorizationPort;
     final CreateAuthorizationService createAuthorizationInformationService;
     final IFetchServerUrlPort fetchServerUrlPort;
@@ -60,9 +60,9 @@ public class GetAuthorizationCodeUsecase {
         final IFetchPermittedScopeListPort permittedScopeListPort,
         final IFetchScopeAudienceWrapperPort fetchScopeAudienceWrapperPort,
         final IFetchRequesterClientPort fetchRequeterClientPort,
-        final IStoreAccessTokenCorePort storeAccessTokenBodyPort,
-        final IStoreIdTokenCorePort storeIdTokenBodyPort,
-        final IStoreRefreshTokenCorePort storeRefreshTokenBodyPort,
+        final IStorePendingAccessTokenCorePort storeAccessTokenBodyPort,
+        final IStorePendingIdTokenCorePort storeIdTokenBodyPort,
+        final IStorePendingRefreshTokenCorePort storeRefreshTokenBodyPort,
         final IStoreRequestedAuthorizationPort storeAuthorizationPort,
         final CreateAuthorizationService createAuthorizationInformationService,
         final IFetchServerUrlPort fetchServerUrlPort,

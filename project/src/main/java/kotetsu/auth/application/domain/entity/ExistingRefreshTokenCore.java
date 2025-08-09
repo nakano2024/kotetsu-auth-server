@@ -13,31 +13,31 @@ public class ExistingRefreshTokenCore {
 
     @Getter
     @NotNull
-    private final LinkedAccessTokenCoreKey linkedAccessTokenCoreId;
+    private final LinkedAccessTokenCoreKey linkedAccessTokenCoreKey;
 
     @Getter
     @NotNull
-    private final LinkedIdTokenCoreKey linkedIdTokenCoreId;
+    private final LinkedIdTokenCoreKey linkedIdTokenCoreKey;
 
     private ExistingRefreshTokenCore(
         final Key key,
-        final LinkedAccessTokenCoreKey linkedAccessTokenCoreId,
-        final LinkedIdTokenCoreKey linkedIdTokenCoreId
+        final LinkedAccessTokenCoreKey linkedAccessTokenCoreKey,
+        final LinkedIdTokenCoreKey linkedIdTokenCoreKey
     ) {
         this.key = key;
-        this.linkedAccessTokenCoreId = linkedAccessTokenCoreId;
-        this.linkedIdTokenCoreId = linkedIdTokenCoreId;
+        this.linkedAccessTokenCoreKey = linkedAccessTokenCoreKey;
+        this.linkedIdTokenCoreKey = linkedIdTokenCoreKey;
     }
 
     public static ExistingRefreshTokenCore of(
         final Key key,
-        final LinkedAccessTokenCoreKey linkedAccessTokenCoreId,
-        final LinkedIdTokenCoreKey linkedIdTokenCoreId
+        final LinkedAccessTokenCoreKey linkedAccessTokenCoreKey,
+        final LinkedIdTokenCoreKey linkedIdTokenCoreKey
     ) {
         ExistingRefreshTokenCore refreshTokenCore = new ExistingRefreshTokenCore(
             key,
-            linkedAccessTokenCoreId,
-            linkedIdTokenCoreId
+            linkedAccessTokenCoreKey,
+            linkedIdTokenCoreKey
         );
 
         return refreshTokenCore;
