@@ -4,7 +4,7 @@ import java.util.UUID;
 
 import lombok.Getter;
 
-public class UserProfileData {
+public class MeProfileData {
     @Getter
     final UUID code;
 
@@ -17,14 +17,14 @@ public class UserProfileData {
     @Getter
     final String imageUrl;
 
-    private UserProfileData(final UUID code, final String name, final String email, final String imageUrl) {
+    private MeProfileData(final UUID code, final String name, final String email, final String imageUrl) {
         this.code = code;
         this.name = name;
         this.email = email;
         this.imageUrl = imageUrl;
     }
 
-    public static UserProfileData of(final UUID code, final String name, final String email, final String imageUrl) {
-        return new UserProfileData(code, name, email, imageUrl);
+    public static MeProfileData of(final UUID code, final String name, final String email, final String imageUrl) {
+        return new MeProfileData(code, name, email, imageUrl);
     }
 }

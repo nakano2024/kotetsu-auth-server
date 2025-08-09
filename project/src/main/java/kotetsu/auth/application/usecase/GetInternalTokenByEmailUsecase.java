@@ -1,67 +1,63 @@
 package kotetsu.auth.application.usecase;
 
-
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.Date;
-import java.util.Map;
 
 import org.springframework.stereotype.Component;
 
-import kotetsu.auth.application.dto.data.UserProfileData;
+import kotetsu.auth.application.domain.entity.IssuedInternalAuthToken;
+import kotetsu.auth.application.domain.entity.MeProfile;
+import kotetsu.auth.application.domain.entity.PendingInternalAuthToken;
+import kotetsu.auth.application.domain.repository.IFetchMeProfilePort;
+import kotetsu.auth.application.domain.service.CreateIssuedInternalAuthTokeService;
+import kotetsu.auth.application.domain.service.CreatePendingInternalAuthTokenService;
+import kotetsu.auth.application.domain.util.IFetchCurrentDatePort;
+import kotetsu.auth.application.domain.value.IssuedAt;
+import kotetsu.auth.application.domain.value.Key;
 import kotetsu.auth.application.dto.input.GetInternalTokenInput;
 import kotetsu.auth.application.dto.output.IdTokenOutput;
 import kotetsu.auth.application.exception.InputNullRuntimeException;
-import kotetsu.auth.application.exception.UserProfileNotFoundIOException;
-import kotetsu.auth.application.persistence.IFindUserProfileByEmailPort;
-import kotetsu.auth.application.util.IGenerateIInternalAuthTokenPort;
-import kotetsu.auth.application.util.IGetCurrentInstantPort;
+import kotetsu.auth.application.exception.MeProfileNotFoundIOException;
 
 @Component
 public class GetInternalTokenByEmailUsecase {
-    final IFindUserProfileByEmailPort findUserProfileByEmailPort;
-    final IGenerateIInternalAuthTokenPort generateInternalTokenPort;
-    final IGetCurrentInstantPort getCurrentInstantPort;
+    private final IFetchMeProfilePort fetchMeProfilePort;
+    private final CreatePendingInternalAuthTokenService createPendingInternalAuthTokenService;
+    private final CreateIssuedInternalAuthTokeService createIssuedInternalAuthTokeService;
+    private final IFetchCurrentDatePort fetchCurrentDatePort;
 
     public GetInternalTokenByEmailUsecase(
-        final IFindUserProfileByEmailPort findUserProfileByEmailPort,
-        final IGenerateIInternalAuthTokenPort generateInternalTokenPort,
-        final IGetCurrentInstantPort getCurrentInstantPort
+        final IFetchMeProfilePort fetchMeProfilePort,
+        final CreatePendingInternalAuthTokenService createPendingInternalAuthTokenService,
+        final CreateIssuedInternalAuthTokeService createIssuedInternalAuthTokeService,
+        final IFetchCurrentDatePort fetchCurrentDatePort
     ) {
-        this.findUserProfileByEmailPort = findUserProfileByEmailPort;
-        this.generateInternalTokenPort = generateInternalTokenPort;
-        this.getCurrentInstantPort = getCurrentInstantPort;
+        this.fetchMeProfilePort = fetchMeProfilePort;
+        this.createPendingInternalAuthTokenService = createPendingInternalAuthTokenService;
+        this.createIssuedInternalAuthTokeService = createIssuedInternalAuthTokeService;
+        this.fetchCurrentDatePort = fetchCurrentDatePort;
     }
 
-    public IdTokenOutput getInternalToken(GetInternalTokenInput input) throws UserProfileNotFoundIOException {
+    public IdTokenOutput getInternalToken(GetInternalTokenInput input) throws MeProfileNotFoundIOException {
         if (input == null) {
             throw new InputNullRuntimeException();
         }
 
-        final UserProfileData userProfile = findUserProfileByEmailPort.findByEmail(input.getEmail());
+        final Date currentDate = fetchCurrentDatePort.fetch();
 
-        if (userProfile == null) {
-            throw new UserProfileNotFoundIOException();
-        }
+        final MeProfile meProfile = fetchMeProfilePort.fetch(Key.of(input.getUserKey()))
+            .orElseThrow(() -> new MeProfileNotFoundIOException());
 
-        Instant current = getCurrentInstantPort.getCurrent();
-        Date issuedAt = Date.from(current);
-        Date expiresAt = Date.from(current.plus(1, ChronoUnit.DAYS));
-        String idToken = generateInternalTokenPort.generate(
-            userProfile.getCode().toString(),
-            issuedAt,
-            expiresAt,
-            Map.of(
-                "name", userProfile.getName(),
-                "email", userProfile.getEmail(),
-                "imageUrl", userProfile.getImageUrl()
-            )
+        final PendingInternalAuthToken pendingInternalAuthToken = createPendingInternalAuthTokenService.create(
+            meProfile,
+            IssuedAt.of(currentDate)
         );
 
+        final IssuedInternalAuthToken issuedInternalAuthToken = createIssuedInternalAuthTokeService.create(pendingInternalAuthToken);
+
         return IdTokenOutput.of(
-            idToken,
-            "Bearer",
-            (Long) (Math.abs(expiresAt.getTime() - issuedAt.getTime()) / 1000)
+            issuedInternalAuthToken.getValue().getValue(),
+            IssuedInternalAuthToken.TOKEN_TYPE,
+            pendingInternalAuthToken.getDuration().getDifferenceSec()
         );
     }
 }

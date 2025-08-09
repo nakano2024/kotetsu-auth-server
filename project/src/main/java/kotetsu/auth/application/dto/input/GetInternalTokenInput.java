@@ -7,22 +7,20 @@ import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import kotetsu.auth.application.exception.InputException;
 import lombok.Getter;
 
 public class GetInternalTokenInput {
     @Getter
     @NotNull
-    @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")
-    private final String email;
+    private final String userKey;
 
-    private GetInternalTokenInput(String email) {
-        this.email = email;
+    private GetInternalTokenInput(final String userKey) {
+        this.userKey = userKey;
     }
 
-    public static GetInternalTokenInput of(String email) {
-        final GetInternalTokenInput input = new GetInternalTokenInput(email);
+    public static GetInternalTokenInput of(final String userKey) {
+        final GetInternalTokenInput input = new GetInternalTokenInput(userKey);
 
         final ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
         final Validator validator = validatorFactory.getValidator();

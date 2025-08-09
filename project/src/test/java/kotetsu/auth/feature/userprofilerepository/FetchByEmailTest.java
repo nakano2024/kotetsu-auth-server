@@ -15,7 +15,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
-import kotetsu.auth.application.dto.data.UserProfileData;
+import kotetsu.auth.application.dto.data.MeProfileData;
 import kotetsu.auth.persistence.UserProfileDao;
 
 @SpringBootTest
@@ -52,7 +52,7 @@ public class FetchByEmailTest {
             parameters
         );
 
-        UserProfileData profile = userProfileDao.findByEmail("tanaka@example.com");
+        MeProfileData profile = userProfileDao.findByEmail("tanaka@example.com");
         assertEquals("9afd6f24-49b8-0ddd-1797-552b9b31dbe4", profile.getCode().toString());
         assertEquals("田中太郎", profile.getName());
         assertEquals("tanaka@example.com", profile.getEmail());
@@ -61,7 +61,7 @@ public class FetchByEmailTest {
 
         @Test
     public void returnNullIfUserDoseNotExist() {
-        UserProfileData profile = userProfileDao.findByEmail("tanaka@example.com");
+        MeProfileData profile = userProfileDao.findByEmail("tanaka@example.com");
         assertNull(profile);
     }
 }

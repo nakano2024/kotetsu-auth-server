@@ -6,8 +6,8 @@ import kotetsu.auth.application.dto.data.UserCredentialData;
 import kotetsu.auth.application.dto.input.GetUserCredentialEmailInput;
 import kotetsu.auth.application.dto.output.UserCredentialsOutput;
 import kotetsu.auth.application.exception.InputNullRuntimeException;
-import kotetsu.auth.application.exception.UserCredentialNotFoundIOException;
-import kotetsu.auth.application.persistence.IFindUserCredentialByEmailPort;
+import kotetsu.auth.application.exception.UserCredentialNotFoundException;
+import kotetsu.auth.application.query.IFindUserCredentialByEmailPort;
 
 @Component
 public class GetUserCredentialsByEmailUsecase {
@@ -17,7 +17,7 @@ public class GetUserCredentialsByEmailUsecase {
         this.findUserCredentialByEmailPort = findUserCredentialByEmailPort;
     }
 
-    public UserCredentialsOutput getUserCredentials(GetUserCredentialEmailInput input) throws UserCredentialNotFoundIOException {
+    public UserCredentialsOutput getUserCredentials(GetUserCredentialEmailInput input) throws UserCredentialNotFoundException {
         if (input == null) {
             throw new InputNullRuntimeException();
         }        
@@ -25,7 +25,7 @@ public class GetUserCredentialsByEmailUsecase {
         UserCredentialData userCredential = findUserCredentialByEmailPort.findByEmail(input.getEmail());
 
         if (userCredential == null) {
-            throw new UserCredentialNotFoundIOException();
+            throw new UserCredentialNotFoundException();
         }
 
         return UserCredentialsOutput.of(
