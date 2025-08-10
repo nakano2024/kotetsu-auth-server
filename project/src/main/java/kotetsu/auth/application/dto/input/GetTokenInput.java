@@ -1,5 +1,6 @@
 package kotetsu.auth.application.dto.input;
 
+import java.util.Optional;
 import java.util.Set;
 
 import jakarta.validation.ConstraintViolation;
@@ -17,29 +18,31 @@ public class GetTokenInput {
     @NotBlank
     private final String grantType;
 
-    @Getter
-    @Pattern(regexp = "[a-zA-Z0-9.]+")
-    @NotBlank
-    private final String clientId;
+    private final  String code;
 
-    @Getter
-    private final String code;
-
-    @Getter
     private final String codeVerifier;
 
-    @Getter
     private final String refreshToken;
+
+    public Optional<String> getCode() {
+        return Optional.ofNullable(code);
+    }
+
+    public Optional<String> getCodeVerifier() {
+        return Optional.ofNullable(codeVerifier);
+    }
+
+    public Optional<String> getRefreshToken() {
+        return Optional.ofNullable(refreshToken);
+    }
 
     private GetTokenInput(
         final String grantType,
-        final String clientId,
         final String code,
         final String codeVerifier,
         final String refreshToken
     ) {
         this.grantType = grantType;
-        this.clientId = clientId;
         this.code = code;
         this.codeVerifier = codeVerifier;
         this.refreshToken = refreshToken;
@@ -47,15 +50,13 @@ public class GetTokenInput {
 
     public static GetTokenInput of(
         final String grantType,
-        final String clientId,
         final String code,
         final String codeVerifier,
         final String refreshToken
     ) {
         final GetTokenInput input = new GetTokenInput(
-            code,
             grantType,
-            clientId,
+            code,
             codeVerifier,
             refreshToken
         );

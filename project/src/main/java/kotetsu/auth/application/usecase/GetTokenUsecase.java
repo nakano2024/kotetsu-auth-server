@@ -141,25 +141,23 @@ public class GetTokenUsecase {
             InvalidCodeVerifierException,
             InputCodeVerifierNullException
     {
-        if (input.getCode() == null) {
-            throw new InputAuthorizationCodeNullException();
-        }
+        final String inputCode = input.getCode()
+            .orElseThrow(() -> new InputAuthorizationCodeNullException());
 
-        if (input.getCodeVerifier() == null) {
-            throw new InputCodeVerifierNullException();
-        }
+        final String inputCodeVerifier = input.getCodeVerifier()
+            .orElseThrow(() -> new InputCodeVerifierNullException());
 
         final Date currentDate = fetchCurrentDatePort.fetch();
 
         final ExistingAuthorization authorization = fetchExistingAuthorizationPort.fetch(
-            AuthorizationCodeValue.of(input.getCode())
+            AuthorizationCodeValue.of(inputCode)
         ).orElseThrow(() -> new AuthorizationCodeNotFoundException());
 
         if (authorization.getAuthorizationCode().getExpiredAt().hasExpired(currentDate)) {
             throw new AuthorizationCodeExpiredException();
         }
 
-        if (!checkCodeVerifilerService.isValid(AuthorizationCodeVerifier.of(input.getCodeVerifier()), authorization.getAuthorizationCode())) {
+        if (!checkCodeVerifilerService.isValid(AuthorizationCodeVerifier.of(inputCodeVerifier), authorization.getAuthorizationCode())) {
             throw new InvalidCodeVerifierException();
         }
 
@@ -203,8 +201,8 @@ public class GetTokenUsecase {
             issuedAccessToken.getValue().getValue(),
             IssuedAccessToken.TOKEN_TYPE,
             issuedAccessToken.getDuration().getDifferenceSec(),
-            Optional.of(refreshToken).orElse(null).getValue().getValue(),
-            Optional.of(idToken).orElse(null).getValue().getValue(),
+            Optional.ofNullable(refreshToken).orElse(null).getValue().getValue(),
+            Optional.ofNullable(idToken).orElse(null).getValue().getValue(),
             accessTokenCore.getScopeList().toScopeListToken(),
             accessTokenCore.getRelatedAudienceList().toStringList()
         );
@@ -214,13 +212,12 @@ public class GetTokenUsecase {
         throws InputRefreshTokenNullException,
             RefreshTokenNotFoundException
     {
-        if (input.getRefreshToken() == null) {
-            throw new InputRefreshTokenNullException();
-        }
+        final String inputRefreshToken = input.getRefreshToken()
+            .orElseThrow(() -> new InputRefreshTokenNullException());
 
         final Date currentDate = fetchCurrentDatePort.fetch();
 
-        final ExistingRefreshToken existingRefreshToken = fetchExistingRefreshTokenPort.fetch(RefreshTokenValue.of(input.getRefreshToken()))
+        final ExistingRefreshToken existingRefreshToken = fetchExistingRefreshTokenPort.fetch(RefreshTokenValue.of(inputRefreshToken))
             .orElseThrow(() -> new RefreshTokenNotFoundException());
 
         if (existingRefreshToken.getDuration().getExpiredAt().hasExpired(currentDate)) {
@@ -265,7 +262,7 @@ public class GetTokenUsecase {
             IssuedAccessToken.TOKEN_TYPE,
             issuedAccessToken.getDuration().getDifferenceSec(),
             newRefreshToken.getValue().getValue(),
-            Optional.of(idToken).orElse(null).getValue().getValue(),
+            Optional.ofNullable(idToken).orElse(null).getValue().getValue(),
             accessTokenCore.getScopeList().toScopeListToken(),
             accessTokenCore.getRelatedAudienceList().toStringList()
         );
