@@ -13,6 +13,9 @@ public class TokenOutput {
     private final String tokenType;
 
     @Getter
+    private final Long issuedAt;
+
+    @Getter
     private final Long expiresIn;
 
     private final String refreshToken;
@@ -36,6 +39,7 @@ public class TokenOutput {
     private TokenOutput(
         final String accessToken,
         final String tokenType,
+        final Long issuedAt,
         final Long expiresIn,
         final String refreshToken,
         final String idToken,
@@ -44,6 +48,7 @@ public class TokenOutput {
     ) {
         this.accessToken = accessToken;
         this.tokenType = tokenType;
+        this.issuedAt = issuedAt;
         this.expiresIn = expiresIn;
         this.refreshToken = refreshToken;
         this.idToken = idToken;
@@ -54,12 +59,22 @@ public class TokenOutput {
     public static TokenOutput of(
         final String accessToken,
         final String tokenType,
+        final Long issuedAt,
         final Long expiresIn,
         final String refreshToken,
         final String idToken,
         final String scopeToken,
         final List<String> audiences
     ) {
-        return new TokenOutput(accessToken, tokenType, expiresIn, refreshToken, idToken, scopeToken, audiences);
+        return new TokenOutput(
+            accessToken,
+            tokenType,
+            issuedAt,
+            expiresIn,
+            refreshToken,
+            idToken,
+            scopeToken,
+            audiences
+        );
     }
 }

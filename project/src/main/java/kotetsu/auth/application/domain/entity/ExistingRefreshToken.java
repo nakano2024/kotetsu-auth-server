@@ -9,24 +9,19 @@ import lombok.Getter;
 public class ExistingRefreshToken {
     @Getter
     @NotNull
-    private final RefreshTokenValue value;
-
-    @Getter
-    @NotNull
     private final LinkedRefreshTokenCoreKey linkedRefreshTokenCoreKey;
 
     @Getter
     @NotNull
     private final Duration duration;
 
-    private ExistingRefreshToken(final RefreshTokenValue value, final LinkedRefreshTokenCoreKey linkedRefreshTokenCoreKey, final Duration duration) {
-        this.value = value;
+    private ExistingRefreshToken(final LinkedRefreshTokenCoreKey linkedRefreshTokenCoreKey, final Duration duration) {
         this.linkedRefreshTokenCoreKey = linkedRefreshTokenCoreKey;
         this.duration = duration;
     }
 
-    public static ExistingRefreshToken of(final RefreshTokenValue value, final LinkedRefreshTokenCoreKey linkedRefreshTokenCoreKey, final Duration duration) {
-        final ExistingRefreshToken existingRefreshToken = new ExistingRefreshToken(value, linkedRefreshTokenCoreKey, duration);
+    public static ExistingRefreshToken of(final LinkedRefreshTokenCoreKey linkedRefreshTokenCoreKey, final Duration duration) {
+        final ExistingRefreshToken existingRefreshToken = new ExistingRefreshToken(linkedRefreshTokenCoreKey, duration);
 
         return existingRefreshToken;
     }

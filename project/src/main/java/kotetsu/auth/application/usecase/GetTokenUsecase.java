@@ -200,6 +200,7 @@ public class GetTokenUsecase {
         return TokenOutput.of(
             issuedAccessToken.getValue().getValue(),
             IssuedAccessToken.TOKEN_TYPE,
+            issuedAccessToken.getDuration().getIssuedAt().getUnixSec(),
             issuedAccessToken.getDuration().getDifferenceSec(),
             Optional.ofNullable(refreshToken).orElse(null).getValue().getValue(),
             Optional.ofNullable(idToken).orElse(null).getValue().getValue(),
@@ -260,6 +261,7 @@ public class GetTokenUsecase {
         return TokenOutput.of(
             issuedAccessToken.getValue().getValue(),
             IssuedAccessToken.TOKEN_TYPE,
+            issuedAccessToken.getDuration().getIssuedAt().getUnixSec(),
             issuedAccessToken.getDuration().getDifferenceSec(),
             newRefreshToken.getValue().getValue(),
             Optional.ofNullable(idToken).orElse(null).getValue().getValue(),
