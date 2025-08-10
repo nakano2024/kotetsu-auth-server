@@ -26,6 +26,7 @@ import kotetsu.auth.application.domain.repository.IFetchExistingAuthorizationPor
 import kotetsu.auth.application.domain.repository.IFetchExistingIdTokenCorePort;
 import kotetsu.auth.application.domain.repository.IFetchExistingRefreshTokenCorePort;
 import kotetsu.auth.application.domain.repository.IFetchExistingRefreshTokenPort;
+import kotetsu.auth.application.domain.repository.IStoreIdTokenMetaPort;
 import kotetsu.auth.application.domain.repository.IStoreIssuedAccessTokenPort;
 import kotetsu.auth.application.domain.repository.IStoreIssuedRefreshTokenPort;
 import kotetsu.auth.application.domain.service.CheckCodeVerifilerService;
@@ -41,6 +42,7 @@ import kotetsu.auth.application.domain.value.IdTokenUniqueId;
 import kotetsu.auth.application.domain.value.IssuedAt;
 import kotetsu.auth.application.domain.value.Key;
 import kotetsu.auth.application.domain.value.LinkedAccessTokenCoreKey;
+import kotetsu.auth.application.domain.value.LinkedIdTokenCoreKey;
 import kotetsu.auth.application.domain.value.LinkedRefreshTokenCoreKey;
 import kotetsu.auth.application.domain.value.RefreshTokenValue;
 import kotetsu.auth.application.dto.input.GetTokenInput;
@@ -66,6 +68,7 @@ public class GetTokenUsecase {
     private final IStoreIssuedRefreshTokenPort storeIssuedRefreshTokenPort;
     private final IFetchExistingRefreshTokenCorePort fetchExistingRefreshTokenCorePort;
     private final IFetchExistingIdTokenCorePort fetchExistingIdTokenCorePort;
+    private final IStoreIdTokenMetaPort storeIdTokenMetaPort;
     private final CreateIdTokenMetaService createIdTokenMetaService;
     private final CreateIssuedIdTokenService createIssuedIdTokenService;
     private final CheckCodeVerifilerService checkCodeVerifilerService;
@@ -83,6 +86,7 @@ public class GetTokenUsecase {
         final CreateIssuedRefreshTokenService createIssuedRefreshTokenService,
         final IStoreIssuedRefreshTokenPort storeIssuedRefreshTokenPort,
         final IFetchExistingRefreshTokenCorePort fetchExistingRefreshTokenCorePort,
+        final IStoreIdTokenMetaPort storeIdTokenMetaPort,
         final IFetchExistingIdTokenCorePort fetchExistingIdTokenCorePort,
         final CreateIdTokenMetaService createIdTokenMetaService,
         final CreateIssuedIdTokenService createIssuedIdTokenService,
@@ -106,6 +110,7 @@ public class GetTokenUsecase {
         this.checkCodeVerifilerService = checkCodeVerifilerService;
         this.fetchExistingRefreshTokenPort = fetchExistingRefreshTokenPort;
         this.deleteExistingRefreshTokenPort = deleteExistingRefreshTokenPort;
+        this.storeIdTokenMetaPort = storeIdTokenMetaPort;
     }
 
     @Transactional
@@ -178,8 +183,13 @@ public class GetTokenUsecase {
         ).orElseThrow(() -> new ExistingIdTokenCoreNullRuntimeException());
 
         if (accessTokenCore.getScopeList().hasOpenid()) {
-            final IdTokenMeta idTokenMeta = createIdTokenMetaService.create(IdTokenUniqueId.of(generateUuidPort.generate()), IssuedAt.of(currentDate));
-            idToken = createIssuedIdTokenService.create(idTokenMeta, idTokenCore);
+            final IdTokenMeta idTokenMeta = createIdTokenMetaService.create(
+                LinkedIdTokenCoreKey.of(idTokenCore.getKey().getValue()),
+                IdTokenUniqueId.of(generateUuidPort.generate()),
+                IssuedAt.of(currentDate)
+            );
+            storeIdTokenMetaPort.store(idTokenMeta);
+            idToken = createIssuedIdTokenService.create(idTokenMeta);
         }
 
         IssuedRefreshToken refreshToken = null;
@@ -229,9 +239,10 @@ public class GetTokenUsecase {
             Key.of(existingRefreshToken.getLinkedRefreshTokenCoreKey().getValue())
         ).orElseThrow(() -> new ExistingRefreshTokenCoreNullRuntimeException());
 
+        // 発行日時及び期限切れ日時は前のトークンを引き継ぐ
         IssuedRefreshToken newRefreshToken = createIssuedRefreshTokenService.create(
             LinkedRefreshTokenCoreKey.of(refreshTokenCore.getKey().getValue()),
-            IssuedAt.of(currentDate)
+            existingRefreshToken.getDuration().getIssuedAt()
         );
         storeIssuedRefreshTokenPort.store(newRefreshToken);
 
@@ -252,8 +263,13 @@ public class GetTokenUsecase {
         ).orElseThrow(() -> new ExistingIdTokenCoreNullRuntimeException());
 
         if (accessTokenCore.getScopeList().hasOpenid()) {
-            final IdTokenMeta idTokenMeta = createIdTokenMetaService.create(IdTokenUniqueId.of(generateUuidPort.generate()), IssuedAt.of(currentDate));
-            idToken = createIssuedIdTokenService.create(idTokenMeta, idTokenCore);
+            final IdTokenMeta idTokenMeta = createIdTokenMetaService.create(
+                LinkedIdTokenCoreKey.of(idTokenCore.getKey().getValue()),
+                IdTokenUniqueId.of(generateUuidPort.generate()),
+                IssuedAt.of(currentDate)
+            );
+            storeIdTokenMetaPort.store(idTokenMeta);
+            idToken = createIssuedIdTokenService.create(idTokenMeta);
         }
 
         deleteExistingRefreshTokenPort.delete(existingRefreshToken);

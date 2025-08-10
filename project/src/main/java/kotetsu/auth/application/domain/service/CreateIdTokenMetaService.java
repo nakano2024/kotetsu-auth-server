@@ -8,10 +8,12 @@ import kotetsu.auth.application.domain.value.Duration;
 import kotetsu.auth.application.domain.value.ExpiredAt;
 import kotetsu.auth.application.domain.value.IdTokenUniqueId;
 import kotetsu.auth.application.domain.value.IssuedAt;
+import kotetsu.auth.application.domain.value.LinkedIdTokenCoreKey;
 
 public class CreateIdTokenMetaService {
-    public IdTokenMeta create(final IdTokenUniqueId uniqueId, final IssuedAt issuedAt) {
+    public IdTokenMeta create(final LinkedIdTokenCoreKey linkedIdTokenCoreKey, final IdTokenUniqueId uniqueId, final IssuedAt issuedAt) {
         return IdTokenMeta.of(
+            linkedIdTokenCoreKey,
             Duration.of(
                 issuedAt,
                 ExpiredAt.of(Date.from(issuedAt.getValue().toInstant().plus(IdTokenMeta.EXPIRES_HOURS, ChronoUnit.HOURS)))

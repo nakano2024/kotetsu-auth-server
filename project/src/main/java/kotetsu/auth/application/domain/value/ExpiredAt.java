@@ -2,7 +2,10 @@ package kotetsu.auth.application.domain.value;
 
 import java.util.Date;
 
+import lombok.Getter;
+
 public class ExpiredAt {
+    @Getter
     private final Date value;
 
     private ExpiredAt(final Date value) {

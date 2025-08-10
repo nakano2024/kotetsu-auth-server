@@ -3,7 +3,6 @@ package kotetsu.auth.application.domain.entity;
 import jakarta.validation.constraints.NotNull;
 import kotetsu.auth.application.domain.value.Duration;
 import kotetsu.auth.application.domain.value.LinkedRefreshTokenCoreKey;
-import kotetsu.auth.application.domain.value.RefreshTokenValue;
 import lombok.Getter;
 
 public class ExistingRefreshToken {
