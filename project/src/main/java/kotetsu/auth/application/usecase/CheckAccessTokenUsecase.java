@@ -6,7 +6,6 @@ import java.util.Optional;
 import kotetsu.auth.application.domain.entity.AudienceClient;
 import kotetsu.auth.application.domain.entity.ExistingAccessToken;
 import kotetsu.auth.application.domain.entity.ExistingAccessTokenCore;
-import kotetsu.auth.application.domain.entity.RequesterClient;
 import kotetsu.auth.application.domain.entity.ResourceOwnerValidator;
 import kotetsu.auth.application.domain.repository.IFetchAudienceClientPort;
 import kotetsu.auth.application.domain.repository.IFetchExistingAccessTokenCorePort;
