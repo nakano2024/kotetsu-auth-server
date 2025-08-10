@@ -6,6 +6,7 @@ import java.util.Optional;
 import kotetsu.auth.application.domain.entity.AudienceClient;
 import kotetsu.auth.application.domain.entity.ExistingAccessToken;
 import kotetsu.auth.application.domain.entity.ExistingAccessTokenCore;
+import kotetsu.auth.application.domain.entity.IssuedAccessToken;
 import kotetsu.auth.application.domain.entity.ResourceOwnerValidator;
 import kotetsu.auth.application.domain.repository.IFetchAudienceClientPort;
 import kotetsu.auth.application.domain.repository.IFetchExistingAccessTokenCorePort;
@@ -59,6 +60,7 @@ public class CheckAccessTokenUsecase {
                 null,
                 null,
                 null,
+                null,
                 null
             );
         }
@@ -69,6 +71,7 @@ public class CheckAccessTokenUsecase {
         if (accessToken.getDuration().getExpiredAt().hasExpired(currentDate)) {
             return AccessTokenCheckOutput.of(
                 false,
+                null,
                 null,
                 null,
                 null,
@@ -94,6 +97,7 @@ public class CheckAccessTokenUsecase {
                 null,
                 null,
                 null,
+                null,
                 null
             );    
         }
@@ -109,7 +113,8 @@ public class CheckAccessTokenUsecase {
                 accessToken.getDuration().getDifferenceSec(),
                 accessTokenCore.getSubject().getValue(),
                 accessTokenCore.getRelatedAudienceList().toStringList(),
-                accessTokenCore.getIssuer().getValue()
+                accessTokenCore.getIssuer().getValue(),
+                IssuedAccessToken.TOKEN_TYPE
         );
     }
 }

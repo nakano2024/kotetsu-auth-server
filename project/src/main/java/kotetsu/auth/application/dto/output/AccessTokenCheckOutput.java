@@ -15,6 +15,7 @@ public class AccessTokenCheckOutput {
     private final String subject;
     private final List<String> audiences;
     private final String issuer;
+    private final String tokenType;
 
     public Optional<String> getScopeToken() {
         return Optional.ofNullable(scopeToken);
@@ -41,7 +42,11 @@ public class AccessTokenCheckOutput {
     }
 
     public Optional<String> getIssuer() {
-        return Optional.ofNullable(scopeToken);
+        return Optional.ofNullable(issuer);
+    }
+
+    public Optional<String> getTokenType() {
+        return Optional.ofNullable(tokenType);
     }
 
     private AccessTokenCheckOutput(
@@ -52,7 +57,8 @@ public class AccessTokenCheckOutput {
         final Long expiresIn,
         final String subject,
         final List<String> audiences,
-        final String issuer
+        final String issuer,
+        final String tokenType
     ) {
         this.isActive = isActive;
         this.scopeToken = scopeToken;
@@ -62,6 +68,7 @@ public class AccessTokenCheckOutput {
         this.subject = subject;
         this.audiences = audiences;
         this.issuer = issuer;
+        this.tokenType = tokenType;
     }
 
     public static AccessTokenCheckOutput of(
@@ -72,7 +79,8 @@ public class AccessTokenCheckOutput {
         final Long expiresIn,
         final String subject,
         final List<String> audiences,
-        final String issuer
+        final String issuer,
+        final String tokenType
     ) {
         final AccessTokenCheckOutput output = new AccessTokenCheckOutput(
             isActive,
@@ -82,7 +90,8 @@ public class AccessTokenCheckOutput {
             expiresIn,
             subject,
             audiences,
-            issuer
+            issuer,
+            tokenType
         );
 
         return output;

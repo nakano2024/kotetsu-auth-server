@@ -7,4 +7,5 @@ import kotetsu.auth.application.domain.value.AccessTokenValue;
 
 public interface IFetchExistingAccessTokenPort {
     Optional<ExistingAccessToken> fetch(AccessTokenValue value);
+    void delete(ExistingAccessToken accessToken);
 }
