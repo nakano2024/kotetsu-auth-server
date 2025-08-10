@@ -3,6 +3,7 @@ package kotetsu.auth.application.domain.entity;
 import jakarta.validation.constraints.NotNull;
 import kotetsu.auth.application.domain.value.AccessType;
 import kotetsu.auth.application.domain.value.AuthorizationCode;
+import kotetsu.auth.application.domain.value.GrantType;
 import kotetsu.auth.application.domain.value.Key;
 import kotetsu.auth.application.domain.value.LinkedAccessTokenCoreKey;
 import kotetsu.auth.application.domain.value.LinkedIdTokenCoreKey;
@@ -34,13 +35,17 @@ public class ExistingAuthorization {
     @NotNull
     private final LinkedRefreshTokenCoreKey linkedRefreshTokenCoreKey;
 
+    @Getter
+    private final GrantType grantType;
+
     private ExistingAuthorization(
         final Key key,
         final AuthorizationCode authorizationCode,
         final AccessType accessType,
         final LinkedAccessTokenCoreKey linkedAccessTokenCoreKey,
         final LinkedIdTokenCoreKey linkedIdTokenCoreKey,
-        final LinkedRefreshTokenCoreKey linkedRefreshTokenCoreKey
+        final LinkedRefreshTokenCoreKey linkedRefreshTokenCoreKey,
+        final GrantType grantType
     ) {
         this.key = key;
         this.authorizationCode = authorizationCode;
@@ -48,6 +53,7 @@ public class ExistingAuthorization {
         this.linkedAccessTokenCoreKey = linkedAccessTokenCoreKey;
         this.linkedIdTokenCoreKey = linkedIdTokenCoreKey;
         this.linkedRefreshTokenCoreKey = linkedRefreshTokenCoreKey;
+        this.grantType = grantType;
     }
 
     public static ExistingAuthorization of(
@@ -56,7 +62,8 @@ public class ExistingAuthorization {
         final AccessType accessType,
         final LinkedAccessTokenCoreKey linkedAccessTokenCoreKey,
         final LinkedIdTokenCoreKey linkedIdTokenCoreKey,
-        final LinkedRefreshTokenCoreKey linkedRefreshTokenCoreKey
+        final LinkedRefreshTokenCoreKey linkedRefreshTokenCoreKey,
+        final GrantType grantType
     ) {
         ExistingAuthorization authorization = new ExistingAuthorization(
             key,
@@ -64,7 +71,8 @@ public class ExistingAuthorization {
             accessType,
             linkedAccessTokenCoreKey,
             linkedIdTokenCoreKey,
-            linkedRefreshTokenCoreKey
+            linkedRefreshTokenCoreKey,
+            grantType
         );
 
         return authorization;

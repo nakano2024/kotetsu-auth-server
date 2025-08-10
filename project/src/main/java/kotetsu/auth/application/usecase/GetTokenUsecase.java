@@ -5,7 +5,6 @@ import java.util.Optional;
 
 import org.springframework.transaction.annotation.Transactional;
 
-import kotetsu.auth.application.constant.GrantTypeConstant;
 import kotetsu.auth.application.domain.entity.ExistingAccessToken;
 import kotetsu.auth.application.domain.entity.ExistingAccessTokenCore;
 import kotetsu.auth.application.domain.entity.ExistingAuthorization;
@@ -46,6 +45,7 @@ import kotetsu.auth.application.domain.util.IFetchCurrentDatePort;
 import kotetsu.auth.application.domain.util.IGenerateUuidPort;
 import kotetsu.auth.application.domain.value.AuthorizationCodeValue;
 import kotetsu.auth.application.domain.value.AuthorizationCodeVerifier;
+import kotetsu.auth.application.domain.value.GrantType;
 import kotetsu.auth.application.domain.value.IdTokenUniqueId;
 import kotetsu.auth.application.domain.value.IssuedAt;
 import kotetsu.auth.application.domain.value.Key;
@@ -63,6 +63,7 @@ import kotetsu.auth.application.exception.InputRefreshTokenNullException;
 import kotetsu.auth.application.exception.InvalidCodeVerifierException;
 import kotetsu.auth.application.exception.InvalidGrantTypeException;
 import kotetsu.auth.application.exception.RefreshTokenNotFoundException;
+import kotetsu.auth.application.exception.TokenGrantTypeDoseNotMatchException;
 
 public class GetTokenUsecase {
     private final IGenerateUuidPort generateUuidPort;
@@ -142,17 +143,18 @@ public class GetTokenUsecase {
             InputAuthorizationCodeNullException,
             InputCodeVerifierNullException,
             InputRefreshTokenNullException,
-            RefreshTokenNotFoundException
+            RefreshTokenNotFoundException,
+            TokenGrantTypeDoseNotMatchException
     {
         if (input == null) {
             throw new InputNullRuntimeException();
         }
 
-        if (input.getGrantType().equals(GrantTypeConstant.AUTORIZATION_CODE)) {
+        if (input.getGrantType().equals(GrantType.GRANT_TYPE_AUTORIZATION_CODE)) {
             return exchangeWithCode(input);
         }
 
-        if (input.getGrantType().equals(GrantTypeConstant.REFRESH_TOKEN)) {
+        if (input.getGrantType().equals(GrantType.GRANT_TYPE_REFRESH_TOKEN)) {
             return exchangeWithRefresh(input);
         }
 
@@ -164,10 +166,12 @@ public class GetTokenUsecase {
             AuthorizationCodeNotFoundException,
             AuthorizationCodeExpiredException,
             InvalidCodeVerifierException,
-            InputCodeVerifierNullException
+            InputCodeVerifierNullException,
+            TokenGrantTypeDoseNotMatchException
     {
         final String inputCode = input.getCode()
             .orElseThrow(() -> new InputAuthorizationCodeNullException());
+
         final String inputCodeVerifier = input.getCodeVerifier()
             .orElseThrow(() -> new InputCodeVerifierNullException());
 
@@ -176,9 +180,15 @@ public class GetTokenUsecase {
         final ExistingAuthorization authorization = fetchExistingAuthorizationPort.fetch(
             AuthorizationCodeValue.of(inputCode)
         ).orElseThrow(() -> new AuthorizationCodeNotFoundException());
+
+        if (!authorization.getGrantType().isAuthorizationCode()) {
+            throw new TokenGrantTypeDoseNotMatchException();
+        }
+
         if (authorization.getAuthorizationCode().getExpiredAt().hasExpired(currentDate)) {
             throw new AuthorizationCodeExpiredException();
         }
+
         if (!checkCodeVerifilerService.isValid(AuthorizationCodeVerifier.of(inputCodeVerifier), authorization.getAuthorizationCode())) {
             throw new InvalidCodeVerifierException();
         }
@@ -186,13 +196,16 @@ public class GetTokenUsecase {
         final ExistingAccessTokenCore accessTokenCore = fetchExistingAccessTokenCorePort.fetch(
             Key.of(authorization.getLinkedAccessTokenCoreKey().getValue())
         ).orElseThrow(() -> new ExistingAccessTokenCoreNullRuntimeException());
+
         final IssuedAccessToken issuedAccessToken = createIssuedAccessTokenService.create(
             LinkedAccessTokenCoreKey.of(accessTokenCore.getKey().getValue()), 
             IssuedAt.of(currentDate)
         );
+
         storeIssuedAccessTokenPort.store(issuedAccessToken);
 
         IssuedIdToken idToken = null;
+
         final ExistingIdTokenCore idTokenCore = fetchExistingIdTokenCorePort.fetch(
             Key.of(authorization.getLinkedIdTokenCoreKey().getValue())
         ).orElseThrow(() -> new ExistingIdTokenCoreNullRuntimeException());
@@ -203,6 +216,7 @@ public class GetTokenUsecase {
                 IdTokenUniqueId.of(generateUuidPort.generate()),
                 IssuedAt.of(currentDate)
             );
+
             storeIdTokenMetaPort.store(idTokenMeta);
             idToken = createIssuedIdTokenService.create(idTokenMeta);
         }
@@ -220,7 +234,7 @@ public class GetTokenUsecase {
 
             storeIssuedRefreshTokenPort.store(refreshToken);
         }
-        
+
         deleteExistingAuthorization.delete(authorization);
 
         return TokenOutput.of(
@@ -237,7 +251,8 @@ public class GetTokenUsecase {
 
     private TokenOutput exchangeWithRefresh(final GetTokenInput input)
         throws InputRefreshTokenNullException,
-            RefreshTokenNotFoundException
+            RefreshTokenNotFoundException,
+            TokenGrantTypeDoseNotMatchException
     {
         final String inputRefreshToken = input.getRefreshToken()
             .orElseThrow(() -> new InputRefreshTokenNullException());
@@ -246,6 +261,10 @@ public class GetTokenUsecase {
 
         final ExistingRefreshToken existingRefreshToken = fetchExistingRefreshTokenPort.fetch(RefreshTokenValue.of(inputRefreshToken))
             .orElseThrow(() -> new RefreshTokenNotFoundException());
+
+        if (!existingRefreshToken.getGrantType().isRefreshToken()) {
+            throw new TokenGrantTypeDoseNotMatchException();
+        }
 
         if (existingRefreshToken.getDuration().getExpiredAt().hasExpired(currentDate)) {
             throw new RefreshTokenNotFoundException();

@@ -3,6 +3,7 @@ package kotetsu.auth.application.domain.entity;
 import jakarta.validation.constraints.NotNull;
 import kotetsu.auth.application.domain.value.AccessType;
 import kotetsu.auth.application.domain.value.AuthorizationCode;
+import kotetsu.auth.application.domain.value.GrantType;
 import kotetsu.auth.application.domain.value.LinkedAccessTokenCoreKey;
 import kotetsu.auth.application.domain.value.LinkedIdTokenCoreKey;
 import kotetsu.auth.application.domain.value.LinkedRefreshTokenCoreKey;
@@ -29,18 +30,24 @@ public class RequestedAuthorization {
     @NotNull
     private final LinkedRefreshTokenCoreKey linkedRefreshTokenBodyId;
 
+    @Getter
+    @NotNull
+    private final GrantType grantType;
+
     private RequestedAuthorization(
         final AuthorizationCode authorizationCode,
         final AccessType accessType,
         final LinkedAccessTokenCoreKey linkedAccessTokenBodyId,
         final LinkedIdTokenCoreKey linkedIdTokenBodyId,
-        final LinkedRefreshTokenCoreKey linkedRefreshTokenBodyId
+        final LinkedRefreshTokenCoreKey linkedRefreshTokenBodyId,
+        final GrantType grantType
     ) {
         this.authorizationCode = authorizationCode;
         this.accessType = accessType;
         this.linkedAccessTokenBodyId = linkedAccessTokenBodyId;
         this.linkedIdTokenBodyId = linkedIdTokenBodyId;
         this.linkedRefreshTokenBodyId = linkedRefreshTokenBodyId;
+        this.grantType = grantType;
     }
 
     public static RequestedAuthorization of(
@@ -55,7 +62,8 @@ public class RequestedAuthorization {
             accessType,
             linkedAccessTokenBodyId,
             linkedIdTokenBodyId,
-            linkedRefreshTokenBodyId
+            linkedRefreshTokenBodyId,
+            GrantType.of(GrantType.GRANT_TYPE_AUTORIZATION_CODE)
         );
 
         return authorization;
