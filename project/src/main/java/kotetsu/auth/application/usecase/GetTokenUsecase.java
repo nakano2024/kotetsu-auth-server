@@ -145,7 +145,8 @@ public class GetTokenUsecase {
             InputCodeVerifierNullException,
             InputRefreshTokenNullException,
             RefreshTokenNotFoundException,
-            TokenGrantTypeDoseNotMatchException
+            TokenGrantTypeDoseNotMatchException,
+            RefreshTokenExpiredException
     {
         if (input == null) {
             throw new InputNullRuntimeException();
@@ -252,7 +253,8 @@ public class GetTokenUsecase {
     private TokenOutput exchangeWithRefresh(final GetTokenInput input)
         throws InputRefreshTokenNullException,
             RefreshTokenNotFoundException,
-            TokenGrantTypeDoseNotMatchException
+            TokenGrantTypeDoseNotMatchException,
+            RefreshTokenExpiredException
     {
         final String inputRefreshToken = input.getRefreshToken()
             .orElseThrow(() -> new InputRefreshTokenNullException());
@@ -267,7 +269,7 @@ public class GetTokenUsecase {
         }
 
         if (existingRefreshToken.getDuration().getExpiredAt().hasExpired(currentDate)) {
-            throw new RefreshTokenExpiredException());
+            throw new RefreshTokenExpiredException();
         }
 
         final ExistingRefreshTokenCore refreshTokenCore = fetchExistingRefreshTokenCorePort.fetch(
