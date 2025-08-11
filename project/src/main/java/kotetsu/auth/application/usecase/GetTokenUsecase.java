@@ -62,6 +62,7 @@ import kotetsu.auth.application.exception.InputNullRuntimeException;
 import kotetsu.auth.application.exception.InputRefreshTokenNullException;
 import kotetsu.auth.application.exception.InvalidCodeVerifierException;
 import kotetsu.auth.application.exception.InvalidGrantTypeException;
+import kotetsu.auth.application.exception.RefreshTokenExpiredException;
 import kotetsu.auth.application.exception.RefreshTokenNotFoundException;
 import kotetsu.auth.application.exception.TokenGrantTypeDoseNotMatchException;
 
@@ -266,7 +267,7 @@ public class GetTokenUsecase {
         }
 
         if (existingRefreshToken.getDuration().getExpiredAt().hasExpired(currentDate)) {
-            throw new RefreshTokenNotFoundException();
+            throw new RefreshTokenExpiredException());
         }
 
         final ExistingRefreshTokenCore refreshTokenCore = fetchExistingRefreshTokenCorePort.fetch(
