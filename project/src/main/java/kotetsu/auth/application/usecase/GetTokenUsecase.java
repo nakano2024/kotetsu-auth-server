@@ -1,7 +1,6 @@
 package kotetsu.auth.application.usecase;
 
 import java.util.Date;
-import java.util.Optional;
 
 import org.springframework.transaction.annotation.Transactional;
 
