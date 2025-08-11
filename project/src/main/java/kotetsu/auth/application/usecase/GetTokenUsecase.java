@@ -189,7 +189,7 @@ public class GetTokenUsecase {
             throw new AuthorizationCodeExpiredException();
         }
 
-        if (!checkCodeVerifilerService.isValid(AuthorizationCodeVerifier.of(inputCodeVerifier), authorization.getAuthorizationCode())) {
+        if (!checkCodeVerifilerService.isValid(AuthorizationCodeVerifier.of(inputCodeVerifier), authorization.getAuthorizationCode().getChallenge())) {
             throw new InvalidCodeVerifierException();
         }
 
@@ -206,12 +206,11 @@ public class GetTokenUsecase {
 
         storeIssuedAccessTokenPort.store(issuedAccessToken);
 
-        IssuedIdToken idToken = null;
-
         final ExistingIdTokenCore idTokenCore = fetchExistingIdTokenCorePort.fetch(
             Key.of(authorization.getLinkedIdTokenCoreKey().getValue())
         ).orElseThrow(() -> new ExistingIdTokenCoreNullRuntimeException());
 
+        IssuedIdToken idToken = null;
         if (accessTokenCore.getScopeList().hasOpenid()) {
             final IdTokenMeta idTokenMeta = createIdTokenMetaService.create(
                 LinkedIdTokenCoreKey.of(idTokenCore.getKey().getValue()),
