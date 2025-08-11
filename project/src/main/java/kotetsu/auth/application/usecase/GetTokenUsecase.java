@@ -280,8 +280,8 @@ public class GetTokenUsecase {
             IssuedAt.of(currentDate)
         );
 
-        deleteExistingRefreshTokenPort.delete(existingRefreshToken);
         storeIssuedRefreshTokenPort.store(newRefreshToken);
+        deleteExistingRefreshTokenPort.delete(existingRefreshToken);
 
         final ExistingAccessTokenCore accessTokenCore = fetchExistingAccessTokenCorePort.fetch(
             Key.of(refreshTokenCore.getLinkedAccessTokenCoreKey().getValue())
