@@ -243,8 +243,8 @@ public class GetTokenUsecase {
             IssuedAccessToken.TOKEN_TYPE,
             issuedAccessToken.getDuration().getIssuedAt().getUnixSec(),
             issuedAccessToken.getDuration().getDifferenceSec(),
-            Optional.ofNullable(refreshToken).orElse(null).getValue().getValue(),
-            Optional.ofNullable(idToken).orElse(null).getValue().getValue(),
+            (refreshToken != null) ? refreshToken.getValue().getValue() : null ,
+            (idToken != null) ? idToken.getValue().getValue() : null,
             accessTokenCore.getScopeList().toScopeListToken(),
             accessTokenCore.getRelatedAudienceList().toStringList()
         );
@@ -276,7 +276,7 @@ public class GetTokenUsecase {
             Key.of(existingRefreshToken.getLinkedRefreshTokenCoreKey().getValue())
         ).orElseThrow(() -> new ExistingRefreshTokenCoreNullRuntimeException());
 
-        IssuedRefreshToken newRefreshToken = createIssuedRefreshTokenService.create(
+        final IssuedRefreshToken newRefreshToken = createIssuedRefreshTokenService.create(
             LinkedRefreshTokenCoreKey.of(refreshTokenCore.getKey().getValue()),
             IssuedAt.of(currentDate)
         );
@@ -326,7 +326,7 @@ public class GetTokenUsecase {
             issuedAccessToken.getDuration().getIssuedAt().getUnixSec(),
             issuedAccessToken.getDuration().getDifferenceSec(),
             newRefreshToken.getValue().getValue(),
-            Optional.ofNullable(idToken).orElse(null).getValue().getValue(),
+            (idToken != null) ? idToken.getValue().getValue() : null,
             accessTokenCore.getScopeList().toScopeListToken(),
             accessTokenCore.getRelatedAudienceList().toStringList()
         );
