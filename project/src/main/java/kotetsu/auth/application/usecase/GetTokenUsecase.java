@@ -192,6 +192,8 @@ public class GetTokenUsecase {
         if (!checkCodeVerifilerService.isValid(AuthorizationCodeVerifier.of(inputCodeVerifier), authorization.getAuthorizationCode())) {
             throw new InvalidCodeVerifierException();
         }
+
+        deleteExistingAuthorization.delete(authorization);
         
         final ExistingAccessTokenCore accessTokenCore = fetchExistingAccessTokenCorePort.fetch(
             Key.of(authorization.getLinkedAccessTokenCoreKey().getValue())
@@ -235,8 +237,6 @@ public class GetTokenUsecase {
             storeIssuedRefreshTokenPort.store(refreshToken);
         }
 
-        deleteExistingAuthorization.delete(authorization);
-
         return TokenOutput.of(
             issuedAccessToken.getValue().getValue(),
             IssuedAccessToken.TOKEN_TYPE,
@@ -274,10 +274,9 @@ public class GetTokenUsecase {
             Key.of(existingRefreshToken.getLinkedRefreshTokenCoreKey().getValue())
         ).orElseThrow(() -> new ExistingRefreshTokenCoreNullRuntimeException());
 
-        // 発行日時及び期限切れ日時は前のトークンを引き継ぐ
         IssuedRefreshToken newRefreshToken = createIssuedRefreshTokenService.create(
             LinkedRefreshTokenCoreKey.of(refreshTokenCore.getKey().getValue()),
-            existingRefreshToken.getDuration().getIssuedAt()
+            IssuedAt.of(currentDate)
         );
 
         deleteExistingRefreshTokenPort.delete(existingRefreshToken);
