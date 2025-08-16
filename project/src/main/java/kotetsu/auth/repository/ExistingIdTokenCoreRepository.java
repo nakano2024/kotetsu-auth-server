@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import kotetsu.auth.application.domain.entity.ExistingIdTokenCore;
 import kotetsu.auth.application.domain.repository.IFetchExistingIdTokenCorePort;
@@ -20,9 +20,9 @@ import kotetsu.auth.application.domain.value.Subject;
 import kotetsu.auth.application.domain.value.UserName;
 
 public class ExistingIdTokenCoreRepository implements IFetchExistingIdTokenCorePort {
-    private final NamedParameterJdbcOperations jdbcTemplate;
+    private final NamedParameterJdbcTemplate jdbcTemplate;
 
-    public ExistingIdTokenCoreRepository(final NamedParameterJdbcOperations jdbcTemplate) {
+    public ExistingIdTokenCoreRepository(final NamedParameterJdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 

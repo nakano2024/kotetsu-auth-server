@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import kotetsu.auth.application.domain.entity.RequesterClient;
 import kotetsu.auth.application.domain.repository.IFetchRequesterClientPort;
@@ -14,9 +14,9 @@ import kotetsu.auth.application.domain.value.ClientRedirectUri;
 import kotetsu.auth.application.domain.value.Key;
 
 public class RequesterClientRepository implements IFetchRequesterClientPort {
-    private final NamedParameterJdbcOperations jdbcTemplate;
+    private final NamedParameterJdbcTemplate jdbcTemplate;
 
-    public RequesterClientRepository(final NamedParameterJdbcOperations jdbcTemplate) {
+    public RequesterClientRepository(final NamedParameterJdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
     @Override

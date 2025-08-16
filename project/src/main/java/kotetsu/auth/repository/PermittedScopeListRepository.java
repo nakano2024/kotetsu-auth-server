@@ -7,7 +7,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import kotetsu.auth.application.domain.entity.PermittedScopeList;
 import kotetsu.auth.application.domain.entity.Scope;
@@ -15,9 +15,9 @@ import kotetsu.auth.application.domain.repository.IFetchPermittedScopeListPort;
 import kotetsu.auth.application.domain.value.Key;
 
 public class PermittedScopeListRepository implements IFetchPermittedScopeListPort {
-    private final NamedParameterJdbcOperations jdbcTemplate;
+    private final NamedParameterJdbcTemplate jdbcTemplate;
 
-    public PermittedScopeListRepository(final NamedParameterJdbcOperations jdbcTemplate) {
+    public PermittedScopeListRepository(final NamedParameterJdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 

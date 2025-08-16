@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import kotetsu.auth.application.domain.entity.MeProfile;
 import kotetsu.auth.application.domain.repository.IFetchMeProfilePort;
@@ -15,9 +15,9 @@ import kotetsu.auth.application.domain.value.Key;
 import kotetsu.auth.application.domain.value.UserName;
 
 public class MeProfileRepository implements IFetchMeProfilePort {
-    private final NamedParameterJdbcOperations jdbcTemplate;
+    private final NamedParameterJdbcTemplate jdbcTemplate;
 
-    public MeProfileRepository(final NamedParameterJdbcOperations jdbcTemplate) {
+    public MeProfileRepository(final NamedParameterJdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 

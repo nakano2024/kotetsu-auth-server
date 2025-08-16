@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import kotetsu.auth.application.domain.entity.ExistingRefreshTokenCore;
 import kotetsu.auth.application.domain.repository.IFetchExistingRefreshTokenCorePort;
@@ -15,9 +15,9 @@ import kotetsu.auth.application.domain.value.LinkedAccessTokenCoreKey;
 import kotetsu.auth.application.domain.value.LinkedIdTokenCoreKey;
 
 public class ExistingRefreshTokenCoreRepository implements IFetchExistingRefreshTokenCorePort {
-    private final NamedParameterJdbcOperations jdbcTemplate;
+    private final NamedParameterJdbcTemplate jdbcTemplate;
 
-    public ExistingRefreshTokenCoreRepository(final NamedParameterJdbcOperations jdbcTemplate) {
+    public ExistingRefreshTokenCoreRepository(final NamedParameterJdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
