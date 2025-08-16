@@ -51,7 +51,7 @@ public class ExistingIdTokenCoreRepository implements IFetchExistingIdTokenCoreP
         return Optional.of(ExistingIdTokenCore.of(
             Key.of(String.valueOf(row.get("key"))),
             Issuer.of((String) row.get("issuer")),
-            Subject.of((String) row.get("subject")),
+            Subject.of(String.valueOf(row.get("subject"))),
             Nonce.of((String) row.get("nonce")),
             IdTokenProfile.of(
                 UserName.of((String) row.get("u_name")),

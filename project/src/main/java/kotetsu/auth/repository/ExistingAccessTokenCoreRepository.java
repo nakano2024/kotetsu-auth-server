@@ -63,7 +63,7 @@ public class ExistingAccessTokenCoreRepository implements IFetchExistingAccessTo
         return Optional.of(ExistingAccessTokenCore.of(
             Key.of((String) rows.get(0).get("key")),
             Issuer.of((String) rows.get(0).get("issuer")),
-            Subject.of((String) rows.get(0).get("subject")),
+            Subject.of(String.valueOf(rows.get(0).get("subject"))),
             requestedScopeList,
             scopeRelatedAudienceList
         ));
