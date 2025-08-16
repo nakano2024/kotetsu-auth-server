@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
@@ -28,17 +29,17 @@ public class ExistingAccessTokenCoreRepository implements IFetchExistingAccessTo
     @Override
     public Optional<ExistingAccessTokenCore> fetch(Key key) {
         final String sql = """
-            SELECT atc.key, atc.issuer, atc.subject, s.key as s_key, s.name as s_name, rs.url as rs_url 
-            FROM access_token_cores as atc
-            JOIN access_token_core_scopes as atcs ON atc.key = atcs.access_token_core_key
-            JOIN scopes as s ON atcs.scope_key = s.key
-            LEFT JOIN scope_audiences as sa ON s.key = sa.scope_key
-            LEFT JOIN resource_servers as rs ON sa.resource_server_key = rs.key
+            SELECT atc.key, atc.issuer, atc.subject, s.key AS s_key, s.name AS s_name, rs.url AS rs_url 
+            FROM access_token_cores AS atc
+            JOIN access_token_core_scopes AS atcs ON atc.key = atcs.access_token_core_key
+            JOIN scopes AS s ON atcs.scope_key = s.key
+            LEFT JOIN scope_audiences AS sa ON s.key = sa.scope_key
+            LEFT JOIN resource_servers AS rs ON sa.resource_server_key = rs.key
             WHERE atc.key = :key;
         """;
 
         final Map<String, Object> params = new HashMap<>();
-        params.put("key", key.getValue());
+        params.put("key", UUID.fromString(key.getValue()));
 
         final List<Map<String, Object>> rows = template.queryForList(sql, params);
 

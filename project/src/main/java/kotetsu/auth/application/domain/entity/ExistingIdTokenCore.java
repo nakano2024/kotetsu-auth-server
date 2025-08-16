@@ -45,7 +45,6 @@ public class ExistingIdTokenCore {
 
     public static ExistingIdTokenCore of(
         final Key key,
-        final Key authorizationInformationId,
         final Issuer issuer,
         final Subject subject,
         final Nonce nonce,
