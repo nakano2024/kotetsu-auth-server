@@ -17,7 +17,7 @@ public class ResourceOwnerValidator {
         return resourceOwnerValidator;
     }
 
-    public boolean isValid() {
+    public boolean isActive() {
         return activation.isActive();
     }
 }

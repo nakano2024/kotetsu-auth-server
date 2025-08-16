@@ -37,8 +37,8 @@ import kotetsu.auth.application.domain.value.RequestedScopeNameListToken;
 import kotetsu.auth.application.domain.value.Subject;
 import kotetsu.auth.application.dto.input.GetAuthorizationCodeInput;
 import kotetsu.auth.application.dto.output.AuthorizationCodeOutput;
-import kotetsu.auth.application.exception.InputNullRuntimeException;
 import kotetsu.auth.application.exception.ClientNotPermittedScopesContainedException;
+import kotetsu.auth.application.exception.InputNullRuntimeException;
 import kotetsu.auth.application.exception.PermittedScopeListNullRuntimeException;
 import kotetsu.auth.application.exception.RequestedScopeAudienceWrapperNullRuntimeException;
 import kotetsu.auth.application.exception.RequesterClientNotFoundRuntimeException;
@@ -113,8 +113,8 @@ public class GetAuthorizationCodeUsecase {
             Subject.of(input.getResourceOwnerCode()),
             requestedScopeAudienceWrapper.getRequestedScopeList(),
             requestedScopeAudienceWrapper.getRequestedScopeRelatedAudienceList()
-            
         );
+        storeAccessTokenBodyPort.store(accessTokenCore);
 
         final PendingIdTokenCore idTokenCore = PendingIdTokenCore.of(
             Key.of((generateUuidPort.generate())),
@@ -123,12 +123,14 @@ public class GetAuthorizationCodeUsecase {
             Nonce.of(input.getNonce()),
             IdTokenAudience.of(requesterClient.getClientId().getValue())
         );
+        storeIdTokenBodyPort.store(idTokenCore);
 
         final PendingRefreshTokenCore refreshTokenCore = PendingRefreshTokenCore.of(
             Key.of(generateUuidPort.generate()),
             LinkedAccessTokenCoreKey.of(accessTokenCore.getKey().getValue()), 
             LinkedIdTokenCoreKey.of(idTokenCore.getKey().getValue())
         );
+        storeRefreshTokenBodyPort.store(refreshTokenCore);
 
         final RequestedAuthorization authorization = createAuthorizationInformationService.create(
             AuthorizationCodeChallenge.of(input.getCodeChallenge()),
@@ -138,10 +140,6 @@ public class GetAuthorizationCodeUsecase {
             LinkedRefreshTokenCoreKey.of(refreshTokenCore.getKey().getValue()),
             IssuedAt.of(currentDate)
         );
-
-        storeAccessTokenBodyPort.store(accessTokenCore);
-        storeIdTokenBodyPort.store(idTokenCore);
-        storeRefreshTokenBodyPort.store(refreshTokenCore);
         storeAuthorizationPort.store(authorization);
 
         return AuthorizationCodeOutput.of(authorization.getAuthorizationCode().getValue().getValue());

@@ -44,7 +44,7 @@ public class CheckAccessTokenUsecase {
         this.fetchAudienceClientPort = fetchAudienceClientPort;
     }
 
-    AccessTokenCheckOutput execute(final CheckAccessTokenInput input) {
+    public AccessTokenCheckOutput execute(final CheckAccessTokenInput input) {
         if (input == null) {
             throw new InputNullRuntimeException();
         }
@@ -88,7 +88,7 @@ public class CheckAccessTokenUsecase {
         final ResourceOwnerValidator resourceOwnerValidator = fetchResourceOwnerValidatorPort.fetch(Key.of(accessTokenCore.getSubject().getValue()))
             .orElseThrow(() -> new ExistingAccessTokenCoreNullRuntimeException());
 
-        if (!resourceOwnerValidator.isValid()) {
+        if (!resourceOwnerValidator.isActive()) {
             return AccessTokenCheckOutput.of(
                 false,
                 null,
