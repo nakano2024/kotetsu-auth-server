@@ -21,8 +21,14 @@ public class RequestedScopeRelatedAudienceList {
         this.audiences = audiences;
     }
 
-    public static RequestedScopeRelatedAudienceList of(List<AccessTokenAudience> audiences) {
-        RequestedScopeRelatedAudienceList requestedScopeRelatedAudienceList = new RequestedScopeRelatedAudienceList(
+    public static RequestedScopeRelatedAudienceList of(final List<String> audienceNameStrings) {
+        // openidスコープなどaudienceに紐づかないスコープが含まれている場合nullとなるため、フィルタリング
+        final List<AccessTokenAudience> audiences = audienceNameStrings.stream()
+            .filter(audienceNameString -> audienceNameString != null)
+            .map(audienceNameString -> AccessTokenAudience.of(audienceNameString))
+            .collect(Collectors.toList());
+
+        final RequestedScopeRelatedAudienceList requestedScopeRelatedAudienceList = new RequestedScopeRelatedAudienceList(
             new LinkedHashSet<>(audiences)
         );
 
