@@ -33,7 +33,7 @@ public class ExistingIdTokenCoreRepository implements IFetchExistingIdTokenCoreP
             FROM id_token_cores AS itc
             JOIN users AS u ON itc.subject = u.key
             JOIN user_image_files AS uif ON u.key = uif.user_key
-            JOIN files AS f ON uif.file_key = files.key
+            JOIN files AS f ON uif.file_key = f.key
             WHERE itc.key = :key
         """;
 

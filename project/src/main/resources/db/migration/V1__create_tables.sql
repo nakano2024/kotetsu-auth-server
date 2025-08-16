@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS users (
   name        varchar(64) NOT NULL,
   email       varchar(128) NOT NULL,
   password_hash varchar(512) NOT NULL,
-  role_key    uuid REFERENCES user_roles(key),
+  role_key    uuid REFERENCES user_roles(key) ON DELETE CASCADE,
   is_active   boolean NOT NULL DEFAULT true,
   created_at  timestamptz NOT NULL DEFAULT current_timestamp,
   updated_at  timestamptz NOT NULL DEFAULT current_timestamp,
@@ -155,8 +155,8 @@ EXECUTE FUNCTION set_updated_at();
 -- access_token_cores
 CREATE TABLE IF NOT EXISTS access_token_cores (
   key         uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
-  issue       varchar(128) NOT NULL,
-  subject     varchar(128) NOT NULL,
+  issuer      varchar(128) NOT NULL,
+  subject     uuid REFERENCES users(key) ON DELETE CASCADE,
   created_at  timestamptz NOT NULL DEFAULT current_timestamp,
   updated_at  timestamptz NOT NULL DEFAULT current_timestamp
 );
@@ -182,7 +182,7 @@ EXECUTE FUNCTION set_updated_at();
 CREATE TABLE IF NOT EXISTS id_token_cores (
   key         uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
   issuer      varchar(256) NOT NULL,
-  subject     varchar(128) NOT NULL,
+  subject     uuid REFERENCES users(key) ON DELETE CASCADE,
   nonce       varchar(128),
   created_at  timestamptz NOT NULL DEFAULT current_timestamp,
   updated_at  timestamptz NOT NULL DEFAULT current_timestamp
@@ -195,8 +195,8 @@ EXECUTE FUNCTION set_updated_at();
 -- refresh_token_cores
 CREATE TABLE IF NOT EXISTS refresh_token_cores (
   key                   uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
-  access_token_core_key uuid REFERENCES access_token_cores(key) ON DELETE SET NULL,
-  id_token_core_key     uuid REFERENCES id_token_cores(key)     ON DELETE SET NULL,
+  access_token_core_key uuid REFERENCES access_token_cores(key) ON DELETE CASCADE,
+  id_token_core_key     uuid REFERENCES id_token_cores(key)     ON DELETE CASCADE,
   created_at            timestamptz NOT NULL DEFAULT current_timestamp,
   updated_at            timestamptz NOT NULL DEFAULT current_timestamp
 );
