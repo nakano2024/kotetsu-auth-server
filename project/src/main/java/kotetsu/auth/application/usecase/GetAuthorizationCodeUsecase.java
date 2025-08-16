@@ -24,6 +24,8 @@ import kotetsu.auth.application.domain.util.IFetchServerUrlPort;
 import kotetsu.auth.application.domain.util.IGenerateUuidPort;
 import kotetsu.auth.application.domain.value.AccessType;
 import kotetsu.auth.application.domain.value.AuthorizationCodeChallenge;
+import kotetsu.auth.application.domain.value.ClientId;
+import kotetsu.auth.application.domain.value.ClientRedirectUri;
 import kotetsu.auth.application.domain.value.IdTokenAudience;
 import kotetsu.auth.application.domain.value.IssuedAt;
 import kotetsu.auth.application.domain.value.Issuer;
@@ -40,6 +42,7 @@ import kotetsu.auth.application.dto.output.AuthorizationCodeOutput;
 import kotetsu.auth.application.exception.ClientNotPermittedScopesContainedException;
 import kotetsu.auth.application.exception.InputNullRuntimeException;
 import kotetsu.auth.application.exception.PermittedScopeListNullRuntimeException;
+import kotetsu.auth.application.exception.RedirectUriDoseNotMatchException;
 import kotetsu.auth.application.exception.RequestedScopeAudienceWrapperNullRuntimeException;
 import kotetsu.auth.application.exception.RequesterClientNotFoundRuntimeException;
 
@@ -84,7 +87,8 @@ public class GetAuthorizationCodeUsecase {
 
     @Transactional
     public AuthorizationCodeOutput execute(final GetAuthorizationCodeInput input)
-        throws ClientNotPermittedScopesContainedException
+        throws ClientNotPermittedScopesContainedException,
+            RedirectUriDoseNotMatchException
     {
         final Date currentDate = fetchCurrentDatePort.fetch();
 
@@ -92,8 +96,12 @@ public class GetAuthorizationCodeUsecase {
             throw new InputNullRuntimeException();
         }
 
-        final RequesterClient requesterClient = fetchRequeterClientPort.fetch(Key.of(input.getClientKey()))
+        final RequesterClient requesterClient = fetchRequeterClientPort.fetch(ClientId.of(input.getClientKey()))
             .orElseThrow(() -> new RequesterClientNotFoundRuntimeException());
+
+        if(!requesterClient.getRedirectUri().equals(ClientRedirectUri.of(input.getRedirectUri()))) {
+            throw new RedirectUriDoseNotMatchException();
+        }
 
         final RequestedScopeNameList requestedScopeNameList = RequestedScopeNameList.of(RequestedScopeNameListToken.of(input.getScopeListToken()));
         
