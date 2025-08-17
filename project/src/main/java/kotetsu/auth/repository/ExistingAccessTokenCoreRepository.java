@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -35,7 +36,8 @@ public class ExistingAccessTokenCoreRepository implements IFetchExistingAccessTo
             JOIN scopes AS s ON atcs.scope_key = s.key
             LEFT JOIN scope_audiences AS sa ON s.key = sa.scope_key
             LEFT JOIN resource_servers AS rs ON sa.resource_server_key = rs.key
-            WHERE atc.key = :key;
+            WHERE atc.key = :key
+            ORDER BY s.created_at ASC;
         """;
 
         final Map<String, Object> params = new HashMap<>();
@@ -47,17 +49,17 @@ public class ExistingAccessTokenCoreRepository implements IFetchExistingAccessTo
             return Optional.empty();
         }
 
-        final List<Scope> scopes = rows.stream()
+        final Set<Scope> scopes = rows.stream()
             .map(row -> Scope.of(
                 Key.of((String) row.get("s_key")),
                 ScopeName.of((String) row.get("s_name")))
             )
-            .collect(Collectors.toList());
+            .collect(Collectors.toSet());
         final RequestedScopeList requestedScopeList = RequestedScopeList.of(scopes);
 
-        final List<String> resourceServerUrls = rows.stream()
+        final Set<String> resourceServerUrls = rows.stream()
             .map(row -> (String) row.get("rs_url"))
-            .collect(Collectors.toList());
+            .collect(Collectors.toSet());
         final RequestedScopeRelatedAudienceList scopeRelatedAudienceList = RequestedScopeRelatedAudienceList.of(resourceServerUrls);
 
         return Optional.of(ExistingAccessTokenCore.of(

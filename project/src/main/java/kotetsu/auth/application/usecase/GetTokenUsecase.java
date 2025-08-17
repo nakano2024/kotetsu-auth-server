@@ -11,16 +11,10 @@ import kotetsu.auth.application.domain.entity.ExistingIdTokenCore;
 import kotetsu.auth.application.domain.entity.ExistingIdTokenMeta;
 import kotetsu.auth.application.domain.entity.ExistingRefreshToken;
 import kotetsu.auth.application.domain.entity.ExistingRefreshTokenCore;
-import kotetsu.auth.application.domain.entity.IdTokenMeta;
 import kotetsu.auth.application.domain.entity.IssuedAccessToken;
 import kotetsu.auth.application.domain.entity.IssuedIdToken;
+import kotetsu.auth.application.domain.entity.IssuedIdTokenMeta;
 import kotetsu.auth.application.domain.entity.IssuedRefreshToken;
-import kotetsu.auth.application.exception.ExistingAccessTokenCoreNullRuntimeException;
-import kotetsu.auth.application.exception.ExistingAccessTokenNullRuntimeException;
-import kotetsu.auth.application.exception.ExistingIdTokenCoreNullRuntimeException;
-import kotetsu.auth.application.exception.ExistingIdTokenMetaNullRuntimeException;
-import kotetsu.auth.application.exception.ExistingRefreshTokenCoreNullRuntimeException;
-import kotetsu.auth.application.exception.InputAuthorizationCodeNullException;
 import kotetsu.auth.application.domain.repository.IDeleteExistingAccessTokenPort;
 import kotetsu.auth.application.domain.repository.IDeleteExistingAuthorization;
 import kotetsu.auth.application.domain.repository.IDeleteExistingIdTokenMetaPort;
@@ -32,8 +26,8 @@ import kotetsu.auth.application.domain.repository.IFetchExistingIdTokenCorePort;
 import kotetsu.auth.application.domain.repository.IFetchExistingIdTokenMetaPort;
 import kotetsu.auth.application.domain.repository.IFetchExistingRefreshTokenCorePort;
 import kotetsu.auth.application.domain.repository.IFetchExistingRefreshTokenPort;
-import kotetsu.auth.application.domain.repository.IStoreIdTokenMetaPort;
 import kotetsu.auth.application.domain.repository.IStoreIssuedAccessTokenPort;
+import kotetsu.auth.application.domain.repository.IStoreIssuedIdTokenMetaPort;
 import kotetsu.auth.application.domain.repository.IStoreIssuedRefreshTokenPort;
 import kotetsu.auth.application.domain.service.CheckCodeVerifilerService;
 import kotetsu.auth.application.domain.service.CreateIdTokenMetaService;
@@ -56,6 +50,12 @@ import kotetsu.auth.application.dto.input.GetTokenInput;
 import kotetsu.auth.application.dto.output.TokenOutput;
 import kotetsu.auth.application.exception.AuthorizationCodeExpiredException;
 import kotetsu.auth.application.exception.AuthorizationCodeNotFoundException;
+import kotetsu.auth.application.exception.ExistingAccessTokenCoreNullRuntimeException;
+import kotetsu.auth.application.exception.ExistingAccessTokenNullRuntimeException;
+import kotetsu.auth.application.exception.ExistingIdTokenCoreNullRuntimeException;
+import kotetsu.auth.application.exception.ExistingIdTokenMetaNullRuntimeException;
+import kotetsu.auth.application.exception.ExistingRefreshTokenCoreNullRuntimeException;
+import kotetsu.auth.application.exception.InputAuthorizationCodeNullException;
 import kotetsu.auth.application.exception.InputCodeVerifierNullException;
 import kotetsu.auth.application.exception.InputNullRuntimeException;
 import kotetsu.auth.application.exception.InputRefreshTokenNullException;
@@ -77,7 +77,7 @@ public class GetTokenUsecase {
     private final IStoreIssuedRefreshTokenPort storeIssuedRefreshTokenPort;
     private final IFetchExistingRefreshTokenCorePort fetchExistingRefreshTokenCorePort;
     private final IFetchExistingIdTokenCorePort fetchExistingIdTokenCorePort;
-    private final IStoreIdTokenMetaPort storeIdTokenMetaPort;
+    private final IStoreIssuedIdTokenMetaPort storeIdTokenMetaPort;
     private final CreateIdTokenMetaService createIdTokenMetaService;
     private final CreateIssuedIdTokenService createIssuedIdTokenService;
     private final CheckCodeVerifilerService checkCodeVerifilerService;
@@ -99,7 +99,7 @@ public class GetTokenUsecase {
         final CreateIssuedRefreshTokenService createIssuedRefreshTokenService,
         final IStoreIssuedRefreshTokenPort storeIssuedRefreshTokenPort,
         final IFetchExistingRefreshTokenCorePort fetchExistingRefreshTokenCorePort,
-        final IStoreIdTokenMetaPort storeIdTokenMetaPort,
+        final IStoreIssuedIdTokenMetaPort storeIdTokenMetaPort,
         final IFetchExistingIdTokenCorePort fetchExistingIdTokenCorePort,
         final CreateIdTokenMetaService createIdTokenMetaService,
         final CreateIssuedIdTokenService createIssuedIdTokenService,
@@ -213,7 +213,7 @@ public class GetTokenUsecase {
 
         IssuedIdToken idToken = null;
         if (accessTokenCore.getScopeList().hasOpenid()) {
-            final IdTokenMeta idTokenMeta = createIdTokenMetaService.create(
+            final IssuedIdTokenMeta idTokenMeta = createIdTokenMetaService.create(
                 LinkedIdTokenCoreKey.of(idTokenCore.getKey().getValue()),
                 IdTokenUniqueId.of(generateUuidPort.generate()),
                 IssuedAt.of(currentDate)
@@ -308,7 +308,7 @@ public class GetTokenUsecase {
             final ExistingIdTokenMeta existingIdTokenMeta = fetchExistingIdTokenMetaPort.fetch(LinkedIdTokenCoreKey.of(idTokenCore.getKey().getValue()))
                 .orElseThrow(() -> new ExistingIdTokenMetaNullRuntimeException());
 
-            final IdTokenMeta idTokenMeta = createIdTokenMetaService.create(
+            final IssuedIdTokenMeta idTokenMeta = createIdTokenMetaService.create(
                 LinkedIdTokenCoreKey.of(idTokenCore.getKey().getValue()),
                 IdTokenUniqueId.of(generateUuidPort.generate()),
                 IssuedAt.of(currentDate)

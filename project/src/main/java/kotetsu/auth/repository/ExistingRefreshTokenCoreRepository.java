@@ -26,7 +26,7 @@ public class ExistingRefreshTokenCoreRepository implements IFetchExistingRefresh
         final String sql = """
             SELECT key, access_token_core_key, id_token_core_key
             FROM refresh_token_cores
-            WHERE key = :key
+            WHERE key = :key;
         """;
 
         final Map<String, Object> params = new HashMap<>();

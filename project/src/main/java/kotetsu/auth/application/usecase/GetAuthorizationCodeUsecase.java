@@ -9,11 +9,11 @@ import kotetsu.auth.application.domain.entity.PendingIdTokenCore;
 import kotetsu.auth.application.domain.entity.PendingRefreshTokenCore;
 import kotetsu.auth.application.domain.entity.PermittedScopeList;
 import kotetsu.auth.application.domain.entity.RequestedAuthorization;
-import kotetsu.auth.application.domain.entity.RequestedScopeAudienceWrapper;
+import kotetsu.auth.application.domain.entity.RequestedScopeList;
 import kotetsu.auth.application.domain.entity.RequesterClient;
 import kotetsu.auth.application.domain.repository.IFetchPermittedScopeListPort;
+import kotetsu.auth.application.domain.repository.IFetchRequestedScopeListPort;
 import kotetsu.auth.application.domain.repository.IFetchRequesterClientPort;
-import kotetsu.auth.application.domain.repository.IFetchScopeAudienceWrapperPort;
 import kotetsu.auth.application.domain.repository.IStorePendingAccessTokenCorePort;
 import kotetsu.auth.application.domain.repository.IStorePendingIdTokenCorePort;
 import kotetsu.auth.application.domain.repository.IStorePendingRefreshTokenCorePort;
@@ -43,12 +43,12 @@ import kotetsu.auth.application.exception.ClientNotPermittedScopesContainedExcep
 import kotetsu.auth.application.exception.InputNullRuntimeException;
 import kotetsu.auth.application.exception.PermittedScopeListNullRuntimeException;
 import kotetsu.auth.application.exception.RedirectUriDoseNotMatchException;
-import kotetsu.auth.application.exception.RequestedScopeAudienceWrapperNullRuntimeException;
+import kotetsu.auth.application.exception.RequestedScopeListNullRuntimeException;
 import kotetsu.auth.application.exception.RequesterClientNotFoundRuntimeException;
 
 public class GetAuthorizationCodeUsecase {
     final IFetchPermittedScopeListPort permittedScopeListPort;
-    final IFetchScopeAudienceWrapperPort fetchScopeAudienceWrapperPort;
+    final IFetchRequestedScopeListPort fetchRequestedScopeListPort;
     final IFetchRequesterClientPort fetchRequeterClientPort;
     final IStorePendingAccessTokenCorePort storeAccessTokenBodyPort;
     final IStorePendingIdTokenCorePort storeIdTokenBodyPort;
@@ -61,7 +61,7 @@ public class GetAuthorizationCodeUsecase {
 
     public GetAuthorizationCodeUsecase(
         final IFetchPermittedScopeListPort permittedScopeListPort,
-        final IFetchScopeAudienceWrapperPort fetchScopeAudienceWrapperPort,
+        final IFetchRequestedScopeListPort fetchRequestedScopeListPort,
         final IFetchRequesterClientPort fetchRequeterClientPort,
         final IStorePendingAccessTokenCorePort storeAccessTokenBodyPort,
         final IStorePendingIdTokenCorePort storeIdTokenBodyPort,
@@ -73,7 +73,7 @@ public class GetAuthorizationCodeUsecase {
         final IFetchCurrentDatePort fetchCurrentDatePort
     ) {
         this.permittedScopeListPort = permittedScopeListPort;
-        this.fetchScopeAudienceWrapperPort = fetchScopeAudienceWrapperPort;
+        this.fetchRequestedScopeListPort = fetchRequestedScopeListPort;
         this.fetchRequeterClientPort = fetchRequeterClientPort;
         this.storeAccessTokenBodyPort = storeAccessTokenBodyPort;
         this.storeIdTokenBodyPort = storeIdTokenBodyPort;
@@ -105,13 +105,13 @@ public class GetAuthorizationCodeUsecase {
 
         final RequestedScopeNameList requestedScopeNameList = RequestedScopeNameList.of(RequestedScopeNameListToken.of(input.getScopeListToken()));
         
-        final RequestedScopeAudienceWrapper requestedScopeAudienceWrapper = fetchScopeAudienceWrapperPort.fetch(requestedScopeNameList)
-            .orElseThrow(() -> new RequestedScopeAudienceWrapperNullRuntimeException());
+        final RequestedScopeList requestedScopeList = fetchRequestedScopeListPort.fetch(requestedScopeNameList)
+            .orElseThrow(() -> new RequestedScopeListNullRuntimeException());
 
         final PermittedScopeList permittedScopeList =  permittedScopeListPort.fetch(Key.of(requesterClient.getKey().getValue()))
             .orElseThrow(() -> new PermittedScopeListNullRuntimeException());
 
-        if(!permittedScopeList.containsAll(requestedScopeAudienceWrapper.getRequestedScopeList().getScopes())) {
+        if(!permittedScopeList.containsAll(requestedScopeList.getScopes())) {
             throw new ClientNotPermittedScopesContainedException();
         }
 
@@ -119,8 +119,7 @@ public class GetAuthorizationCodeUsecase {
             Key.of(generateUuidPort.generate()),
             Issuer.of(fetchServerUrlPort.fetch()),
             Subject.of(input.getResourceOwnerCode()),
-            requestedScopeAudienceWrapper.getRequestedScopeList(),
-            requestedScopeAudienceWrapper.getRequestedScopeRelatedAudienceList()
+            requestedScopeList
         );
         storeAccessTokenBodyPort.store(accessTokenCore);
 

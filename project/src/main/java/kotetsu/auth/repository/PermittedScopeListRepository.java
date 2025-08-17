@@ -28,6 +28,7 @@ public class PermittedScopeListRepository implements IFetchPermittedScopeListPor
             FROM client_permitted_scopes as cps
             JOIN scopes AS s ON cps.scope_key = s.key
             WHERE cps.client_key = :client_key
+            ORDER BY s.created_at ASC;
         """;
 
         final Map<String, Object> params = new HashMap<>();

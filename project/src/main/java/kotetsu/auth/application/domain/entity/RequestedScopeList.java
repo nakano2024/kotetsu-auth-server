@@ -17,13 +17,13 @@ import lombok.Getter;
 public class RequestedScopeList {
     @Getter
     @NotNull
-    private final List<Scope> scopes;
+    private final Set<Scope> scopes;
 
-    private RequestedScopeList(final List<Scope> scopes) {
+    private RequestedScopeList(final Set<Scope> scopes) {
         this.scopes = scopes;
     }
 
-    public static RequestedScopeList of(final List<Scope> scopes) {
+    public static RequestedScopeList of(final Set<Scope> scopes) { 
         final RequestedScopeList requestedScopeList = new RequestedScopeList(scopes);
 
         final ValidatorFactory factory = Validation.buildDefaultValidatorFactory();

@@ -34,7 +34,7 @@ public class ExistingIdTokenCoreRepository implements IFetchExistingIdTokenCoreP
             JOIN users AS u ON itc.subject = u.key
             JOIN user_image_files AS uif ON u.key = uif.user_key
             JOIN files AS f ON uif.file_key = f.key
-            WHERE itc.key = :key
+            WHERE itc.key = :key;
         """;
 
         final Map<String, Object> params = new HashMap<>();

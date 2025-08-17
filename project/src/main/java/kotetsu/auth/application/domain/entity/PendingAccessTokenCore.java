@@ -30,38 +30,30 @@ public class PendingAccessTokenCore {
     @NotNull
     private final RequestedScopeList scopeList;
 
-    @Getter
-    @NotNull
-    private final RequestedScopeRelatedAudienceList relatedAudienceList;
-
     private PendingAccessTokenCore(
         final Key key,
         final Issuer issuer,
         final Subject subject,
-        final RequestedScopeList scopeList,
-        final RequestedScopeRelatedAudienceList relatedAudienceList
+        final RequestedScopeList scopeList
     ) {
         this.key = key;
         this.issuer = issuer;
         this.subject = subject;
         this.scopeList = scopeList;
-        this.relatedAudienceList = relatedAudienceList;
     }
 
     public static PendingAccessTokenCore of(
         final Key key,
         final Issuer issuer,
         final Subject subject,
-        final RequestedScopeList scopeList,
-        final RequestedScopeRelatedAudienceList relatedAudienceList
+        final RequestedScopeList scopeList
     ) {
 
         final PendingAccessTokenCore accessTokenCore = new PendingAccessTokenCore(
             key,
             issuer,
             subject,
-            scopeList,
-            relatedAudienceList
+            scopeList
         );
 
         final ValidatorFactory factory = Validation.buildDefaultValidatorFactory();

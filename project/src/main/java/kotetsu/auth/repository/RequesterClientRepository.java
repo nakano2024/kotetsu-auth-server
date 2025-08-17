@@ -19,12 +19,13 @@ public class RequesterClientRepository implements IFetchRequesterClientPort {
     public RequesterClientRepository(final NamedParameterJdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
+    
     @Override
     public Optional<RequesterClient> fetch(final ClientId clientId) {
         final String sql = """
             SELECT key, client_id, redirect_uri
             FROM clients
-            WHERE client_id = :client_id
+            WHERE client_id = :client_id;
         """;
 
         final Map<String, Object> params = new HashMap<>();

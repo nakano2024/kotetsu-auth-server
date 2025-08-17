@@ -6,7 +6,7 @@ import kotetsu.auth.application.domain.value.IdTokenUniqueId;
 import kotetsu.auth.application.domain.value.LinkedIdTokenCoreKey;
 import lombok.Getter;
 
-public class IdTokenMeta {
+public class IssuedIdTokenMeta {
     public static final int EXPIRES_HOURS = 1;
 
     @Getter
@@ -21,14 +21,14 @@ public class IdTokenMeta {
     @NotNull
     private final IdTokenUniqueId uniqueId;
 
-    private IdTokenMeta(final LinkedIdTokenCoreKey linkedIdTokenCoreKey, final Duration duration, final IdTokenUniqueId uniqueId) {
+    private IssuedIdTokenMeta(final LinkedIdTokenCoreKey linkedIdTokenCoreKey, final Duration duration, final IdTokenUniqueId uniqueId) {
         this.linkedIdTokenCoreKey = linkedIdTokenCoreKey;
         this.duration = duration;
         this.uniqueId = uniqueId;
     }
 
-    public static IdTokenMeta of(final LinkedIdTokenCoreKey linkedIdTokenCoreKey, final Duration duration, final IdTokenUniqueId uniqueId) {
-        final IdTokenMeta idTokenMeta = new IdTokenMeta(linkedIdTokenCoreKey, duration, uniqueId);
+    public static IssuedIdTokenMeta of(final LinkedIdTokenCoreKey linkedIdTokenCoreKey, final Duration duration, final IdTokenUniqueId uniqueId) {
+        final IssuedIdTokenMeta idTokenMeta = new IssuedIdTokenMeta(linkedIdTokenCoreKey, duration, uniqueId);
 
         return idTokenMeta;
     }

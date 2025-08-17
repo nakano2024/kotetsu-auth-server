@@ -1,6 +1,5 @@
 package kotetsu.auth.application.domain.entity;
 
-import java.util.List;
 import java.util.Set;
 
 import jakarta.validation.ConstraintViolation;
@@ -31,7 +30,7 @@ public class PermittedScopeList {
         return permittedScopeList;
     }
 
-    public boolean containsAll(final List<Scope> requestedScopes) {
+    public boolean containsAll(final Set<Scope> requestedScopes) {
         if (requestedScopes == null) {
             return false;
         }
