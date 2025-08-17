@@ -5,6 +5,6 @@ import java.util.Optional;
 import kotetsu.auth.application.domain.entity.ExistingIdTokenMeta;
 import kotetsu.auth.application.domain.value.LinkedIdTokenCoreKey;
 
-public interface IFetchExistingIdTokenMetaPort {
-    Optional<ExistingIdTokenMeta> fetch(LinkedIdTokenCoreKey linkedIdTokenCoreKey);
+public interface IFetchExistingIdTokenMetaForUpdatePort {
+    Optional<ExistingIdTokenMeta> fetchForUpdate(LinkedIdTokenCoreKey linkedIdTokenCoreKey);
 }

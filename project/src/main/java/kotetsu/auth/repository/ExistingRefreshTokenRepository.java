@@ -11,7 +11,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import kotetsu.auth.application.domain.entity.ExistingRefreshToken;
 import kotetsu.auth.application.domain.repository.IDeleteExistingRefreshTokenPort;
-import kotetsu.auth.application.domain.repository.IFetchExistingRefreshTokenPort;
+import kotetsu.auth.application.domain.repository.IFetchExistingRefreshTokenForUpdatePort;
 import kotetsu.auth.application.domain.value.Duration;
 import kotetsu.auth.application.domain.value.ExpiredAt;
 import kotetsu.auth.application.domain.value.GrantType;
@@ -20,7 +20,7 @@ import kotetsu.auth.application.domain.value.LinkedRefreshTokenCoreKey;
 import kotetsu.auth.application.domain.value.RefreshTokenValue;
 
 public class ExistingRefreshTokenRepository
-    implements IFetchExistingRefreshTokenPort,
+    implements IFetchExistingRefreshTokenForUpdatePort,
         IDeleteExistingRefreshTokenPort
 {
     private final NamedParameterJdbcTemplate jdbcTemplate;
@@ -30,11 +30,12 @@ public class ExistingRefreshTokenRepository
     }
 
     @Override
-    public Optional<ExistingRefreshToken> fetch(RefreshTokenValue value) {
+    public Optional<ExistingRefreshToken> fetchForUpdate(RefreshTokenValue value) {
         final String sql = """
             SELECT refresh_token_core_key, grant_type_name, issued_at, expired_at
             FROM refresh_tokens
-            value = :value;
+            value = :value
+            FOR UPDATE;
         """;
 
         final Map<String, Object> params = new HashMap<>();

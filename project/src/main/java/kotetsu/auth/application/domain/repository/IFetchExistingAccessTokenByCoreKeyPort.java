@@ -6,5 +6,5 @@ import kotetsu.auth.application.domain.entity.ExistingAccessToken;
 import kotetsu.auth.application.domain.value.LinkedAccessTokenCoreKey;
 
 public interface IFetchExistingAccessTokenByCoreKeyPort {
-    Optional<ExistingAccessToken> fetchByCoreKey(LinkedAccessTokenCoreKey linkedAccessTokenCoreKey);
+    Optional<ExistingAccessToken> fetchForUpdateByCoreKey(LinkedAccessTokenCoreKey linkedAccessTokenCoreKey);
 }

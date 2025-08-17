@@ -21,11 +21,11 @@ import kotetsu.auth.application.domain.repository.IDeleteExistingIdTokenMetaPort
 import kotetsu.auth.application.domain.repository.IDeleteExistingRefreshTokenPort;
 import kotetsu.auth.application.domain.repository.IFetchExistingAccessTokenByCoreKeyPort;
 import kotetsu.auth.application.domain.repository.IFetchExistingAccessTokenCorePort;
-import kotetsu.auth.application.domain.repository.IFetchExistingAuthorizationPort;
+import kotetsu.auth.application.domain.repository.IFetchExistingAuthorizationForUpdatePort;
 import kotetsu.auth.application.domain.repository.IFetchExistingIdTokenCorePort;
-import kotetsu.auth.application.domain.repository.IFetchExistingIdTokenMetaPort;
+import kotetsu.auth.application.domain.repository.IFetchExistingIdTokenMetaForUpdatePort;
 import kotetsu.auth.application.domain.repository.IFetchExistingRefreshTokenCorePort;
-import kotetsu.auth.application.domain.repository.IFetchExistingRefreshTokenPort;
+import kotetsu.auth.application.domain.repository.IFetchExistingRefreshTokenForUpdatePort;
 import kotetsu.auth.application.domain.repository.IStoreIssuedAccessTokenPort;
 import kotetsu.auth.application.domain.repository.IStoreIssuedIdTokenMetaPort;
 import kotetsu.auth.application.domain.repository.IStoreIssuedRefreshTokenPort;
@@ -67,7 +67,7 @@ import kotetsu.auth.application.exception.TokenGrantTypeDoseNotMatchException;
 
 public class GetTokenUsecase {
     private final IGenerateUuidPort generateUuidPort;
-    private final IFetchExistingAuthorizationPort fetchExistingAuthorizationPort;
+    private final IFetchExistingAuthorizationForUpdatePort fetchExistingAuthorizationPort;
     private final IFetchCurrentDatePort fetchCurrentDatePort;
     private final IDeleteExistingAuthorization deleteExistingAuthorization;
     private final IFetchExistingAccessTokenCorePort fetchExistingAccessTokenCorePort;
@@ -81,16 +81,16 @@ public class GetTokenUsecase {
     private final CreateIdTokenMetaService createIdTokenMetaService;
     private final CreateIssuedIdTokenService createIssuedIdTokenService;
     private final CheckCodeVerifilerService checkCodeVerifilerService;
-    private final IFetchExistingRefreshTokenPort fetchExistingRefreshTokenPort;
+    private final IFetchExistingRefreshTokenForUpdatePort fetchExistingRefreshTokenPort;
     private final IDeleteExistingRefreshTokenPort deleteExistingRefreshTokenPort;
     private final IFetchExistingAccessTokenByCoreKeyPort fetchExistingAccessTokenByCoreKeyPort;
     private final IDeleteExistingAccessTokenPort deleteExistingAccessTokenPort;
-    private final IFetchExistingIdTokenMetaPort fetchExistingIdTokenMetaPort;
+    private final IFetchExistingIdTokenMetaForUpdatePort fetchExistingIdTokenMetaPort;
     private final IDeleteExistingIdTokenMetaPort deleteExistingIdTokenMetaPort;
 
     public GetTokenUsecase(
         final IGenerateUuidPort generateUuidPort,
-        final IFetchExistingAuthorizationPort fetchExistingAuthorizationPort,
+        final IFetchExistingAuthorizationForUpdatePort fetchExistingAuthorizationPort,
         final IFetchCurrentDatePort fetchCurrentDatePort,
         final IDeleteExistingAuthorization deleteExistingAuthorization,
         final IFetchExistingAccessTokenCorePort fetchExistingAccessTokenCorePort,
@@ -104,11 +104,11 @@ public class GetTokenUsecase {
         final CreateIdTokenMetaService createIdTokenMetaService,
         final CreateIssuedIdTokenService createIssuedIdTokenService,
         final CheckCodeVerifilerService checkCodeVerifilerService,
-        final IFetchExistingRefreshTokenPort fetchExistingRefreshTokenPort,
+        final IFetchExistingRefreshTokenForUpdatePort fetchExistingRefreshTokenPort,
         final IDeleteExistingRefreshTokenPort deleteExistingRefreshTokenPort,
         final IFetchExistingAccessTokenByCoreKeyPort fetchExistingAccessTokenByCoreKeyPort,
         final IDeleteExistingAccessTokenPort deleteExistingAccessTokenPort,
-        final IFetchExistingIdTokenMetaPort fetchExistingIdTokenMetaPort,
+        final IFetchExistingIdTokenMetaForUpdatePort fetchExistingIdTokenMetaPort,
         final IDeleteExistingIdTokenMetaPort deleteExistingIdTokenMetaPort
     ) {
         this.generateUuidPort = generateUuidPort;
@@ -178,7 +178,7 @@ public class GetTokenUsecase {
 
         final Date currentDate = fetchCurrentDatePort.fetch();
 
-        final ExistingAuthorization authorization = fetchExistingAuthorizationPort.fetch(
+        final ExistingAuthorization authorization = fetchExistingAuthorizationPort.fetchForUpdate(
             AuthorizationCodeValue.of(inputCode)
         ).orElseThrow(() -> new AuthorizationCodeNotFoundException());
 
@@ -260,7 +260,7 @@ public class GetTokenUsecase {
 
         final Date currentDate = fetchCurrentDatePort.fetch();
 
-        final ExistingRefreshToken existingRefreshToken = fetchExistingRefreshTokenPort.fetch(RefreshTokenValue.of(inputRefreshToken))
+        final ExistingRefreshToken existingRefreshToken = fetchExistingRefreshTokenPort.fetchForUpdate(RefreshTokenValue.of(inputRefreshToken))
             .orElseThrow(() -> new RefreshTokenNotFoundException());
 
         if (!existingRefreshToken.getGrantType().isRefreshToken()) {
@@ -287,7 +287,7 @@ public class GetTokenUsecase {
             Key.of(refreshTokenCore.getLinkedAccessTokenCoreKey().getValue())
         ).orElseThrow(() -> new ExistingAccessTokenCoreNullRuntimeException());
 
-        final ExistingAccessToken existingAccessToken = fetchExistingAccessTokenByCoreKeyPort.fetchByCoreKey(LinkedAccessTokenCoreKey.of(accessTokenCore.getKey().getValue()))
+        final ExistingAccessToken existingAccessToken = fetchExistingAccessTokenByCoreKeyPort.fetchForUpdateByCoreKey(LinkedAccessTokenCoreKey.of(accessTokenCore.getKey().getValue()))
             .orElseThrow(() -> new ExistingAccessTokenNullRuntimeException());
 
         final IssuedAccessToken issuedAccessToken = createIssuedAccessTokenService.create(
@@ -305,7 +305,7 @@ public class GetTokenUsecase {
                 Key.of(refreshTokenCore.getLinkedIdTokenCoreKey().getValue())
             ).orElseThrow(() -> new ExistingIdTokenCoreNullRuntimeException());
 
-            final ExistingIdTokenMeta existingIdTokenMeta = fetchExistingIdTokenMetaPort.fetch(LinkedIdTokenCoreKey.of(idTokenCore.getKey().getValue()))
+            final ExistingIdTokenMeta existingIdTokenMeta = fetchExistingIdTokenMetaPort.fetchForUpdate(LinkedIdTokenCoreKey.of(idTokenCore.getKey().getValue()))
                 .orElseThrow(() -> new ExistingIdTokenMetaNullRuntimeException());
 
             final IssuedIdTokenMeta idTokenMeta = createIdTokenMetaService.create(

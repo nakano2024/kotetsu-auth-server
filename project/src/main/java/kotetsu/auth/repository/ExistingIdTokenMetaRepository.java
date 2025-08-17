@@ -11,7 +11,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import kotetsu.auth.application.domain.entity.ExistingIdTokenMeta;
 import kotetsu.auth.application.domain.repository.IDeleteExistingIdTokenMetaPort;
-import kotetsu.auth.application.domain.repository.IFetchExistingIdTokenMetaPort;
+import kotetsu.auth.application.domain.repository.IFetchExistingIdTokenMetaForUpdatePort;
 import kotetsu.auth.application.domain.value.Duration;
 import kotetsu.auth.application.domain.value.ExpiredAt;
 import kotetsu.auth.application.domain.value.IdTokenUniqueId;
@@ -19,7 +19,7 @@ import kotetsu.auth.application.domain.value.IssuedAt;
 import kotetsu.auth.application.domain.value.LinkedIdTokenCoreKey;
 
 public class ExistingIdTokenMetaRepository
-    implements IFetchExistingIdTokenMetaPort,
+    implements IFetchExistingIdTokenMetaForUpdatePort,
         IDeleteExistingIdTokenMetaPort
 {
     private final NamedParameterJdbcTemplate jdbcTemplate;
@@ -29,11 +29,12 @@ public class ExistingIdTokenMetaRepository
     }
 
     @Override
-    public Optional<ExistingIdTokenMeta> fetch(LinkedIdTokenCoreKey linkedIdTokenCoreKey) {
+    public Optional<ExistingIdTokenMeta> fetchForUpdate(LinkedIdTokenCoreKey linkedIdTokenCoreKey) {
         final String sql = """
             SELECT key, issued_at, expired_at
             FROM id_token_metas
-            WHERE id_token_core_key = :id_token_core_key;
+            WHERE id_token_core_key = :id_token_core_key
+            FOR UPDATE;
         """;
 
         final Map<String, Object> params = new HashMap<>();

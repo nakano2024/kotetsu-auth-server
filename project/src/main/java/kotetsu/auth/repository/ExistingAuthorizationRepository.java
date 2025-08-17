@@ -10,7 +10,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import kotetsu.auth.application.domain.entity.ExistingAuthorization;
 import kotetsu.auth.application.domain.repository.IDeleteExistingAuthorization;
-import kotetsu.auth.application.domain.repository.IFetchExistingAuthorizationPort;
+import kotetsu.auth.application.domain.repository.IFetchExistingAuthorizationForUpdatePort;
 import kotetsu.auth.application.domain.value.AccessType;
 import kotetsu.auth.application.domain.value.AuthorizationCode;
 import kotetsu.auth.application.domain.value.AuthorizationCodeChallenge;
@@ -23,7 +23,7 @@ import kotetsu.auth.application.domain.value.LinkedRefreshTokenCoreKey;
 
 public class ExistingAuthorizationRepository 
     implements IDeleteExistingAuthorization,
-        IFetchExistingAuthorizationPort {
+        IFetchExistingAuthorizationForUpdatePort {
     
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
@@ -37,11 +37,12 @@ public class ExistingAuthorizationRepository
     }
     
     @Override
-    public Optional<ExistingAuthorization> fetch(final AuthorizationCodeValue authorizationCodeValue) {
+    public Optional<ExistingAuthorization> fetchForUpdate(final AuthorizationCodeValue authorizationCodeValue) {
         final String sql = """
             SELECT value, challenge, expired_at, access_type_name, grant_type_name, access_token_core_key, id_token_core_key, refresh_token_core_key
             FROM authorization_codes
-            WHERE value = :value;
+            WHERE value = :value
+            FOR UPDATE;
         """;
 
         final Map<String, Object> params = new HashMap<>();
