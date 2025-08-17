@@ -17,6 +17,7 @@ import kotetsu.auth.application.domain.value.AccessTokenValue;
 import kotetsu.auth.application.domain.value.Duration;
 import kotetsu.auth.application.domain.value.ExpiredAt;
 import kotetsu.auth.application.domain.value.IssuedAt;
+import kotetsu.auth.application.domain.value.Key;
 import kotetsu.auth.application.domain.value.LinkedAccessTokenCoreKey;
 
 public class ExistingAccessTokenRepository
@@ -33,7 +34,7 @@ public class ExistingAccessTokenRepository
     @Override
     public Optional<ExistingAccessToken> fetch(AccessTokenValue value) {
         final String sql = """
-            SELECT access_token_core_key, issued_at, expired_at
+            SELECT key, access_token_core_key, issued_at, expired_at
             FROM access_tokens
             WHERE value = :value;
         """;
@@ -50,6 +51,7 @@ public class ExistingAccessTokenRepository
         final Map<String, Object> row = rows.get(0);
 
         return Optional.of(ExistingAccessToken.of(
+            Key.of(String.valueOf(row.get("key"))),
             LinkedAccessTokenCoreKey.of(String.valueOf(row.get("access_token_core_key"))),
             Duration.of(
                 IssuedAt.of((Date) row.get("issued_at")),
@@ -61,7 +63,7 @@ public class ExistingAccessTokenRepository
     @Override
     public Optional<ExistingAccessToken> fetchForUpdateByCoreKey(LinkedAccessTokenCoreKey linkedAccessTokenCoreKey) {
         final String sql = """
-            SELECT access_token_core_key, issued_at, expired_at
+            SELECT key, access_token_core_key, issued_at, expired_at
             FROM access_tokens
             WHERE access_token_core_key = :access_token_core_key
             FOR UPDATE;
@@ -79,6 +81,7 @@ public class ExistingAccessTokenRepository
         final Map<String, Object> row = rows.get(0);
 
         return Optional.of(ExistingAccessToken.of(
+            Key.of(String.valueOf(row.get("key"))),
             LinkedAccessTokenCoreKey.of(String.valueOf(row.get("access_token_core_key"))),
             Duration.of(
                 IssuedAt.of((Date) row.get("issued_at")),
@@ -89,7 +92,14 @@ public class ExistingAccessTokenRepository
 
     @Override
     public void delete(ExistingAccessToken accessToken) {
-        // TODO Auto-generated method stub
-        
+        final String sql = """
+            DELETE FROM access_tokens
+            WHERE key = :key
+        """;
+
+        final Map<String, Object> params = new HashMap<>();
+        params.put("key", UUID.fromString(accessToken.getKey().getValue()));
+
+        template.update(sql, params);
     }
 }

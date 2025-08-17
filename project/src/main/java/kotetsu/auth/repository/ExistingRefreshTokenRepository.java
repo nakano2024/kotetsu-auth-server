@@ -16,6 +16,7 @@ import kotetsu.auth.application.domain.value.Duration;
 import kotetsu.auth.application.domain.value.ExpiredAt;
 import kotetsu.auth.application.domain.value.GrantType;
 import kotetsu.auth.application.domain.value.IssuedAt;
+import kotetsu.auth.application.domain.value.Key;
 import kotetsu.auth.application.domain.value.LinkedRefreshTokenCoreKey;
 import kotetsu.auth.application.domain.value.RefreshTokenValue;
 
@@ -32,7 +33,7 @@ public class ExistingRefreshTokenRepository
     @Override
     public Optional<ExistingRefreshToken> fetchForUpdate(RefreshTokenValue value) {
         final String sql = """
-            SELECT refresh_token_core_key, grant_type_name, issued_at, expired_at
+            SELECT key, refresh_token_core_key, grant_type_name, issued_at, expired_at
             FROM refresh_tokens
             value = :value
             FOR UPDATE;
@@ -50,6 +51,7 @@ public class ExistingRefreshTokenRepository
         final Map<String, Object> row = rows.get(0);
 
         return Optional.of(ExistingRefreshToken.of(
+            Key.of(String.valueOf(row.get("key"))),
             LinkedRefreshTokenCoreKey.of(String.valueOf(row.get("refresh_token_core_key"))),
             Duration.of(
                 IssuedAt.of((Date) row.get("issued_at")),
@@ -61,7 +63,14 @@ public class ExistingRefreshTokenRepository
 
     @Override
     public void delete(ExistingRefreshToken existingRefreshToken) {
-        // TODO Auto-generated method stub
-        
+        final String sql = """
+            DELETE FROM refresh_tokens
+            WHERE key = :key
+        """;
+
+        final Map<String, Object> params = new HashMap<>();
+        params.put("key", UUID.fromString(existingRefreshToken.getKey().getValue()));
+
+        jdbcTemplate.update(sql, params);        
     }
 }

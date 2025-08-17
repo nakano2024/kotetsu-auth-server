@@ -16,6 +16,7 @@ import kotetsu.auth.application.domain.value.Duration;
 import kotetsu.auth.application.domain.value.ExpiredAt;
 import kotetsu.auth.application.domain.value.IdTokenUniqueId;
 import kotetsu.auth.application.domain.value.IssuedAt;
+import kotetsu.auth.application.domain.value.Key;
 import kotetsu.auth.application.domain.value.LinkedIdTokenCoreKey;
 
 public class ExistingIdTokenMetaRepository
@@ -49,6 +50,7 @@ public class ExistingIdTokenMetaRepository
         final Map<String, Object> row = rows.get(0);
 
         return Optional.of(ExistingIdTokenMeta.of(
+            Key.of(String.valueOf(row.get("key"))),
             Duration.of(
                 IssuedAt.of((Date) row.get("issued_at")),
                 ExpiredAt.of((Date) row.get("expired_at"))
@@ -59,7 +61,14 @@ public class ExistingIdTokenMetaRepository
 
     @Override
     public void delete(ExistingIdTokenMeta idTokenMeta) {
-        
-        
+        final String sql = """
+            DELETE FROM id_token_metas
+            WHERE key = :key
+        """;
+
+        final Map<String, Object> params = new HashMap<>();
+        params.put("key", UUID.fromString(idTokenMeta.getKey().getValue()));
+
+        jdbcTemplate.update(sql, params);
     }
 }

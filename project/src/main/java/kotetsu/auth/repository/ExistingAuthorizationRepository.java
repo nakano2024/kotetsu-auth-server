@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
@@ -17,6 +18,7 @@ import kotetsu.auth.application.domain.value.AuthorizationCodeChallenge;
 import kotetsu.auth.application.domain.value.AuthorizationCodeValue;
 import kotetsu.auth.application.domain.value.ExpiredAt;
 import kotetsu.auth.application.domain.value.GrantType;
+import kotetsu.auth.application.domain.value.Key;
 import kotetsu.auth.application.domain.value.LinkedAccessTokenCoreKey;
 import kotetsu.auth.application.domain.value.LinkedIdTokenCoreKey;
 import kotetsu.auth.application.domain.value.LinkedRefreshTokenCoreKey;
@@ -33,13 +35,21 @@ public class ExistingAuthorizationRepository
     
     @Override
     public void delete(ExistingAuthorization existingAuthorization) {
-        
+        final String sql = """
+            DELETE FROM authorization_codes
+            WHERE key = :key
+        """;
+
+        final Map<String, Object> params = new HashMap<>();
+        params.put("key", UUID.fromString(existingAuthorization.getKey().getValue()));
+
+        jdbcTemplate.update(sql, params);
     }
     
     @Override
     public Optional<ExistingAuthorization> fetchForUpdate(final AuthorizationCodeValue authorizationCodeValue) {
         final String sql = """
-            SELECT value, challenge, expired_at, access_type_name, grant_type_name, access_token_core_key, id_token_core_key, refresh_token_core_key
+            SELECT key, value, challenge, expired_at, access_type_name, grant_type_name, access_token_core_key, id_token_core_key, refresh_token_core_key
             FROM authorization_codes
             WHERE value = :value
             FOR UPDATE;
@@ -57,6 +67,7 @@ public class ExistingAuthorizationRepository
         final Map<String, Object> row = rows.get(0);
 
         return Optional.of(ExistingAuthorization.of(
+            Key.of(String.valueOf(row.get("key"))),
             AuthorizationCode.of(
                 AuthorizationCodeValue.of((String) row.get("value")),
                 AuthorizationCodeChallenge.of((String) row.get("challenge")),
