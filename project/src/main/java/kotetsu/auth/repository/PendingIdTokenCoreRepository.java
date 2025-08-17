@@ -1,5 +1,9 @@
 package kotetsu.auth.repository;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import kotetsu.auth.application.domain.entity.PendingIdTokenCore;
@@ -13,7 +17,28 @@ public class PendingIdTokenCoreRepository implements IStorePendingIdTokenCorePor
     }
     
     @Override
-    public void store(PendingIdTokenCore tokenBody) {
-        
+    public void store(PendingIdTokenCore idTokenCore) {
+        final String sql = """
+            INSERT INTO id_token_cores(
+                key,
+                issuer,
+                subject,
+                nonce
+            )
+            VALUES(
+                :key,
+                :issuer,
+                :subject,
+                :nonce
+            );
+        """;
+
+        final Map<String, Object> params = new HashMap<>();
+        params.put("key", UUID.fromString(idTokenCore.getKey().getValue()));
+        params.put("issuer", idTokenCore.getIssuer().getValue());
+        params.put("subject", idTokenCore.getSubject().getValue());
+        params.put("nonce", idTokenCore.getNonce().getValue());
+
+        jdbcTemplate.update(sql, params);
     }
 }

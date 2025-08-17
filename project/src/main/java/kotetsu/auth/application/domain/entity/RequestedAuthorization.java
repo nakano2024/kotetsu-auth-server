@@ -20,15 +20,15 @@ public class RequestedAuthorization {
 
     @Getter
     @NotNull
-    private final LinkedAccessTokenCoreKey linkedAccessTokenBodyId;
+    private final LinkedAccessTokenCoreKey linkedAccessTokenCoreKey;
 
     @Getter
     @NotNull
-    private final LinkedIdTokenCoreKey linkedIdTokenBodyId;
+    private final LinkedIdTokenCoreKey linkedIdTokenCoreKey;
 
     @Getter
     @NotNull
-    private final LinkedRefreshTokenCoreKey linkedRefreshTokenBodyId;
+    private final LinkedRefreshTokenCoreKey linkedRefreshTokenCoreKey;
 
     @Getter
     @NotNull
@@ -37,32 +37,32 @@ public class RequestedAuthorization {
     private RequestedAuthorization(
         final AuthorizationCode authorizationCode,
         final AccessType accessType,
-        final LinkedAccessTokenCoreKey linkedAccessTokenBodyId,
-        final LinkedIdTokenCoreKey linkedIdTokenBodyId,
-        final LinkedRefreshTokenCoreKey linkedRefreshTokenBodyId,
+        final LinkedAccessTokenCoreKey linkedAccessTokenCoreKey,
+        final LinkedIdTokenCoreKey linkedIdTokenCoreKey,
+        final LinkedRefreshTokenCoreKey linkedRefreshTokenCoreKey,
         final GrantType grantType
     ) {
         this.authorizationCode = authorizationCode;
         this.accessType = accessType;
-        this.linkedAccessTokenBodyId = linkedAccessTokenBodyId;
-        this.linkedIdTokenBodyId = linkedIdTokenBodyId;
-        this.linkedRefreshTokenBodyId = linkedRefreshTokenBodyId;
+        this.linkedAccessTokenCoreKey = linkedAccessTokenCoreKey;
+        this.linkedIdTokenCoreKey = linkedIdTokenCoreKey;
+        this.linkedRefreshTokenCoreKey = linkedRefreshTokenCoreKey;
         this.grantType = grantType;
     }
 
     public static RequestedAuthorization of(
         final AuthorizationCode authorizationCode,
         final AccessType accessType,
-        final LinkedAccessTokenCoreKey linkedAccessTokenBodyId,
-        final LinkedIdTokenCoreKey linkedIdTokenBodyId,
-        final LinkedRefreshTokenCoreKey linkedRefreshTokenBodyId
+        final LinkedAccessTokenCoreKey linkedAccessTokenCoreKey,
+        final LinkedIdTokenCoreKey linkedIdTokenCoreKey,
+        final LinkedRefreshTokenCoreKey linkedRefreshTokenCoreKey
     ) {
         RequestedAuthorization authorization = new RequestedAuthorization(
             authorizationCode,
             accessType,
-            linkedAccessTokenBodyId,
-            linkedIdTokenBodyId,
-            linkedRefreshTokenBodyId,
+            linkedAccessTokenCoreKey,
+            linkedIdTokenCoreKey,
+            linkedRefreshTokenCoreKey,
             GrantType.of(GrantType.GRANT_TYPE_AUTORIZATION_CODE)
         );
 
