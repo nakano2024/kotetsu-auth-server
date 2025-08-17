@@ -36,8 +36,8 @@ public class IssuedAccessTokenRepository implements IStoreIssuedAccessTokenPort 
         final Map<String, Object> params = new HashMap<>();
         params.put("value", issuedAccessToken.getValue().getValue());
         params.put("access_token_core_key", UUID.fromString(issuedAccessToken.getLinkedAccessTokenCoreKey().getValue()));
-        params.put("issued_at", issuedAccessToken.getDuration().getIssuedAt());
-        params.put("expired_at", issuedAccessToken.getDuration().getExpiredAt());
+        params.put("issued_at", issuedAccessToken.getDuration().getIssuedAt().getValue());
+        params.put("expired_at", issuedAccessToken.getDuration().getExpiredAt().getValue());
 
         jdbcTemplate.update(sql, params);
     }

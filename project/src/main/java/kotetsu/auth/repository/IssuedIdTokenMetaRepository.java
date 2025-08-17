@@ -38,8 +38,8 @@ public class IssuedIdTokenMetaRepository
         final Map<String, Object> params = new HashMap<>();
         params.put("key", UUID.fromString(idTokenMeta.getUniqueId().getValue()));
         params.put("id_token_core_key", UUID.fromString(idTokenMeta.getLinkedIdTokenCoreKey().getValue()));
-        params.put("issued_at", idTokenMeta.getDuration().getIssuedAt());
-        params.put("expired_at", idTokenMeta.getDuration().getExpiredAt());
+        params.put("issued_at", idTokenMeta.getDuration().getIssuedAt().getValue());
+        params.put("expired_at", idTokenMeta.getDuration().getExpiredAt().getValue());
 
         jdbcTemplate.update(sql, params);
     }
