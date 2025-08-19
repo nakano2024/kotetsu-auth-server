@@ -10,7 +10,6 @@ import kotetsu.auth.application.domain.value.Duration;
 import kotetsu.auth.application.domain.value.ExpiredAt;
 import kotetsu.auth.application.domain.value.IssuedAt;
 import kotetsu.auth.application.domain.value.LinkedRefreshTokenCoreKey;
-import kotetsu.auth.application.domain.value.RefreshTokenValue;
 
 public class CreateIssuedRefreshTokenService {
     private final IGenerateRefreshTokenValuePort generateRefreshTokenValuePort;
@@ -23,7 +22,7 @@ public class CreateIssuedRefreshTokenService {
 
     public IssuedRefreshToken create(final LinkedRefreshTokenCoreKey coreKey, final IssuedAt issuedAt) {
         return IssuedRefreshToken.of(
-            generateRefreshTokenValuePort.generate(RefreshTokenValue.LENGTH),
+            generateRefreshTokenValuePort.generate(),
             coreKey,
             Duration.of(
                 issuedAt,

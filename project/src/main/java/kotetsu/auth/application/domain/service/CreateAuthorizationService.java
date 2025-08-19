@@ -4,7 +4,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
 import kotetsu.auth.application.domain.entity.RequestedAuthorization;
-import kotetsu.auth.application.domain.util.IGenerateRandomStringPort;
+import kotetsu.auth.application.domain.util.IFetchGenerateAuthorizationCodeValuePort;
 import kotetsu.auth.application.domain.value.AccessType;
 import kotetsu.auth.application.domain.value.AuthorizationCode;
 import kotetsu.auth.application.domain.value.AuthorizationCodeChallenge;
@@ -17,12 +17,12 @@ import kotetsu.auth.application.domain.value.LinkedRefreshTokenCoreKey;
 
 public class CreateAuthorizationService {
 
-    private final IGenerateRandomStringPort generateRandomStringPort;
+    private final IFetchGenerateAuthorizationCodeValuePort fetchGenerateAuthorizationCodeValuePort;
 
     public CreateAuthorizationService(
-        final IGenerateRandomStringPort generateRandomStringPort
+        final IFetchGenerateAuthorizationCodeValuePort fetchGenerateAuthorizationCodeValuePort
     ) {
-        this.generateRandomStringPort = generateRandomStringPort;
+        this.fetchGenerateAuthorizationCodeValuePort = fetchGenerateAuthorizationCodeValuePort;
     }
 
     public RequestedAuthorization create(
@@ -33,9 +33,10 @@ public class CreateAuthorizationService {
         final LinkedRefreshTokenCoreKey linkedRefreshTokenCoreId,
         final IssuedAt issuedAt
     ) {
+        final AuthorizationCodeValue codeValue = fetchGenerateAuthorizationCodeValuePort.generate();
         return RequestedAuthorization.of(
             AuthorizationCode.of(
-                AuthorizationCodeValue.of(generateRandomStringPort.generate(AuthorizationCodeValue.LENGTH)),
+                codeValue,
                 challenge,
                 ExpiredAt.of(Date.from(issuedAt.getValue().toInstant().plus(AuthorizationCode.EXPIRES_MIN, ChronoUnit.MINUTES)))
             ),
