@@ -1,7 +1,8 @@
 package kotetsu.auth.application.domain.service;
 
-import kotetsu.auth.application.domain.entity.IssuedIdTokenMeta;
+import kotetsu.auth.application.domain.entity.ExistingIdTokenCore;
 import kotetsu.auth.application.domain.entity.IssuedIdToken;
+import kotetsu.auth.application.domain.entity.IssuedIdTokenMeta;
 import kotetsu.auth.application.domain.util.IGenerateIdTokenValuePort;
 
 public class CreateIssuedIdTokenService {
@@ -11,7 +12,7 @@ public class CreateIssuedIdTokenService {
         this.generateIdTokenValuePort = generateIdTokenValuePort;
     }
 
-    public IssuedIdToken create(final IssuedIdTokenMeta meta) {
-        return IssuedIdToken.of(generateIdTokenValuePort.generate(meta));
+    public IssuedIdToken create(final IssuedIdTokenMeta meta, final ExistingIdTokenCore idTokenCore) {
+        return IssuedIdToken.of(generateIdTokenValuePort.generate(meta, idTokenCore));
     }
 }

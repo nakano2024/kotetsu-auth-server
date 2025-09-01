@@ -220,7 +220,7 @@ public class GetTokenUsecase {
             );
 
             storeIdTokenMetaPort.store(idTokenMeta);
-            idToken = createIssuedIdTokenService.create(idTokenMeta);
+            idToken = createIssuedIdTokenService.create(idTokenMeta, idTokenCore);
         }
 
         IssuedRefreshToken refreshToken = null;
@@ -316,7 +316,7 @@ public class GetTokenUsecase {
             
             deleteExistingIdTokenMetaPort.delete(existingIdTokenMeta);
             storeIdTokenMetaPort.store(idTokenMeta);
-            idToken = createIssuedIdTokenService.create(idTokenMeta);
+            idToken = createIssuedIdTokenService.create(idTokenMeta, idTokenCore);
         }
 
         return TokenOutput.of(

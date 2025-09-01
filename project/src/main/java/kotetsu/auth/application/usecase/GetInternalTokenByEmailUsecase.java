@@ -11,6 +11,7 @@ import kotetsu.auth.application.domain.service.CreatePendingInternalAuthTokenSer
 import kotetsu.auth.application.domain.util.IFetchCurrentDatePort;
 import kotetsu.auth.application.domain.value.IssuedAt;
 import kotetsu.auth.application.domain.value.Key;
+import kotetsu.auth.application.domain.value.Subject;
 import kotetsu.auth.application.dto.input.GetInternalTokenInput;
 import kotetsu.auth.application.dto.output.IdTokenOutput;
 import kotetsu.auth.application.exception.InputNullRuntimeException;
@@ -45,6 +46,7 @@ public class GetInternalTokenByEmailUsecase {
             .orElseThrow(() -> new MeProfileNotFoundIOException());
 
         final PendingInternalAuthToken pendingInternalAuthToken = createPendingInternalAuthTokenService.create(
+            Subject.of(input.getUserKey()),
             meProfile,
             IssuedAt.of(currentDate)
         );
