@@ -7,6 +7,6 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public class OidcPrivateKeyPemList {
-    private final List<OidcPrivateKeyPem> keys;
+public class OidcPrivateKeyPemJsonWrapper {
+    private final List<OidcPrivateKeyPemJson> keys;
 }

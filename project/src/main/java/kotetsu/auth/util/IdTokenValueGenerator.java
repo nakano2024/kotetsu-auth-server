@@ -22,8 +22,8 @@ import kotetsu.auth.application.domain.entity.IssuedIdTokenMeta;
 import kotetsu.auth.application.domain.util.IGenerateIdTokenValuePort;
 import kotetsu.auth.application.domain.value.IdTokenValue;
 import kotetsu.auth.dto.util.OidcPrivateKey;
-import kotetsu.auth.dto.util.OidcPrivateKeyPem;
-import kotetsu.auth.dto.util.OidcPrivateKeyPemList;
+import kotetsu.auth.dto.util.OidcPrivateKeyPemJson;
+import kotetsu.auth.dto.util.OidcPrivateKeyPemJsonWrapper;
 
 public class IdTokenValueGenerator implements IGenerateIdTokenValuePort {
     @Override
@@ -58,15 +58,15 @@ public class IdTokenValueGenerator implements IGenerateIdTokenValuePort {
             }
 
             final ObjectMapper objectMapper = new ObjectMapper();
-            final OidcPrivateKeyPemList oidcPrivateKeyPemList = objectMapper.readValue(privateKeysJson, OidcPrivateKeyPemList.class);
+            final OidcPrivateKeyPemJsonWrapper oidcPrivateKeyPemList = objectMapper.readValue(privateKeysJson, OidcPrivateKeyPemJsonWrapper.class);
 
-            final List<OidcPrivateKeyPem> keys = oidcPrivateKeyPemList.getKeys();
+            final List<OidcPrivateKeyPemJson> keys = oidcPrivateKeyPemList.getKeys();
             if (keys.isEmpty()) {
                 throw new IllegalArgumentException("OIDC_PRIVATE_KEYは最低1つ必須です。");
             }
 
             final Random random = new Random();
-            final OidcPrivateKeyPem key = keys.get(random.nextInt(keys.size()));
+            final OidcPrivateKeyPemJson key = keys.get(random.nextInt(keys.size()));
             final String pem = key.getPem();
 
             if (pem == null || pem.isEmpty()) {

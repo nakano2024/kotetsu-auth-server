@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public class OidcPrivateKeyPem {
+public class OidcPrivateKeyPemJson {
     private final String kid;
     private final String pem;
 }
