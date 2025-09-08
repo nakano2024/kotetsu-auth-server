@@ -30,7 +30,8 @@ public class PublicKeyGetter {
         try {       
             // PEMデータを読み込む
             PemReader pemReader = new PemReader(new StringReader(pem));
-            PemObject pemObject = pemReader.readPemObject();
+            final PemObject pemObject;
+            pemObject = pemReader.readPemObject();
             pemReader.close();
             
             if (pemObject == null || !pemObject.getType().equals("RSA PUBLIC KEY")) {
