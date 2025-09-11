@@ -9,12 +9,12 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import kotetsu.auth.application.domain.exception.RequestedScopeNameListValidationException;
 import lombok.Getter;
 
 public class RequestedScopeNameList {
-    @NotBlank
+    @NotNull
     @Getter
     private final Set<ScopeName> value;
 
