@@ -1,8 +1,9 @@
 package kotetsu.auth.unit.domain.entity.requestedscopelist;
 
 import java.util.List;
+import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 
 import kotetsu.auth.application.domain.entity.RequestedScopeList;
@@ -20,6 +21,11 @@ public class OfTest {
 
         RequestedScopeList requestedScopeList = RequestedScopeList.of(scopes);
 
-        assertSame(scopes, requestedScopeList.getScopes());
+        Set<Scope> expectedScopeSet = Set.of(
+            Scope.of(Key.of("test-key1"), ScopeName.of("read")),
+            Scope.of(Key.of("test-key2"), ScopeName.of("write"))
+        );
+
+        assertEquals(expectedScopeSet, requestedScopeList.getScopes());
     }
 }
