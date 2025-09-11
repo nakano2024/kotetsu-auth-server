@@ -1,6 +1,7 @@
 package kotetsu.auth.unit.domain.value.duration;
 
 import java.util.Date;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 
@@ -16,7 +17,7 @@ public class OfTest {
         
         Duration duration = Duration.of(issuedAt, expiredAt);
 
-        assertEquals(issuedAt.getValue(), duration.getIssuedAt().getValue());
-        assertEquals(expiredAt.getValue(), duration.getExpiredAt().getValue());
+        assertEquals(new Date(1000), duration.getIssuedAt().getValue());
+        assertEquals(new Date(2000), duration.getExpiredAt().getValue());
     }
 }
