@@ -4,15 +4,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import kotetsu.auth.application.domain.entity.ExistingAccessTokenCore;
+import kotetsu.auth.application.domain.entity.RequestedRelatedAudienceList;
 import kotetsu.auth.application.domain.entity.RequestedScopeList;
-import kotetsu.auth.application.domain.entity.RequestedScopeRelatedAudienceList;
 import kotetsu.auth.application.domain.entity.Scope;
 import kotetsu.auth.application.domain.repository.IFetchExistingAccessTokenCorePort;
 import kotetsu.auth.application.domain.value.Issuer;
@@ -49,18 +48,18 @@ public class ExistingAccessTokenCoreRepository implements IFetchExistingAccessTo
             return Optional.empty();
         }
 
-        final Set<Scope> scopes = rows.stream()
+        final List<Scope> scopes = rows.stream()
             .map(row -> Scope.of(
                 Key.of((String) row.get("s_key")),
                 ScopeName.of((String) row.get("s_name")))
             )
-            .collect(Collectors.toSet());
+            .collect(Collectors.toList());
         final RequestedScopeList requestedScopeList = RequestedScopeList.of(scopes);
 
-        final Set<String> resourceServerUrls = rows.stream()
+        final List<String> resourceServerUrls = rows.stream()
             .map(row -> (String) row.get("rs_url"))
-            .collect(Collectors.toSet());
-        final RequestedScopeRelatedAudienceList scopeRelatedAudienceList = RequestedScopeRelatedAudienceList.of(resourceServerUrls);
+            .collect(Collectors.toList());
+        final RequestedRelatedAudienceList scopeRelatedAudienceList = RequestedRelatedAudienceList.of(resourceServerUrls);
 
         return Optional.of(ExistingAccessTokenCore.of(
             Key.of((String) rows.get(0).get("key")),

@@ -39,6 +39,6 @@ public class Key {
         }
 
         Key anotherCode = (Key) objct;
-        return this.equals(anotherCode);
+        return this.value.equals(anotherCode.getValue());
     }
 }

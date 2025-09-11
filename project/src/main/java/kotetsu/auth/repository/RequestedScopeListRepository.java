@@ -3,7 +3,6 @@ package kotetsu.auth.repository;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -42,12 +41,12 @@ public class RequestedScopeListRepository implements IFetchRequestedScopeListPor
         
         final List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql, params);
 
-        final Set<Scope> scopes = rows.stream()
+        final List<Scope> scopes = rows.stream()
             .map(row -> Scope.of(
                 Key.of(String.valueOf(row.get("key"))),
                 ScopeName.of(String.valueOf(row.get("name")))
             ))
-            .collect(Collectors.toSet());
+            .collect(Collectors.toList());
 
         return Optional.of(RequestedScopeList.of(scopes));
     }

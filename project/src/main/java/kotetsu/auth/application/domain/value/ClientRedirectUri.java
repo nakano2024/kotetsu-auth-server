@@ -33,7 +33,9 @@ public class ClientRedirectUri {
             return false;
         }
 
-        return obj.equals(this);
+        final ClientRedirectUri anotherClientRedirectUri = (ClientRedirectUri) obj;
+
+        return this.value.equals(anotherClientRedirectUri.getValue());
     }
 
     @Override

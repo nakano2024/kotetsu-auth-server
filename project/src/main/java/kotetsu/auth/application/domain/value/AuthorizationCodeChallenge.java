@@ -33,7 +33,9 @@ public class AuthorizationCodeChallenge {
             return false;
         }
 
-        return obj.equals(this);
+        final AuthorizationCodeChallenge anotherAuthorizationCodeChallenge = (AuthorizationCodeChallenge) obj;
+
+        return this.value.equals(anotherAuthorizationCodeChallenge.getValue());
     }
 
     @Override

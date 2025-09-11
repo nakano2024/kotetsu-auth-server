@@ -32,7 +32,7 @@ public class AccessTokenAudience {
         }
 
         AccessTokenAudience anotherAudience = (AccessTokenAudience) object;
-        return this.equals(anotherAudience);
+        return this.value.equals(anotherAudience.getValue());
     }
 
     @Override

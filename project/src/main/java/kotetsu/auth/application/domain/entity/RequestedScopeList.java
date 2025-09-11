@@ -1,5 +1,6 @@
 package kotetsu.auth.application.domain.entity;
 
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -23,8 +24,10 @@ public class RequestedScopeList {
         this.scopes = scopes;
     }
 
-    public static RequestedScopeList of(final Set<Scope> scopes) { 
-        final RequestedScopeList requestedScopeList = new RequestedScopeList(scopes);
+    public static RequestedScopeList of(final List<Scope> scopes) { 
+        final RequestedScopeList requestedScopeList = new RequestedScopeList(
+            new LinkedHashSet<>(scopes)
+        );
 
         final ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         final Validator validator = factory.getValidator();

@@ -38,6 +38,6 @@ public class ScopeName {
 
         ScopeName anotherScopeName = (ScopeName) object;
 
-        return this.equals(anotherScopeName);
+        return this.value.equals(anotherScopeName.getValue());
     }
 }

@@ -13,29 +13,29 @@ import jakarta.validation.constraints.NotNull;
 import kotetsu.auth.application.domain.exception.RequestedScopeRelatedAudienceListValidationException;
 import kotetsu.auth.application.domain.value.AccessTokenAudience;
 
-public class RequestedScopeRelatedAudienceList {
+public class RequestedRelatedAudienceList {
     @NotNull
     private final Set<AccessTokenAudience> audiences;
 
-    private RequestedScopeRelatedAudienceList(Set<AccessTokenAudience> audiences) {
+    private RequestedRelatedAudienceList(Set<AccessTokenAudience> audiences) {
         this.audiences = audiences;
     }
 
-    public static RequestedScopeRelatedAudienceList of(final Set<String> audienceNameStrings) {
+    public static RequestedRelatedAudienceList of(final List<String> audienceNameStrings) {
         // openidスコープなどaudienceに紐づかないスコープが含まれている場合nullとなるため、フィルタリング
-        final Set<AccessTokenAudience> audiences = audienceNameStrings.stream()
+        final List<AccessTokenAudience> audiences = audienceNameStrings.stream()
             .filter(audienceNameString -> audienceNameString != null)
             .map(audienceNameString -> AccessTokenAudience.of(audienceNameString))
-            .collect(Collectors.toSet());
+            .collect(Collectors.toList());
 
-        final RequestedScopeRelatedAudienceList requestedScopeRelatedAudienceList = new RequestedScopeRelatedAudienceList(
+        final RequestedRelatedAudienceList requestedScopeRelatedAudienceList = new RequestedRelatedAudienceList(
             new LinkedHashSet<>(audiences)
         );
 
         final ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         final Validator validator = factory.getValidator();
-        Set<ConstraintViolation<RequestedScopeRelatedAudienceList>> violations = validator.validate(requestedScopeRelatedAudienceList);
-        for (final ConstraintViolation<RequestedScopeRelatedAudienceList> violation : violations) {
+        Set<ConstraintViolation<RequestedRelatedAudienceList>> violations = validator.validate(requestedScopeRelatedAudienceList);
+        for (final ConstraintViolation<RequestedRelatedAudienceList> violation : violations) {
             throw new RequestedScopeRelatedAudienceListValidationException(violation.getMessage());
         }
 
@@ -44,7 +44,7 @@ public class RequestedScopeRelatedAudienceList {
 
     public List<String> toStringList() {
         return audiences.stream()
-            .map(AccessTokenAudience::getValue)
+            .map(audience -> audience.getValue())
             .collect(Collectors.toList());
     }
 }

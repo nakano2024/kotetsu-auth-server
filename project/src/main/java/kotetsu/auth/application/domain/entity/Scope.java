@@ -42,7 +42,10 @@ public class Scope {
 
         Scope anotherScope = (Scope) object;
 
-        return this.equals(anotherScope);
+        return (
+            this.getKey().equals(anotherScope.getKey()) &&
+            this.getName().equals(anotherScope.getName())
+        );
     }
 
     @Override

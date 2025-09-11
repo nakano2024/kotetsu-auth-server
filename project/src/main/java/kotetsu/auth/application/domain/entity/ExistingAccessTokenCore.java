@@ -32,14 +32,14 @@ public class ExistingAccessTokenCore {
 
     @Getter
     @NotNull
-    private final RequestedScopeRelatedAudienceList relatedAudienceList;
+    private final RequestedRelatedAudienceList relatedAudienceList;
 
     private ExistingAccessTokenCore(
         final Key key,
         final Issuer issuer,
         final Subject subject,
         final RequestedScopeList scopeList,
-        final RequestedScopeRelatedAudienceList relatedAudienceList
+        final RequestedRelatedAudienceList relatedAudienceList
     ) {
         this.key = key;
         this.issuer = issuer;
@@ -53,7 +53,7 @@ public class ExistingAccessTokenCore {
         final Issuer issuer,
         final Subject subject,
         final RequestedScopeList scopeList,
-        final RequestedScopeRelatedAudienceList relatedAudienceList
+        final RequestedRelatedAudienceList relatedAudienceList
     ) {
 
         final ExistingAccessTokenCore accessTokenCore = new ExistingAccessTokenCore(
