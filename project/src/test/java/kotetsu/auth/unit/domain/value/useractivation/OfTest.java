@@ -1,6 +1,6 @@
 package kotetsu.auth.unit.domain.value.useractivation;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 
 import kotetsu.auth.application.domain.value.UserActivation;
@@ -10,6 +10,6 @@ public class OfTest {
     public void objectIsConstructedWithMatchingArguments() {
         UserActivation userActivation = UserActivation.of(true);
 
-        assertEquals(true, userActivation.isActive());
+        assertTrue(userActivation.isActive());
     }
 }
