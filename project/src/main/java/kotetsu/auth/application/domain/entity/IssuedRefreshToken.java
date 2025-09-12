@@ -43,7 +43,7 @@ public class IssuedRefreshToken {
             value,
             linkedRefreshTokenCoreKey,
             duration,
-            GrantType.of(GrantType.GRANT_TYPE_REFRESH_TOKEN)
+            GrantType.of(GrantType.REFRESH_TOKEN)
         );
 
         return issuedRefreshToken;

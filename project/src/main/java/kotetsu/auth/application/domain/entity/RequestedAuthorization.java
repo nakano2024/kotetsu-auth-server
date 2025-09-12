@@ -63,7 +63,7 @@ public class RequestedAuthorization {
             linkedAccessTokenCoreKey,
             linkedIdTokenCoreKey,
             linkedRefreshTokenCoreKey,
-            GrantType.of(GrantType.GRANT_TYPE_AUTORIZATION_CODE)
+            GrantType.of(GrantType.AUTORIZATION_CODE)
         );
 
         return authorization;

@@ -8,8 +8,8 @@ import kotetsu.auth.application.domain.value.AccessType;
 public class OfTest {
     @Test
     public void objectIsConstructedWithMatchingArguments() {
-        AccessType accessType = AccessType.of("online");
+        AccessType accessType = AccessType.of(AccessType.ONLINE);
 
-        assertEquals("online", accessType.getValue());
+        assertEquals(AccessType.ONLINE, accessType.getValue());
     }
 }

@@ -3,8 +3,8 @@ package kotetsu.auth.application.domain.value;
 import lombok.Getter;
 
 public class GrantType {
-    public static final String GRANT_TYPE_AUTORIZATION_CODE = "authorization_code";
-    public static final String GRANT_TYPE_REFRESH_TOKEN = "refresh_token";
+    public static final String AUTORIZATION_CODE = "authorization_code";
+    public static final String REFRESH_TOKEN = "refresh_token";
 
     @Getter
     private final String value;
@@ -20,10 +20,10 @@ public class GrantType {
     }
 
     public boolean isRefreshToken() {
-        return value.equals(GRANT_TYPE_REFRESH_TOKEN);
+        return value.equals(REFRESH_TOKEN);
     }
 
     public boolean isAuthorizationCode() {
-        return value.equals(GRANT_TYPE_AUTORIZATION_CODE);
+        return value.equals(AUTORIZATION_CODE);
     }
 }

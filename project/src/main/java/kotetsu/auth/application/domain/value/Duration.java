@@ -24,6 +24,6 @@ public class Duration {
     }
 
     public Long getDifferenceSec() {
-        return (expiredAt.getUnixSec() - issuedAt.getUnixSec());
+        return Math.abs(expiredAt.getUnixSec() - issuedAt.getUnixSec());
     }
 }

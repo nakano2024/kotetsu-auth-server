@@ -151,11 +151,11 @@ public class GetTokenUsecase {
             throw new InputNullRuntimeException();
         }
 
-        if (input.getGrantType().equals(GrantType.GRANT_TYPE_AUTORIZATION_CODE)) {
+        if (input.getGrantType().equals(GrantType.AUTORIZATION_CODE)) {
             return exchangeWithCode(input);
         }
 
-        if (input.getGrantType().equals(GrantType.GRANT_TYPE_REFRESH_TOKEN)) {
+        if (input.getGrantType().equals(GrantType.REFRESH_TOKEN)) {
             return exchangeWithRefresh(input);
         }
 
