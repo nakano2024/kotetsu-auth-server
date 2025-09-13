@@ -8,7 +8,7 @@ import kotetsu.auth.application.domain.value.RefreshTokenValue;
 import lombok.Getter;
 
 public class IssuedRefreshToken {
-    public static final int EXPIRES_WEEKS = 1;
+    public static final int EXPIRES_DAYS = 7;
 
     @Getter
     @NotNull

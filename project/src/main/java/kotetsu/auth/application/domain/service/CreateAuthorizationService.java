@@ -4,7 +4,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
 import kotetsu.auth.application.domain.entity.RequestedAuthorization;
-import kotetsu.auth.application.domain.util.IFetchGenerateAuthorizationCodeValuePort;
+import kotetsu.auth.application.domain.util.IGenerateAuthorizationCodeValuePort;
 import kotetsu.auth.application.domain.value.AccessType;
 import kotetsu.auth.application.domain.value.AuthorizationCode;
 import kotetsu.auth.application.domain.value.AuthorizationCodeChallenge;
@@ -17,10 +17,10 @@ import kotetsu.auth.application.domain.value.LinkedRefreshTokenCoreKey;
 
 public class CreateAuthorizationService {
 
-    private final IFetchGenerateAuthorizationCodeValuePort fetchGenerateAuthorizationCodeValuePort;
+    private final IGenerateAuthorizationCodeValuePort fetchGenerateAuthorizationCodeValuePort;
 
     public CreateAuthorizationService(
-        final IFetchGenerateAuthorizationCodeValuePort fetchGenerateAuthorizationCodeValuePort
+        final IGenerateAuthorizationCodeValuePort fetchGenerateAuthorizationCodeValuePort
     ) {
         this.fetchGenerateAuthorizationCodeValuePort = fetchGenerateAuthorizationCodeValuePort;
     }

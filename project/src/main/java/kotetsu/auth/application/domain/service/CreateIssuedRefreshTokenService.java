@@ -3,7 +3,6 @@ package kotetsu.auth.application.domain.service;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
-import kotetsu.auth.application.domain.entity.IssuedIdTokenMeta;
 import kotetsu.auth.application.domain.entity.IssuedRefreshToken;
 import kotetsu.auth.application.domain.util.IGenerateRefreshTokenValuePort;
 import kotetsu.auth.application.domain.value.Duration;
@@ -26,7 +25,7 @@ public class CreateIssuedRefreshTokenService {
             coreKey,
             Duration.of(
                 issuedAt,
-                ExpiredAt.of(Date.from(issuedAt.getValue().toInstant().plus(IssuedIdTokenMeta.EXPIRES_HOURS, ChronoUnit.HOURS)))
+                ExpiredAt.of(Date.from(issuedAt.getValue().toInstant().plus(IssuedRefreshToken.EXPIRES_DAYS, ChronoUnit.DAYS)))
             )
         );
     }

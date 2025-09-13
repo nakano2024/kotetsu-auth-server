@@ -4,7 +4,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
 import kotetsu.auth.application.domain.entity.IssuedAccessToken;
-import kotetsu.auth.application.domain.util.IFetchCurrentDatePort;
 import kotetsu.auth.application.domain.util.IGenerateAccessTokenValuePort;
 import kotetsu.auth.application.domain.value.AccessTokenValue;
 import kotetsu.auth.application.domain.value.Duration;
@@ -15,7 +14,7 @@ import kotetsu.auth.application.domain.value.LinkedAccessTokenCoreKey;
 public class CreateIssuedAccessTokenService {
     private final IGenerateAccessTokenValuePort generateAccessTokenValuePort;
 
-    public CreateIssuedAccessTokenService(final IGenerateAccessTokenValuePort generateAccessTokenValuePort, final IFetchCurrentDatePort fetchCurrentDatePort) {
+    public CreateIssuedAccessTokenService(final IGenerateAccessTokenValuePort generateAccessTokenValuePort) {
         this.generateAccessTokenValuePort = generateAccessTokenValuePort;
     }
 
