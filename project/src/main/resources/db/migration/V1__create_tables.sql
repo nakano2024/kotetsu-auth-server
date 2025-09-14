@@ -68,13 +68,25 @@ CREATE TABLE IF NOT EXISTS clients (
   key           uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
   client_id     varchar(128) NOT NULL,
   client_secret_hash varchar(128) NOT NULL,
-  redirect_uri  varchar(512) NOT NULL,
   created_at    timestamptz NOT NULL DEFAULT current_timestamp,
   updated_at    timestamptz NOT NULL DEFAULT current_timestamp,
   CONSTRAINT uq_clients_client_id UNIQUE (client_id)
 );
 CREATE TRIGGER trg_clients_updated_at
 BEFORE UPDATE ON clients
+FOR EACH ROW
+EXECUTE FUNCTION set_updated_at();
+
+-- client_redirects
+CREATE TABLE IF NOT EXISTS client_redirects (
+  key           uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+  client_key    uuid NOT NULL REFERENCES clients(key) ON DELETE CASCADE,
+  redirect_uri  varchar(512) NOT NULL,
+  created_at    timestamptz NOT NULL DEFAULT current_timestamp,
+  updated_at    timestamptz NOT NULL DEFAULT current_timestamp
+);
+CREATE TRIGGER trg_client_redirects_updated_at
+BEFORE UPDATE ON client_redirects
 FOR EACH ROW
 EXECUTE FUNCTION set_updated_at();
 

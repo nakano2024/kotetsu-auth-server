@@ -35,7 +35,7 @@ public class GetInternalTokenByEmailUsecase {
         this.fetchCurrentDatePort = fetchCurrentDatePort;
     }
 
-    public IdTokenOutput getInternalToken(GetInternalTokenInput input) throws MeProfileNotFoundIOException {
+    public IdTokenOutput execute(GetInternalTokenInput input) throws MeProfileNotFoundIOException {
         if (input == null) {
             throw new InputNullRuntimeException();
         }

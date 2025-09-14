@@ -23,8 +23,9 @@ public class RequesterClientRepository implements IFetchRequesterClientPort {
     @Override
     public Optional<RequesterClient> fetch(final ClientId clientId) {
         final String sql = """
-            SELECT key, client_id, redirect_uri
-            FROM clients
+            SELECT c.key, c.client_id, cr.redirect_uri
+            FROM clients as c
+            JOIN client_redirects AS cr ON c.key = cr.client_key
             WHERE client_id = :client_id;
         """;
 
@@ -40,9 +41,9 @@ public class RequesterClientRepository implements IFetchRequesterClientPort {
         final Map<String, Object> row = rows.get(0);
 
         return Optional.of(RequesterClient.of(
-            Key.of(String.valueOf(row.get("key"))),
-            ClientId.of((String) row.get("client_id")),
-            ClientRedirectUri.of((String) row.get("redirect_uri"))
+            Key.of(String.valueOf(row.get("c_key"))),
+            ClientId.of((String) row.get("c_client_id")),
+            ClientRedirectUri.of((String) row.get("cr_redirect_uri"))
         ));
     }
 }

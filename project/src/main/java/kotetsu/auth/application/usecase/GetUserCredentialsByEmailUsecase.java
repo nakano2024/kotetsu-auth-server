@@ -14,7 +14,7 @@ public class GetUserCredentialsByEmailUsecase {
         this.findUserCredentialByEmailPort = findUserCredentialByEmailPort;
     }
 
-    public UserCredentialsOutput getUserCredentials(GetUserCredentialEmailInput input) throws UserCredentialNotFoundException {
+    public UserCredentialsOutput execute(GetUserCredentialEmailInput input) throws UserCredentialNotFoundException {
         if (input == null) {
             throw new InputNullRuntimeException();
         }        
