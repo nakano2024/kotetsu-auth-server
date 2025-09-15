@@ -9,6 +9,7 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -53,6 +54,12 @@ import kotetsu.auth.application.domain.value.LinkedRefreshTokenCoreKey;
 import kotetsu.auth.application.domain.value.ScopeName;
 import kotetsu.auth.application.dto.input.GetAuthorizationCodeInput;
 import kotetsu.auth.application.dto.output.AuthorizationCodeOutput;
+import kotetsu.auth.application.exception.ClientNotPermittedScopesContainedException;
+import kotetsu.auth.application.exception.InputNullRuntimeException;
+import kotetsu.auth.application.exception.PermittedScopeListNullRuntimeException;
+import kotetsu.auth.application.exception.RedirectUriDoseNotMatchException;
+import kotetsu.auth.application.exception.RequestedScopeListNullRuntimeException;
+import kotetsu.auth.application.exception.RequesterClientNotFoundRuntimeException;
 import kotetsu.auth.application.usecase.GetAuthorizationCodeUsecase;
 
 @ExtendWith(MockitoExtension.class)
@@ -148,13 +155,13 @@ public class ExecuteTest {
         assertDoesNotThrow(() -> {
             AuthorizationCodeOutput result = getAuthorizationCodeUsecase.execute(GetAuthorizationCodeInput.of(
             "990a9655-8ace-499c-11db-503fbc63b0e2",
-            "52a95015-f708-41d3-8f46-f6c5c2ebc8e6",
+            "LfYEaydDWOCIINJopILoPl",
             "https://example.com/callback",
             "task.read task.write",
             "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
             "sqro48PJQ7L3teGAkN8J",
             "offline"
-        ));
+            ));
             
             ArgumentCaptor<PendingAccessTokenCore> accessTokenCoreCaptor = ArgumentCaptor.forClass(PendingAccessTokenCore.class);
             verify(storeAccessTokenBodyPort).store(accessTokenCoreCaptor.capture());
@@ -219,5 +226,146 @@ public class ExecuteTest {
 
             assertEquals("LfYEaydDWOCIINJopILoPl", result.getCode());
         });
+    }
+
+    @Test
+    public void throwExceptionIfInputIsNull() {
+        InputNullRuntimeException exception = assertThrows(InputNullRuntimeException.class, () -> {
+            getAuthorizationCodeUsecase.execute(null);
+        });
+
+        assertEquals("inputはnullが許容されていません。", exception.getMessage());
+    }
+
+    @Test
+    public void throwExceptionIfRequesterClientIsEmpty() {
+        when(fetchRequeterClientPort.fetch(any())).thenReturn(Optional.empty());
+
+        RequesterClientNotFoundRuntimeException exception = assertThrows(RequesterClientNotFoundRuntimeException.class, () -> {
+            getAuthorizationCodeUsecase.execute(GetAuthorizationCodeInput.of(
+            "990a9655-8ace-499c-11db-503fbc63b0e2",
+            "52a95015-f708-41d3-8f46-f6c5c2ebc8e6",
+            "https://example.com/callback",
+            "task.read task.write",
+            "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+            "sqro48PJQ7L3teGAkN8J",
+            "offline"
+            ));
+        });
+
+        assertEquals("RequesterClientが見つかりません。", exception.getMessage());
+    }
+
+    @Test
+    public void throwExceptionIfRedirectUriIsInvalid() {
+        when(fetchRequeterClientPort.fetch(any())).thenReturn(Optional.of(RequesterClient.of(
+            Key.of("52a95015-f708-41d3-8f46-f6c5c2ebc8e6"),
+            ClientId.of("2G3qRGhp2lBU2N5kXahQgBGx2H"),
+            ClientRedirectUri.of("https://example.com/invalid-callback")
+        )));
+
+        RedirectUriDoseNotMatchException exception = assertThrows(RedirectUriDoseNotMatchException.class, () -> {
+            getAuthorizationCodeUsecase.execute(GetAuthorizationCodeInput.of(
+            "990a9655-8ace-499c-11db-503fbc63b0e2",
+            "52a95015-f708-41d3-8f46-f6c5c2ebc8e6",
+            "https://example.com/callback",
+            "task.read task.write",
+            "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+            "sqro48PJQ7L3teGAkN8J",
+            "offline"
+            ));
+        });
+
+        assertEquals("redirectUriが一致しません。", exception.getMessage());
+    }
+
+    @Test
+    public void throwExceptionIfNotPermittedScopesAreRequested() {
+        when(permittedScopeListPort.fetch(any())).thenReturn(Optional.of(PermittedScopeList.of(Set.of(
+            Scope.of(Key.of("4b4f03a8-12bd-f6eb-f69b-0cfa8ec8b23c"), ScopeName.of("task.read")),
+            Scope.of(Key.of("36b4c06d-4921-ad84-21ed-c96d9945668a"), ScopeName.of("task.write")),
+            Scope.of(Key.of("f6f170ea-1d20-4642-8289-98f87d9893dc"), ScopeName.of("task.delete")),
+            Scope.of(Key.of("3da7e043-c147-fe02-5586-824b3ade58bf"), ScopeName.of("task"))
+        ))));
+
+        when(fetchRequestedScopeListPort.fetch(any())).thenReturn(Optional.of(RequestedScopeList.of(List.of(
+            Scope.of(Key.of("4b4f03a8-12bd-f6eb-f69b-0cfa8ec8b23c"), ScopeName.of("task.read")),
+            Scope.of(Key.of("d4003dd9-cce3-f2f7-7b52-0329cc8f929b"), ScopeName.of("file.delete"))
+        ))));
+
+        when(fetchRequeterClientPort.fetch(any())).thenReturn(Optional.of(RequesterClient.of(
+            Key.of("52a95015-f708-41d3-8f46-f6c5c2ebc8e6"),
+            ClientId.of("2G3qRGhp2lBU2N5kXahQgBGx2H"),
+            ClientRedirectUri.of("https://example.com/callback")
+        )));
+
+        ClientNotPermittedScopesContainedException exception = assertThrows(ClientNotPermittedScopesContainedException.class, () -> {
+            getAuthorizationCodeUsecase.execute(GetAuthorizationCodeInput.of(
+            "990a9655-8ace-499c-11db-503fbc63b0e2",
+            "52a95015-f708-41d3-8f46-f6c5c2ebc8e6",
+            "https://example.com/callback",
+            "task.read task.write",
+            "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+            "sqro48PJQ7L3teGAkN8J",
+            "offline"
+            ));
+        });
+
+        assertEquals("RequesterClientに許可されていないスコープが含まれています。", exception.getMessage());
+    }
+
+    @Test
+    public void throwExceptionIfRequestedScopeNameistNull() {
+        when(fetchRequestedScopeListPort.fetch(any())).thenReturn(Optional.empty());
+
+        when(fetchRequeterClientPort.fetch(any())).thenReturn(Optional.of(RequesterClient.of(
+            Key.of("52a95015-f708-41d3-8f46-f6c5c2ebc8e6"),
+            ClientId.of("2G3qRGhp2lBU2N5kXahQgBGx2H"),
+            ClientRedirectUri.of("https://example.com/callback")
+        )));
+
+        RequestedScopeListNullRuntimeException exception = assertThrows(RequestedScopeListNullRuntimeException.class, () -> {
+            getAuthorizationCodeUsecase.execute(GetAuthorizationCodeInput.of(
+            "990a9655-8ace-499c-11db-503fbc63b0e2",
+            "52a95015-f708-41d3-8f46-f6c5c2ebc8e6",
+            "https://example.com/callback",
+            "task.read task.write",
+            "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+            "sqro48PJQ7L3teGAkN8J",
+            "offline"
+            ));
+        });
+
+        assertEquals("RequestedScopeListはnullが許容されません。", exception.getMessage());
+    }
+
+    @Test
+    public void throwExceptionIfPermittedScopeListNull() {
+        when(permittedScopeListPort.fetch(any())).thenReturn(Optional.empty());
+
+        when(fetchRequestedScopeListPort.fetch(any())).thenReturn(Optional.of(RequestedScopeList.of(List.of(
+            Scope.of(Key.of("4b4f03a8-12bd-f6eb-f69b-0cfa8ec8b23c"), ScopeName.of("task.read")),
+            Scope.of(Key.of("d4003dd9-cce3-f2f7-7b52-0329cc8f929b"), ScopeName.of("file.delete"))
+        ))));
+
+        when(fetchRequeterClientPort.fetch(any())).thenReturn(Optional.of(RequesterClient.of(
+            Key.of("52a95015-f708-41d3-8f46-f6c5c2ebc8e6"),
+            ClientId.of("2G3qRGhp2lBU2N5kXahQgBGx2H"),
+            ClientRedirectUri.of("https://example.com/callback")
+        )));
+
+        PermittedScopeListNullRuntimeException exception = assertThrows(PermittedScopeListNullRuntimeException.class, () -> {
+            getAuthorizationCodeUsecase.execute(GetAuthorizationCodeInput.of(
+            "990a9655-8ace-499c-11db-503fbc63b0e2",
+            "52a95015-f708-41d3-8f46-f6c5c2ebc8e6",
+            "https://example.com/callback",
+            "task.read task.write",
+            "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+            "sqro48PJQ7L3teGAkN8J",
+            "offline"
+            ));
+        });
+
+        assertEquals("PermittedScopeListはnullが許容されません。", exception.getMessage());
     }
 }

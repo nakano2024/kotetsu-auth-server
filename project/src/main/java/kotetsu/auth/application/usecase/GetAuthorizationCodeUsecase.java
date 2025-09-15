@@ -96,7 +96,7 @@ public class GetAuthorizationCodeUsecase {
             throw new InputNullRuntimeException();
         }
 
-        final RequesterClient requesterClient = fetchRequeterClientPort.fetch(ClientId.of(input.getClientKey()))
+        final RequesterClient requesterClient = fetchRequeterClientPort.fetch(ClientId.of(input.getClientId()))
             .orElseThrow(() -> new RequesterClientNotFoundRuntimeException());
 
         if(!requesterClient.getRedirectUri().equals(ClientRedirectUri.of(input.getRedirectUri()))) {

@@ -17,7 +17,7 @@ public class GetAuthorizationCodeInput {
 
     @Getter
     @NotBlank
-    private final String clientKey;
+    private final String clientId;
 
     @Getter
     @NotBlank
@@ -39,7 +39,7 @@ public class GetAuthorizationCodeInput {
 
     private GetAuthorizationCodeInput(
         final String resourceOwnerKey,
-        final String clientKey,
+        final String clientId,
         final String redirectUri,
         final String scopeListToken,
         final String codeChallenge,
@@ -47,7 +47,7 @@ public class GetAuthorizationCodeInput {
         final String accessType
     ) {
         this.resourceOwnerKey = resourceOwnerKey;
-        this.clientKey = clientKey;
+        this.clientId = clientId;
         this.redirectUri = redirectUri;
         this.scopeListToken = scopeListToken;
         this.codeChallenge = codeChallenge;
@@ -57,7 +57,7 @@ public class GetAuthorizationCodeInput {
 
     public static  GetAuthorizationCodeInput of(
         final String resourceOwnerKey,
-        final String clientKey,
+        final String clientId,
         final String redirectUri,
         final String scopeListToken,
         final String codeChallenge,
@@ -66,7 +66,7 @@ public class GetAuthorizationCodeInput {
     ) {
         final GetAuthorizationCodeInput input = new GetAuthorizationCodeInput(
             resourceOwnerKey,
-            clientKey,
+            clientId,
             redirectUri,
             scopeListToken,
             codeChallenge,
