@@ -118,7 +118,7 @@ public class GetAuthorizationCodeUsecase {
         final PendingAccessTokenCore accessTokenCore = PendingAccessTokenCore.of(
             Key.of(generateUuidPort.generate()),
             Issuer.of(fetchServerUrlPort.fetch()),
-            Subject.of(input.getResourceOwnerCode()),
+            Subject.of(input.getResourceOwnerKey()),
             requestedScopeList
         );
         storeAccessTokenBodyPort.store(accessTokenCore);
@@ -126,7 +126,7 @@ public class GetAuthorizationCodeUsecase {
         final PendingIdTokenCore idTokenCore = PendingIdTokenCore.of(
             Key.of((generateUuidPort.generate())),
             Issuer.of(fetchServerUrlPort.fetch()),
-            Subject.of(input.getResourceOwnerCode()),
+            Subject.of(input.getResourceOwnerKey()),
             Nonce.of(input.getNonce()),
             IdTokenAudience.of(requesterClient.getClientId().getValue())
         );
