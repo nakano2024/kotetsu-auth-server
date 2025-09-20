@@ -12,6 +12,7 @@ import kotetsu.auth.application.domain.value.ScopeName;
 
 public class ToScopeListTokenTest {
     @Test
+    // 複数パターンで検証したい
     public void returnResultMatchingAllArgumentScopes() {
         List<Scope> scopes = List.of(
             Scope.of(Key.of("test-key1"), ScopeName.of("task.read")),
@@ -22,5 +23,14 @@ public class ToScopeListTokenTest {
         RequestedScopeList requestedScopeList = RequestedScopeList.of(scopes);
 
         assertEquals("task.read task.write task.delete", requestedScopeList.toScopeListToken());
+    }
+
+    @Test
+    public void returnEmptyStringIfArgumentScopesIsEmpty() {
+        List<Scope> scopes = List.of();
+
+        RequestedScopeList requestedScopeList = RequestedScopeList.of(scopes);
+
+        assertEquals("", requestedScopeList.toScopeListToken());
     }
 }

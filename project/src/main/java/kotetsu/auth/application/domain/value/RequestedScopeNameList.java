@@ -23,9 +23,9 @@ public class RequestedScopeNameList {
     }
 
     public static RequestedScopeNameList of(final RequestedScopeNameListToken requestedScopeNameListToken) {
-        final List<String> scopeNameStrings = Arrays.asList(requestedScopeNameListToken.getValue().split(" "));
+        final List<String> scopeNameStringList = Arrays.asList(requestedScopeNameListToken.getValue().split(" "));
 
-        final Set<ScopeName> value = scopeNameStrings.stream()
+        final Set<ScopeName> value = scopeNameStringList.stream()
             .map(scopeNameString -> ScopeName.of(scopeNameString))
             .collect(Collectors.toSet());
 

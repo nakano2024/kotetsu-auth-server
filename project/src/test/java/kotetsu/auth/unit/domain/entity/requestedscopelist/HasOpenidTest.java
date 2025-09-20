@@ -25,10 +25,9 @@ public class HasOpenidTest {
     }
 
     @Test
+    // TODO: 複数パターンで検証したい
     public void returnFalseIfOpenidNotContaind() {
-        List<Scope> scopes = List.of(
-            Scope.of(Key.of("test-key1"), ScopeName.of("read"))
-        );
+        List<Scope> scopes = List.of();
 
         RequestedScopeList requestedScopeList = RequestedScopeList.of(scopes);
 

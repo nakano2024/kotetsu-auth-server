@@ -22,4 +22,16 @@ public class OfTest {
 
         assertEquals(expectedScopes, requestedScopeNameList.getValue());
     }
+
+    @Test
+    public void objecIsConstructedWithEmptyScopes() {
+        RequestedScopeNameListToken token = RequestedScopeNameListToken.of("");
+        RequestedScopeNameList requestedScopeNameList = RequestedScopeNameList.of(token);
+
+        final Set<ScopeName> expectedScopes = Set.of(
+            ScopeName.of("")
+        );
+
+        assertEquals(expectedScopes, requestedScopeNameList.getValue());
+    }
 }
