@@ -151,11 +151,12 @@ public class GetTokenUsecase {
             throw new InputNullRuntimeException();
         }
 
-        if (input.getGrantType().equals(GrantType.AUTORIZATION_CODE)) {
+        final GrantType grantType = GrantType.of(input.getGrantType());
+        if (grantType.isAuthorizationCode()) {
             return exchangeWithCode(input);
         }
 
-        if (input.getGrantType().equals(GrantType.REFRESH_TOKEN)) {
+        if (grantType.isRefreshToken()) {
             return exchangeWithRefresh(input);
         }
 
