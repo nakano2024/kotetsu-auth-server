@@ -20,4 +20,14 @@ public class ToStringListTest {
 
         assertEquals(expectedAudienceList, requestedRelatedAudienceList.toStringList());
     }
+
+    @Test
+    public void returnEmptyArgumentAudiences() {
+        final RequestedRelatedAudienceList requestedRelatedAudienceList = RequestedRelatedAudienceList.of(List.of());
+
+        
+        final List<String> expectedAudienceList = List.of();
+
+        assertEquals(expectedAudienceList, requestedRelatedAudienceList.toStringList());
+    }
 }

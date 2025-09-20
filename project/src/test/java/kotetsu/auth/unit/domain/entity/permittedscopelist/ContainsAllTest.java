@@ -41,4 +41,15 @@ public class ContainsAllTest {
             Scope.of(Key.of("not-containd"), ScopeName.of("not.containd"))
         )));
     }
+
+        @Test
+    public void returnsFalseIfPermittedScopeListIsEmpty() {
+        Set<Scope> scopes = Set.of();
+
+        PermittedScopeList permittedScopeList = PermittedScopeList.of(scopes);
+        assertFalse(permittedScopeList.containsAll(Set.of(
+            Scope.of(Key.of("test-key1"), ScopeName.of("read")),
+            Scope.of(Key.of("not-containd"), ScopeName.of("not.containd"))
+        )));
+    }
 }
