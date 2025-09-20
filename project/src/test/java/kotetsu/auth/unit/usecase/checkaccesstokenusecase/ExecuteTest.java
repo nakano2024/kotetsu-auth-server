@@ -129,7 +129,7 @@ public class ExecuteTest {
 
         assertTrue(output.isActive());
         assertEquals("task.read task.delete file.write", output.getScopeToken().get());
-        assertEquals("keR201fe4bswqg4gg4f4f33ge432333", output.getClientId().get());
+        assertEquals("pkmyIsnBHq1WGqbODvvf", output.getClientId().get());
         assertEquals(1757761201, output.getIssuedAt().get());
         assertEquals(3600, output.getExpiresIn().get());
         assertEquals("f1993751-8223-5e7d-5138-fb99cfb6cb68", output.getSubject().get());

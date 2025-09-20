@@ -47,4 +47,8 @@ public class RequestedRelatedAudienceList {
             .map(audience -> audience.getValue())
             .collect(Collectors.toList());
     }
+
+    public void add(AccessTokenAudience newAudience) {
+        audiences.add(newAudience);
+    }
 }

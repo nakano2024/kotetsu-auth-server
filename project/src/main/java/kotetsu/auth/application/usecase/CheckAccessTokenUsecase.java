@@ -108,7 +108,7 @@ public class CheckAccessTokenUsecase {
         return AccessTokenCheckOutput.of(
                 true,
                 accessTokenCore.getScopeList().toScopeListToken(),
-                audienceClient.getClientId().getValue(),
+                accessTokenCore.getRequesterClientId().getValue(),
                 accessToken.getDuration().getIssuedAt().getUnixSec(),
                 accessToken.getDuration().getDifferenceSec(),
                 accessTokenCore.getSubject().getValue(),

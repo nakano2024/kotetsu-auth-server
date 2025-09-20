@@ -8,7 +8,9 @@ import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 import jakarta.validation.constraints.NotNull;
 import kotetsu.auth.application.domain.exception.AccessTokenDraftValidationException;
+import kotetsu.auth.application.domain.value.AccessTokenAudience;
 import kotetsu.auth.application.domain.value.ClientId;
+import kotetsu.auth.application.domain.value.IdTokenAudience;
 import kotetsu.auth.application.domain.value.Issuer;
 import kotetsu.auth.application.domain.value.Key;
 import kotetsu.auth.application.domain.value.Subject;
@@ -82,5 +84,11 @@ public class ExistingAccessTokenCore {
         }
 
         return accessTokenCore;
+    }
+
+    public void addOpenidAudience(IdTokenAudience idTokenAudience) {
+        if (scopeList.hasOpenid()) {
+            relatedAudienceList.add(AccessTokenAudience.of(idTokenAudience.getValue()));
+        }
     }
 }
