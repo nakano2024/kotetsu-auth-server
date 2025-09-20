@@ -99,15 +99,15 @@ public class CheckAccessTokenUsecase {
         }
 
         return AccessTokenCheckOutput.of(
-                true,
-                accessTokenCore.getScopeList().toScopeListToken(),
-                accessTokenCore.getRequesterClientId().getValue(),
-                accessToken.getDuration().getIssuedAt().getUnixSec(),
-                accessToken.getDuration().getDifferenceSec(),
-                accessTokenCore.getSubject().getValue(),
-                accessTokenCore.getRelatedAudienceList().toStringList(),
-                accessTokenCore.getIssuer().getValue(),
-                IssuedAccessToken.TOKEN_TYPE
+            true,
+            accessTokenCore.getScopeList().toScopeListToken(),
+            accessTokenCore.getRequesterClientId().getValue(),
+            accessToken.getDuration().getIssuedAt().getUnixSec(),
+            accessToken.getDuration().getDifferenceSec(),
+            accessTokenCore.getSubject().getValue(),
+            accessTokenCore.getRelatedAudienceList().toStringList(),
+            accessTokenCore.getIssuer().getValue(),
+            IssuedAccessToken.TOKEN_TYPE
         );
     }
 }
