@@ -3,7 +3,6 @@ package kotetsu.auth.application.usecase;
 import java.util.Date;
 import java.util.Optional;
 
-import kotetsu.auth.application.domain.entity.AudienceClient;
 import kotetsu.auth.application.domain.entity.ExistingAccessToken;
 import kotetsu.auth.application.domain.entity.ExistingAccessTokenCore;
 import kotetsu.auth.application.domain.entity.IssuedAccessToken;
@@ -18,7 +17,6 @@ import kotetsu.auth.application.domain.value.AccessTokenValue;
 import kotetsu.auth.application.domain.value.Key;
 import kotetsu.auth.application.dto.input.CheckAccessTokenInput;
 import kotetsu.auth.application.dto.output.AccessTokenCheckOutput;
-import kotetsu.auth.application.exception.AudienceClientNullRuntimeException;
 import kotetsu.auth.application.exception.ExistingAccessTokenCoreNullRuntimeException;
 import kotetsu.auth.application.exception.InputNullRuntimeException;
 
@@ -27,7 +25,6 @@ public class CheckAccessTokenUsecase {
     private final IFetchExistingAccessTokenPort fetchExistingAccessTokenPort;
     private final IFetchExistingAccessTokenCorePort fetchExistingAccessTokenCorePort;
     private final IFetchResourceOwnerValidator fetchResourceOwnerValidatorPort;
-    private final IFetchAudienceClientPort fetchAudienceClientPort;
 
     public CheckAccessTokenUsecase(
         final IFetchCurrentDatePort fetchCurrentDatePort,
@@ -41,7 +38,6 @@ public class CheckAccessTokenUsecase {
         this.fetchExistingAccessTokenPort = fetchExistingAccessTokenPort;
         this.fetchExistingAccessTokenCorePort = fetchExistingAccessTokenCorePort;
         this.fetchResourceOwnerValidatorPort = fetchResourceOwnerValidatorPort;
-        this.fetchAudienceClientPort = fetchAudienceClientPort;
     }
 
     public AccessTokenCheckOutput execute(final CheckAccessTokenInput input) {
@@ -101,9 +97,6 @@ public class CheckAccessTokenUsecase {
                 null
             );    
         }
-
-        final AudienceClient audienceClient = fetchAudienceClientPort.fetch(Key.of(input.getClientKey()))
-            .orElseThrow(() -> new AudienceClientNullRuntimeException());
 
         return AccessTokenCheckOutput.of(
                 true,

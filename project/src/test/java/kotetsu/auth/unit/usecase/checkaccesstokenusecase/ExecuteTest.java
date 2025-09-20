@@ -17,14 +17,12 @@ import org.mockito.Mock;
 import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import kotetsu.auth.application.domain.entity.AudienceClient;
 import kotetsu.auth.application.domain.entity.ExistingAccessToken;
 import kotetsu.auth.application.domain.entity.ExistingAccessTokenCore;
 import kotetsu.auth.application.domain.entity.RequestedRelatedAudienceList;
 import kotetsu.auth.application.domain.entity.RequestedScopeList;
 import kotetsu.auth.application.domain.entity.ResourceOwnerValidator;
 import kotetsu.auth.application.domain.entity.Scope;
-import kotetsu.auth.application.domain.repository.IFetchAudienceClientPort;
 import kotetsu.auth.application.domain.repository.IFetchExistingAccessTokenCorePort;
 import kotetsu.auth.application.domain.repository.IFetchExistingAccessTokenPort;
 import kotetsu.auth.application.domain.repository.IFetchResourceOwnerValidator;
@@ -56,9 +54,6 @@ public class ExecuteTest {
 
     @Mock
     private IFetchResourceOwnerValidator fetchResourceOwnerValidatorPort;
-
-    @Mock
-    private IFetchAudienceClientPort fetchAudienceClientPort;
 
     @InjectMocks
     private CheckAccessTokenUsecase checkAccessTokenUsecase;
@@ -113,11 +108,6 @@ public class ExecuteTest {
 
         when(fetchResourceOwnerValidatorPort.fetch(any())).thenReturn(Optional.of(ResourceOwnerValidator.of(
             UserActivation.of(true)
-        )));
-
-        when(fetchAudienceClientPort.fetch(any())).thenReturn(Optional.of(AudienceClient.of(
-            Key.of("574206d6-f061-6e71-41d4-eb536ba24c13"),
-            ClientId.of("keR201fe4bswqg4gg4f4f33ge432333")
         )));
 
         AccessTokenCheckOutput output = checkAccessTokenUsecase.execute(

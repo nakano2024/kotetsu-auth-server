@@ -1,5 +1,6 @@
 package kotetsu.auth.unit.domain.entity.existingaccesstokencore;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -42,10 +43,38 @@ public class OfTest {
         assertEquals("59085ab5-b68b-5be2-2bf0-71608e4cae3e", existingAccessTokenCore.getKey().getValue());
         assertEquals("https://issuer.com", existingAccessTokenCore.getIssuer().getValue());
         assertEquals("f5323e50-a6a0-1442-e88f-b67bb6344183", existingAccessTokenCore.getSubject().getValue());
-        // RequestedScopeListやRequestedRelatedAudienceListに含まれる値の妥当性は、専用のテストで行うため省略
-        // ひとまず引数で渡された値の妥当性を確認
         assertSame(requestedScopeList, existingAccessTokenCore.getScopeList());
         assertSame(relatedAudienceList, existingAccessTokenCore.getRelatedAudienceList());
+        assertEquals("requester-client-id", existingAccessTokenCore.getRequesterClientId().getValue());
+    }
+
+    @Test
+    public void audienceContainsClientIdIfScopeListHasOpenid() {
+        RequestedScopeList requestedScopeList = RequestedScopeList.of(List.of(
+            Scope.of(
+                Key.of(Scope.KEY_OPENID),
+                ScopeName.of(Scope.NAME_OPENID)
+            )
+        ));
+
+        RequestedRelatedAudienceList relatedAudienceList = RequestedRelatedAudienceList.of(
+            new ArrayList<>()
+        );
+
+        ExistingAccessTokenCore existingAccessTokenCore = ExistingAccessTokenCore.of(
+            Key.of("59085ab5-b68b-5be2-2bf0-71608e4cae3e"),
+            Issuer.of("https://issuer.com"),
+            Subject.of("f5323e50-a6a0-1442-e88f-b67bb6344183"),
+            requestedScopeList,
+            relatedAudienceList,
+            ClientId.of("requester-client-id")
+        );
+        
+        assertEquals("59085ab5-b68b-5be2-2bf0-71608e4cae3e", existingAccessTokenCore.getKey().getValue());
+        assertEquals("https://issuer.com", existingAccessTokenCore.getIssuer().getValue());
+        assertEquals("f5323e50-a6a0-1442-e88f-b67bb6344183", existingAccessTokenCore.getSubject().getValue());
+        assertSame(requestedScopeList, existingAccessTokenCore.getScopeList());
+        assertEquals(RequestedRelatedAudienceList.of(List.of("requester-client-id")).toStringList(), existingAccessTokenCore.getRelatedAudienceList().toStringList());
         assertEquals("requester-client-id", existingAccessTokenCore.getRequesterClientId().getValue());
     }
 }
