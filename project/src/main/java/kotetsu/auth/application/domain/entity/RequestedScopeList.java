@@ -12,6 +12,7 @@ import jakarta.validation.ValidatorFactory;
 import jakarta.validation.constraints.NotNull;
 import kotetsu.auth.application.domain.exception.RequestedScopeListValidationException;
 import kotetsu.auth.application.domain.value.Key;
+import kotetsu.auth.application.domain.value.RequestedScopeNameList;
 import kotetsu.auth.application.domain.value.ScopeName;
 import lombok.Getter;
 
@@ -41,6 +42,14 @@ public class RequestedScopeList {
 
     public boolean hasOpenid() {
         return scopes.contains(Scope.of(Key.of(Scope.KEY_OPENID), ScopeName.of(Scope.NAME_OPENID)));
+    }
+
+    // クライアントが存在しないはずのスコープ名を指定していないかの確認のために、Repositoryから取得されたスコープの中にクライアント指定のスコープ名が全て含まれているか検証している
+    public boolean matchesRequestedScopeNameList(final RequestedScopeNameList requestedScopeNameList) {
+        final Set<ScopeName> scopeNames = scopes.stream()
+            .map(scope -> scope.getName())
+            .collect(Collectors.toSet());
+        return scopeNames.containsAll(requestedScopeNameList.getValue());
     }
 
     public String toScopeListToken() {
