@@ -107,7 +107,8 @@ public class ExecuteTest {
                     "https://task.example.com",
                     "https://file.example.com"
                 )
-            )
+            ),
+            ClientId.of("pkmyIsnBHq1WGqbODvvf")
         )));
 
         when(fetchResourceOwnerValidatorPort.fetch(any())).thenReturn(Optional.of(ResourceOwnerValidator.of(
@@ -243,7 +244,8 @@ public class ExecuteTest {
                     "https://task.example.com",
                     "https://file.example.com"
                 )
-            )
+            ),
+            ClientId.of("pkmyIsnBHq1WGqbODvvf")
         )));
 
         when(fetchResourceOwnerValidatorPort.fetch(any())).thenReturn(Optional.of(ResourceOwnerValidator.of(

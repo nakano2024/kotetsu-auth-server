@@ -41,6 +41,7 @@ import kotetsu.auth.application.dto.input.GetAuthorizationCodeInput;
 import kotetsu.auth.application.dto.output.AuthorizationCodeOutput;
 import kotetsu.auth.application.exception.ClientNotPermittedScopesContainedException;
 import kotetsu.auth.application.exception.InputNullRuntimeException;
+import kotetsu.auth.application.exception.InvalidScopeNameListTokenException;
 import kotetsu.auth.application.exception.PermittedScopeListNullRuntimeException;
 import kotetsu.auth.application.exception.RedirectUriDoseNotMatchException;
 import kotetsu.auth.application.exception.RequestedScopeListNullRuntimeException;
@@ -88,7 +89,8 @@ public class GetAuthorizationCodeUsecase {
     @Transactional
     public AuthorizationCodeOutput execute(final GetAuthorizationCodeInput input)
         throws ClientNotPermittedScopesContainedException,
-            RedirectUriDoseNotMatchException
+            RedirectUriDoseNotMatchException,
+            InvalidScopeNameListTokenException
     {
         final Date currentDate = fetchCurrentDatePort.fetch();
 
@@ -108,6 +110,10 @@ public class GetAuthorizationCodeUsecase {
         final RequestedScopeList requestedScopeList = fetchRequestedScopeListPort.fetch(requestedScopeNameList)
             .orElseThrow(() -> new RequestedScopeListNullRuntimeException());
 
+        if (!requestedScopeList.matchesRequestedScopeNameList(requestedScopeNameList)) {
+            throw new InvalidScopeNameListTokenException();
+        }
+
         final PermittedScopeList permittedScopeList =  permittedScopeListPort.fetch(Key.of(requesterClient.getKey().getValue()))
             .orElseThrow(() -> new PermittedScopeListNullRuntimeException());
 
@@ -119,7 +125,8 @@ public class GetAuthorizationCodeUsecase {
             Key.of(generateUuidPort.generate()),
             Issuer.of(fetchServerUrlPort.fetch()),
             Subject.of(input.getResourceOwnerKey()),
-            requestedScopeList
+            requestedScopeList,
+            requesterClient.getClientId()
         );
         storeAccessTokenBodyPort.store(accessTokenCore);
 

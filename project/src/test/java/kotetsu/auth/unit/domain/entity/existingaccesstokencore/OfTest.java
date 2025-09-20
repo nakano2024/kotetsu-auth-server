@@ -10,6 +10,7 @@ import kotetsu.auth.application.domain.entity.ExistingAccessTokenCore;
 import kotetsu.auth.application.domain.entity.RequestedRelatedAudienceList;
 import kotetsu.auth.application.domain.entity.RequestedScopeList;
 import kotetsu.auth.application.domain.entity.Scope;
+import kotetsu.auth.application.domain.value.ClientId;
 import kotetsu.auth.application.domain.value.Issuer;
 import kotetsu.auth.application.domain.value.Key;
 import kotetsu.auth.application.domain.value.ScopeName;
@@ -34,7 +35,8 @@ public class OfTest {
             Issuer.of("https://issuer.com"),
             Subject.of("f5323e50-a6a0-1442-e88f-b67bb6344183"),
             requestedScopeList,
-            relatedAudienceList
+            relatedAudienceList,
+            ClientId.of("requester-client-id")
         );
         
         assertEquals("59085ab5-b68b-5be2-2bf0-71608e4cae3e", existingAccessTokenCore.getKey().getValue());
@@ -44,5 +46,6 @@ public class OfTest {
         // ひとまず引数で渡された値の妥当性を確認
         assertSame(requestedScopeList, existingAccessTokenCore.getScopeList());
         assertSame(relatedAudienceList, existingAccessTokenCore.getRelatedAudienceList());
+        assertEquals("requester-client-id", existingAccessTokenCore.getRequesterClientId().getValue());
     }
 }

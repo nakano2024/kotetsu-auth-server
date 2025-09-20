@@ -56,6 +56,7 @@ import kotetsu.auth.application.dto.input.GetAuthorizationCodeInput;
 import kotetsu.auth.application.dto.output.AuthorizationCodeOutput;
 import kotetsu.auth.application.exception.ClientNotPermittedScopesContainedException;
 import kotetsu.auth.application.exception.InputNullRuntimeException;
+import kotetsu.auth.application.exception.InvalidScopeNameListTokenException;
 import kotetsu.auth.application.exception.PermittedScopeListNullRuntimeException;
 import kotetsu.auth.application.exception.RedirectUriDoseNotMatchException;
 import kotetsu.auth.application.exception.RequestedScopeListNullRuntimeException;
@@ -337,6 +338,34 @@ public class ExecuteTest {
         });
 
         assertEquals("RequestedScopeListはnullが許容されません。", exception.getMessage());
+    }
+
+    @Test
+    public void throwExceptionIfRequesteScopeNameListTokenDoseNotMatcheRequestedScopeList() {
+        when(fetchRequestedScopeListPort.fetch(any())).thenReturn(Optional.of(RequestedScopeList.of(List.of(
+            Scope.of(Key.of("4b4f03a8-12bd-f6eb-f69b-0cfa8ec8b23c"), ScopeName.of("task.read")),
+            Scope.of(Key.of("d4003dd9-cce3-f2f7-7b52-0329cc8f929b"), ScopeName.of("file.delete"))
+        ))));
+
+        when(fetchRequeterClientPort.fetch(any())).thenReturn(Optional.of(RequesterClient.of(
+            Key.of("52a95015-f708-41d3-8f46-f6c5c2ebc8e6"),
+            ClientId.of("2G3qRGhp2lBU2N5kXahQgBGx2H"),
+            ClientRedirectUri.of("https://example.com/callback")
+        )));
+
+        InvalidScopeNameListTokenException exception = assertThrows(InvalidScopeNameListTokenException.class, () -> {
+            getAuthorizationCodeUsecase.execute(GetAuthorizationCodeInput.of(
+            "990a9655-8ace-499c-11db-503fbc63b0e2",
+            "52a95015-f708-41d3-8f46-f6c5c2ebc8e6",
+            "https://example.com/callback",
+            "task.read task.write notexist.read",
+            "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+            "sqro48PJQ7L3teGAkN8J",
+            "offline"
+            ));
+        });
+
+        assertEquals("存在しないスコープが含まれてます。", exception.getMessage());
     }
 
     @Test

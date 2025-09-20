@@ -8,6 +8,7 @@ import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 import jakarta.validation.constraints.NotNull;
 import kotetsu.auth.application.domain.exception.AccessTokenDraftValidationException;
+import kotetsu.auth.application.domain.value.ClientId;
 import kotetsu.auth.application.domain.value.Issuer;
 import kotetsu.auth.application.domain.value.Key;
 import kotetsu.auth.application.domain.value.Subject;
@@ -30,30 +31,38 @@ public class PendingAccessTokenCore {
     @NotNull
     private final RequestedScopeList requestedScopeList;
 
+    @Getter
+    @NotNull
+    private final ClientId requesterClientId;
+
     private PendingAccessTokenCore(
         final Key key,
         final Issuer issuer,
         final Subject subject,
-        final RequestedScopeList requestedScopeList
+        final RequestedScopeList requestedScopeList,
+        final ClientId requesterClientId
     ) {
         this.key = key;
         this.issuer = issuer;
         this.subject = subject;
         this.requestedScopeList = requestedScopeList;
+        this.requesterClientId = requesterClientId;
     }
 
     public static PendingAccessTokenCore of(
         final Key key,
         final Issuer issuer,
         final Subject subject,
-        final RequestedScopeList requestedScopeList
+        final RequestedScopeList requestedScopeList,
+        final ClientId requesterClientId
     ) {
 
         final PendingAccessTokenCore accessTokenCore = new PendingAccessTokenCore(
             key,
             issuer,
             subject,
-            requestedScopeList
+            requestedScopeList,
+            requesterClientId
         );
 
         final ValidatorFactory factory = Validation.buildDefaultValidatorFactory();

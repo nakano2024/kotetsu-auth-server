@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import kotetsu.auth.application.domain.entity.PendingAccessTokenCore;
 import kotetsu.auth.application.domain.entity.RequestedScopeList;
 import kotetsu.auth.application.domain.entity.Scope;
+import kotetsu.auth.application.domain.value.ClientId;
 import kotetsu.auth.application.domain.value.Issuer;
 import kotetsu.auth.application.domain.value.Key;
 import kotetsu.auth.application.domain.value.ScopeName;
@@ -23,19 +24,20 @@ public class OfTest {
         RequestedScopeList requestedScopeList = RequestedScopeList.of(List.of(
             Scope.of(Key.of("scope-key"), ScopeName.of("read"))
         ));
+        ClientId requesterClientId = ClientId.of("requester-client-id");
 
         PendingAccessTokenCore pendingAccessTokenCore = PendingAccessTokenCore.of(
             key,
             issuer,
             subject,
-            requestedScopeList
+            requestedScopeList,
+            requesterClientId
         );
 
         assertEquals("test-key", pendingAccessTokenCore.getKey().getValue());
         assertEquals("test-issuer", pendingAccessTokenCore.getIssuer().getValue());
         assertEquals("test-subject", pendingAccessTokenCore.getSubject().getValue());
-        // RequestedScopeListに含まれる値の妥当性は、専用のテストで行うため省略
-        // ひとまず引数で渡された値の妥当性を確認
         assertSame(requestedScopeList, pendingAccessTokenCore.getRequestedScopeList());
+        assertEquals("requester-client-id", pendingAccessTokenCore.getRequesterClientId().getValue());
     }
 }

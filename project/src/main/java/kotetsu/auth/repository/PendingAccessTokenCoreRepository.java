@@ -29,12 +29,14 @@ public class PendingAccessTokenCoreRepository implements IStorePendingAccessToke
             INSERT INTO access_token_cores(
                 key,
                 issuer,
-                subject
+                subject,
+                requester_client_id
             )
             VALUES(
                 :key,
                 :issuer,
-                :subject
+                :subject,
+                :requester_client_id
             );
         """;
 
@@ -42,6 +44,7 @@ public class PendingAccessTokenCoreRepository implements IStorePendingAccessToke
         params.put("key", UUID.fromString(accessTokenCore.getKey().getValue()));
         params.put("issuer", accessTokenCore.getIssuer().getValue());
         params.put("subject", accessTokenCore.getSubject().getValue());
+        params.put("requester_client_id", accessTokenCore.getRequesterClientId().getValue());
 
         jdbcTemplate.update(sql, params);
 

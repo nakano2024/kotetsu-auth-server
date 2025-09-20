@@ -8,6 +8,7 @@ import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 import jakarta.validation.constraints.NotNull;
 import kotetsu.auth.application.domain.exception.AccessTokenDraftValidationException;
+import kotetsu.auth.application.domain.value.ClientId;
 import kotetsu.auth.application.domain.value.Issuer;
 import kotetsu.auth.application.domain.value.Key;
 import kotetsu.auth.application.domain.value.Subject;
@@ -34,18 +35,24 @@ public class ExistingAccessTokenCore {
     @NotNull
     private final RequestedRelatedAudienceList relatedAudienceList;
 
+    @Getter
+    @NotNull
+    private final ClientId requesterClientId;
+
     private ExistingAccessTokenCore(
         final Key key,
         final Issuer issuer,
         final Subject subject,
         final RequestedScopeList scopeList,
-        final RequestedRelatedAudienceList relatedAudienceList
+        final RequestedRelatedAudienceList relatedAudienceList,
+        final ClientId requesterClientId
     ) {
         this.key = key;
         this.issuer = issuer;
         this.subject = subject;
         this.scopeList = scopeList;
         this.relatedAudienceList = relatedAudienceList;
+        this.requesterClientId = requesterClientId;
     }
 
     public static ExistingAccessTokenCore of(
@@ -53,7 +60,8 @@ public class ExistingAccessTokenCore {
         final Issuer issuer,
         final Subject subject,
         final RequestedScopeList scopeList,
-        final RequestedRelatedAudienceList relatedAudienceList
+        final RequestedRelatedAudienceList relatedAudienceList,
+        final ClientId requesterClientId
     ) {
 
         final ExistingAccessTokenCore accessTokenCore = new ExistingAccessTokenCore(
@@ -61,7 +69,8 @@ public class ExistingAccessTokenCore {
             issuer,
             subject,
             scopeList,
-            relatedAudienceList
+            relatedAudienceList,
+            requesterClientId
         );
 
         final ValidatorFactory factory = Validation.buildDefaultValidatorFactory();

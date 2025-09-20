@@ -244,8 +244,7 @@ public class GetTokenUsecase {
             issuedAccessToken.getDuration().getDifferenceSec(),
             (refreshToken != null) ? refreshToken.getValue().getValue() : null ,
             (idToken != null) ? idToken.getValue().getValue() : null,
-            accessTokenCore.getScopeList().toScopeListToken(),
-            accessTokenCore.getRelatedAudienceList().toStringList()
+            accessTokenCore.getScopeList().toScopeListToken()
         );
     }
 
@@ -326,8 +325,7 @@ public class GetTokenUsecase {
             issuedAccessToken.getDuration().getDifferenceSec(),
             newRefreshToken.getValue().getValue(),
             (idToken != null) ? idToken.getValue().getValue() : null,
-            accessTokenCore.getScopeList().toScopeListToken(),
-            accessTokenCore.getRelatedAudienceList().toStringList()
+            accessTokenCore.getScopeList().toScopeListToken()
         );
     }
 }

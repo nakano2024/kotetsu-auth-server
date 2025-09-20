@@ -14,6 +14,7 @@ import kotetsu.auth.application.domain.entity.RequestedRelatedAudienceList;
 import kotetsu.auth.application.domain.entity.RequestedScopeList;
 import kotetsu.auth.application.domain.entity.Scope;
 import kotetsu.auth.application.domain.repository.IFetchExistingAccessTokenCorePort;
+import kotetsu.auth.application.domain.value.ClientId;
 import kotetsu.auth.application.domain.value.Issuer;
 import kotetsu.auth.application.domain.value.Key;
 import kotetsu.auth.application.domain.value.ScopeName;
@@ -29,7 +30,7 @@ public class ExistingAccessTokenCoreRepository implements IFetchExistingAccessTo
     @Override
     public Optional<ExistingAccessTokenCore> fetch(Key key) {
         final String sql = """
-            SELECT atc.key, atc.issuer, atc.subject, s.key AS s_key, s.name AS s_name, rs.url AS rs_url 
+            SELECT atc.key, atc.issuer, atc.subject, atc.requester_client_id, s.key AS s_key, s.name AS s_name, rs.url AS rs_url 
             FROM access_token_cores AS atc
             JOIN access_token_core_scopes AS atcs ON atc.key = atcs.access_token_core_key
             JOIN scopes AS s ON atcs.scope_key = s.key
@@ -62,11 +63,12 @@ public class ExistingAccessTokenCoreRepository implements IFetchExistingAccessTo
         final RequestedRelatedAudienceList scopeRelatedAudienceList = RequestedRelatedAudienceList.of(resourceServerUrls);
 
         return Optional.of(ExistingAccessTokenCore.of(
-            Key.of((String) rows.get(0).get("key")),
-            Issuer.of((String) rows.get(0).get("issuer")),
-            Subject.of(String.valueOf(rows.get(0).get("subject"))),
+            Key.of((String) rows.get(0).get("atc_key")),
+            Issuer.of((String) rows.get(0).get("atc_issuer")),
+            Subject.of(String.valueOf(rows.get(0).get("atc_subject"))),
             requestedScopeList,
-            scopeRelatedAudienceList
+            scopeRelatedAudienceList,
+            ClientId.of((String) rows.get(0).get("atc_requester_client_id"))
         ));
     }
 }
