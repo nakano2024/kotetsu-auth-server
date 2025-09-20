@@ -305,7 +305,7 @@ public class ExecuteTest {
             "990a9655-8ace-499c-11db-503fbc63b0e2",
             "52a95015-f708-41d3-8f46-f6c5c2ebc8e6",
             "https://example.com/callback",
-            "task.read task.write",
+            "task.read file.delete",
             "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
             "sqro48PJQ7L3teGAkN8J",
             "offline"
@@ -388,7 +388,7 @@ public class ExecuteTest {
             "990a9655-8ace-499c-11db-503fbc63b0e2",
             "52a95015-f708-41d3-8f46-f6c5c2ebc8e6",
             "https://example.com/callback",
-            "task.read task.write",
+            "task.read file.delete",
             "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
             "sqro48PJQ7L3teGAkN8J",
             "offline"
