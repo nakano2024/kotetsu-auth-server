@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import static org.mockito.ArgumentMatchers.any;
@@ -117,18 +115,22 @@ public class ExecuteTest {
             )
         );
 
-        assertTrue(output.isActive());
-        assertEquals("task.read task.delete file.write", output.getScopeToken().get());
-        assertEquals("pkmyIsnBHq1WGqbODvvf", output.getClientId().get());
-        assertEquals(1757761201, output.getIssuedAt().get());
-        assertEquals(3600, output.getExpiresIn().get());
-        assertEquals("f1993751-8223-5e7d-5138-fb99cfb6cb68", output.getSubject().get());
-        assertEquals(List.of(
-            "https://task.example.com",
-            "https://file.example.com"
-        ), output.getAudiences().get());
-        assertEquals("https://oauth.example.com", output.getIssuer().get());
-        assertEquals("Bearer", output.getTokenType().get());
+        final AccessTokenCheckOutput expectedOutput = AccessTokenCheckOutput.of(
+            true,
+            "task.read task.delete file.write",
+            "pkmyIsnBHq1WGqbODvvf",
+            1757761201L,
+            3600L,
+            "f1993751-8223-5e7d-5138-fb99cfb6cb68",
+            List.of(
+                "https://task.example.com",
+                "https://file.example.com"
+            ),
+            "https://oauth.example.com",
+            "Bearer"
+        );
+
+        assertEquals(expectedOutput, output);
     }
 
     @Test
@@ -142,15 +144,19 @@ public class ExecuteTest {
             )
         );
 
-        assertFalse(output.isActive());
-        assertTrue(output.getScopeToken().isEmpty());
-        assertTrue(output.getClientId().isEmpty());
-        assertTrue(output.getIssuedAt().isEmpty());
-        assertTrue(output.getExpiresIn().isEmpty());
-        assertTrue(output.getSubject().isEmpty());
-        assertTrue(output.getAudiences().isEmpty());
-        assertTrue(output.getIssuer().isEmpty());
-        assertTrue(output.getTokenType().isEmpty());
+        final AccessTokenCheckOutput expectedOutput = AccessTokenCheckOutput.of(
+            false,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+        );
+        
+        assertEquals(expectedOutput, output);
     }
 
     @Test
@@ -179,15 +185,19 @@ public class ExecuteTest {
             )
         );
 
-        assertFalse(output.isActive());
-        assertTrue(output.getScopeToken().isEmpty());
-        assertTrue(output.getClientId().isEmpty());
-        assertTrue(output.getIssuedAt().isEmpty());
-        assertTrue(output.getExpiresIn().isEmpty());
-        assertTrue(output.getSubject().isEmpty());
-        assertTrue(output.getAudiences().isEmpty());
-        assertTrue(output.getIssuer().isEmpty());
-        assertTrue(output.getTokenType().isEmpty());
+        final AccessTokenCheckOutput expectedOutput = AccessTokenCheckOutput.of(
+            false,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+        );
+        
+        assertEquals(expectedOutput, output);
     }
 
     @Test
@@ -249,14 +259,18 @@ public class ExecuteTest {
             )
         );
 
-        assertFalse(output.isActive());
-        assertTrue(output.getScopeToken().isEmpty());
-        assertTrue(output.getClientId().isEmpty());
-        assertTrue(output.getIssuedAt().isEmpty());
-        assertTrue(output.getExpiresIn().isEmpty());
-        assertTrue(output.getSubject().isEmpty());
-        assertTrue(output.getAudiences().isEmpty());
-        assertTrue(output.getIssuer().isEmpty());
-        assertTrue(output.getTokenType().isEmpty());
+        final AccessTokenCheckOutput expectedOutput = AccessTokenCheckOutput.of(
+            false,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+        );
+        
+        assertEquals(expectedOutput, output);
     }
 }

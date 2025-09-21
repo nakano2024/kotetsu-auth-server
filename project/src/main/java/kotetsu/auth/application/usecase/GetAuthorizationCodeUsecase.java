@@ -156,6 +156,9 @@ public class GetAuthorizationCodeUsecase {
         );
         storeAuthorizationPort.store(authorization);
 
-        return AuthorizationCodeOutput.of(authorization.getAuthorizationCode().getValue().getValue());
+        return AuthorizationCodeOutput.of(
+            authorization.getAuthorizationCode().getValue().getValue(),
+            requesterClient.getRedirectUri().getValue()
+        );
     }
 }

@@ -154,7 +154,7 @@ public class ExecuteTest {
         ));
 
         assertDoesNotThrow(() -> {
-            AuthorizationCodeOutput result = getAuthorizationCodeUsecase.execute(GetAuthorizationCodeInput.of(
+            final AuthorizationCodeOutput result = getAuthorizationCodeUsecase.execute(GetAuthorizationCodeInput.of(
             "990a9655-8ace-499c-11db-503fbc63b0e2",
             "LfYEaydDWOCIINJopILoPl",
             "https://example.com/callback",
@@ -225,7 +225,11 @@ public class ExecuteTest {
             assertEquals("df8f55e1-2498-2b65-c610-b7145ccbc53f", authorizationCaptor.getValue().getLinkedIdTokenCoreKey().getValue());
             assertEquals("32972779-f6e2-60be-44cc-dbb2b7dc8fd2", authorizationCaptor.getValue().getLinkedRefreshTokenCoreKey().getValue());
 
-            assertEquals("LfYEaydDWOCIINJopILoPl", result.getCode());
+            final AuthorizationCodeOutput expectedResult = AuthorizationCodeOutput.of(
+                "LfYEaydDWOCIINJopILoPl",
+                "https://example.com/callback"
+            );
+            assertEquals(expectedResult, result);
         });
     }
 

@@ -4,7 +4,9 @@ import java.util.List;
 import java.util.Optional;
 
 import lombok.Getter;
+import lombok.Value;
 
+@Value
 public class AccessTokenCheckOutput {
     @Getter
     private final boolean isActive;
