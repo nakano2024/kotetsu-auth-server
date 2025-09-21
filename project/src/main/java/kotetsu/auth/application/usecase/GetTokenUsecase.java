@@ -208,12 +208,14 @@ public class GetTokenUsecase {
 
         storeIssuedAccessTokenPort.store(issuedAccessToken);
 
-        final ExistingIdTokenCore idTokenCore = fetchExistingIdTokenCorePort.fetch(
-            Key.of(authorization.getLinkedIdTokenCoreKey().getValue())
-        ).orElseThrow(() -> new ExistingIdTokenCoreNullRuntimeException());
+
 
         IssuedIdToken idToken = null;
         if (accessTokenCore.getScopeList().hasOpenid()) {
+            final ExistingIdTokenCore idTokenCore = fetchExistingIdTokenCorePort.fetch(
+                Key.of(authorization.getLinkedIdTokenCoreKey().getValue())
+            ).orElseThrow(() -> new ExistingIdTokenCoreNullRuntimeException());
+
             final IssuedIdTokenMeta idTokenMeta = createIdTokenMetaService.create(
                 LinkedIdTokenCoreKey.of(idTokenCore.getKey().getValue()),
                 IdTokenUniqueId.of(generateUuidPort.generate()),

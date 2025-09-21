@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import static org.mockito.ArgumentMatchers.any;
@@ -37,6 +38,7 @@ import kotetsu.auth.application.domain.value.Subject;
 import kotetsu.auth.application.domain.value.UserActivation;
 import kotetsu.auth.application.dto.input.CheckAccessTokenInput;
 import kotetsu.auth.application.dto.output.AccessTokenCheckOutput;
+import kotetsu.auth.application.exception.InputNullRuntimeException;
 import kotetsu.auth.application.usecase.CheckAccessTokenUsecase;
 
 @ExtendWith(MockitoExtension.class)
@@ -272,5 +274,14 @@ public class ExecuteTest {
         );
         
         assertEquals(expectedOutput, output);
+    }
+
+    @Test
+    public void throwExceptionIfInputIsNull() {
+        InputNullRuntimeException exception = assertThrows(InputNullRuntimeException.class, () -> {
+            checkAccessTokenUsecase.execute(null);
+        });
+
+        assertEquals("inputはnullが許容されていません。", exception.getMessage());
     }
 }
