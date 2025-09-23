@@ -25,7 +25,7 @@ public class RequesterClientRepository implements IFetchRequesterClientPort {
     @Override
     public Optional<RequesterClient> fetch(final ClientId clientId) {
         final String sql = """
-            SELECT c.key, c.client_id, cr.redirect_uri
+            SELECT c.key AS c_key, c.client_id AS c_client_id, cr.redirect_uri AS cr_redirect_uri
             FROM clients as c
             JOIN client_redirects AS cr ON c.key = cr.client_key
             WHERE client_id = :client_id;

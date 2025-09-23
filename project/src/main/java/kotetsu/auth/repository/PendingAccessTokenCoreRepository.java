@@ -32,21 +32,21 @@ public class PendingAccessTokenCoreRepository implements IStorePendingAccessToke
                 key,
                 issuer,
                 subject,
-                requester_client_id
+                client_id
             )
             VALUES(
                 :key,
                 :issuer,
                 :subject,
-                :requester_client_id
+                :client_id
             );
         """;
 
         final Map<String, Object> params = new HashMap<>();
         params.put("key", UUID.fromString(accessTokenCore.getKey().getValue()));
         params.put("issuer", accessTokenCore.getIssuer().getValue());
-        params.put("subject", accessTokenCore.getSubject().getValue());
-        params.put("requester_client_id", accessTokenCore.getRequesterClientId().getValue());
+        params.put("subject", UUID.fromString(accessTokenCore.getSubject().getValue()));
+        params.put("client_id", accessTokenCore.getRequesterClientId().getValue());
 
         jdbcTemplate.update(sql, params);
 

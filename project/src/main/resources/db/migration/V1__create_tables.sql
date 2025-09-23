@@ -169,6 +169,7 @@ CREATE TABLE IF NOT EXISTS access_token_cores (
   key         uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
   issuer      varchar(128) NOT NULL,
   subject     uuid REFERENCES users(key) ON DELETE CASCADE,
+  client_id   varchar(128) NOT NULL REFERENCES clients(client_id) ON DELETE CASCADE,
   created_at  timestamptz NOT NULL DEFAULT current_timestamp,
   updated_at  timestamptz NOT NULL DEFAULT current_timestamp
 );

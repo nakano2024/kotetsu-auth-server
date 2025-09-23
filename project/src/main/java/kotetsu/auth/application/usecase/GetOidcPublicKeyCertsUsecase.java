@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import kotetsu.auth.application.dto.output.OidcPublicKeyCertsOutput;
 import kotetsu.auth.application.dto.output.OidcPublicKeyJwkOutput;
@@ -15,6 +16,7 @@ import kotetsu.auth.application.util.IFetchOidcPublicKeyJwksPort;
 public class GetOidcPublicKeyCertsUsecase {
     private IFetchOidcPublicKeyJwksPort fetchOidcPublicKeyJwksPort;
 
+    @Transactional
     public OidcPublicKeyCertsOutput execute() {
         final List<OidcPublicKeyJwk> jwks = fetchOidcPublicKeyJwksPort.fetch()
             .orElseThrow(() -> new OidcPublicKeyJwksNullRuntimeException());

@@ -1,8 +1,14 @@
 package kotetsu.auth.application.domain.value;
 
 import java.util.Objects;
+import java.util.Set;
 
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
 import jakarta.validation.constraints.NotBlank;
+import kotetsu.auth.application.domain.exception.RequestedScopeNameListTokenValidationException;
 import lombok.Getter;
 
 public class ClientRedirectUri {
@@ -16,6 +22,15 @@ public class ClientRedirectUri {
 
     public static ClientRedirectUri of(final String value) {
         final ClientRedirectUri clientRedirectUri = new ClientRedirectUri(value);
+
+        final ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+        final Validator validator = factory.getValidator();
+        final Set<ConstraintViolation<ClientRedirectUri>> violations = validator.validate(clientRedirectUri);
+
+        for (final ConstraintViolation<ClientRedirectUri> violation : violations) {
+            throw new RequestedScopeNameListTokenValidationException(violation.getMessage());
+        }
+
         return clientRedirectUri;
     }
 
@@ -35,7 +50,7 @@ public class ClientRedirectUri {
 
         final ClientRedirectUri anotherClientRedirectUri = (ClientRedirectUri) obj;
 
-        return this.value.equals(anotherClientRedirectUri.getValue());
+        return this.getValue().equals(anotherClientRedirectUri.getValue());
     }
 
     @Override

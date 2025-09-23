@@ -3,6 +3,7 @@ package kotetsu.auth.application.usecase;
 import java.util.Date;
 
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import kotetsu.auth.application.domain.entity.IssuedInternalAuthToken;
 import kotetsu.auth.application.domain.entity.MeProfile;
@@ -38,6 +39,7 @@ public class GetInternalTokenByEmailUsecase {
         this.fetchCurrentDatePort = fetchCurrentDatePort;
     }
 
+    @Transactional
     public IdTokenOutput execute(GetInternalTokenInput input) throws MeProfileNotFoundIOException {
         if (input == null) {
             throw new InputNullRuntimeException();

@@ -38,7 +38,7 @@ public class PendingIdTokenCoreRepository implements IStorePendingIdTokenCorePor
         final Map<String, Object> params = new HashMap<>();
         params.put("key", UUID.fromString(idTokenCore.getKey().getValue()));
         params.put("issuer", idTokenCore.getIssuer().getValue());
-        params.put("subject", idTokenCore.getSubject().getValue());
+        params.put("subject", UUID.fromString(idTokenCore.getSubject().getValue()));
         params.put("nonce", idTokenCore.getNonce().getValue());
 
         jdbcTemplate.update(sql, params);

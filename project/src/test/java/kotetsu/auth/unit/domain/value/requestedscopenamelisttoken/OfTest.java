@@ -20,8 +20,12 @@ public class OfTest {
                 "task.read task.write"
             ),
             Arguments.of(
-                "task.read task.write task.delete",
-                "task.read task.write task.delete"
+                "task.read task.write",
+                "task.read task.write"
+            ),
+            Arguments.of(
+                "task.read openid task.write task.delete profile",
+                "task.read openid task.write task.delete profile"
             ),
             Arguments.of(
                 "task.read",

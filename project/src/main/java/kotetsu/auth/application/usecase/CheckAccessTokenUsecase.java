@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.Optional;
 
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import kotetsu.auth.application.domain.entity.ExistingAccessToken;
 import kotetsu.auth.application.domain.entity.ExistingAccessTokenCore;
@@ -43,6 +44,7 @@ public class CheckAccessTokenUsecase {
         this.fetchResourceOwnerValidatorPort = fetchResourceOwnerValidatorPort;
     }
 
+    @Transactional
     public AccessTokenCheckOutput execute(final CheckAccessTokenInput input) {
         if (input == null) {
             throw new InputNullRuntimeException();

@@ -35,8 +35,8 @@ public class PendingRefreshTokenCoreRepository implements IStorePendingRefreshTo
 
         final Map<String, Object> params = new HashMap<>();
         params.put("key", UUID.fromString(refreshTokenCore.getKey().getValue()));
-        params.put("access_token_core_key", refreshTokenCore.getLinkedAccessTokenCoreId().getValue());
-        params.put("id_token_core_key", refreshTokenCore.getLinkedIdTokenCoreId().getValue());
+        params.put("access_token_core_key", UUID.fromString(refreshTokenCore.getLinkedAccessTokenCoreId().getValue()));
+        params.put("id_token_core_key", UUID.fromString(refreshTokenCore.getLinkedIdTokenCoreId().getValue()));
 
         jdbcTemplate.update(sql, params);
     }

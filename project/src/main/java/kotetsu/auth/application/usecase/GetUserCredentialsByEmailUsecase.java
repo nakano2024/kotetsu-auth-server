@@ -1,6 +1,7 @@
 package kotetsu.auth.application.usecase;
 
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import kotetsu.auth.application.dto.data.UserCredentialData;
 import kotetsu.auth.application.dto.input.GetUserCredentialEmailInput;
@@ -17,6 +18,7 @@ public class GetUserCredentialsByEmailUsecase {
         this.findUserCredentialByEmailPort = findUserCredentialByEmailPort;
     }
 
+    @Transactional
     public UserCredentialsOutput execute(GetUserCredentialEmailInput input) throws UserCredentialNotFoundException {
         if (input == null) {
             throw new InputNullRuntimeException();

@@ -14,7 +14,7 @@ import lombok.Getter;
 public class RequestedScopeNameListToken {
     @Getter
     @NotNull
-    @Pattern(regexp = "^(?:[A-Za-z0-9]+\\.[A-Za-z0-9]+(?: [A-Za-z0-9]+\\.[A-Za-z0-9]+)*|[A-Za-z0-9]+(?: [A-Za-z0-9]+)*)$")
+    @Pattern(regexp = "^[a-zA-Z0-9]+\\.?[a-zA-Z0-9]+( [a-zA-Z0-9]+\\.?[a-zA-Z0-9]+)*$")
     private final String value;
 
     private RequestedScopeNameListToken(final String value) {

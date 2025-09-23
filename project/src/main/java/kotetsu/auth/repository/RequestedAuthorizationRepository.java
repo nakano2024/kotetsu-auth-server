@@ -44,8 +44,8 @@ public class RequestedAuthorizationRepository implements IStoreRequestedAuthoriz
         """;
 
         final Map<String, Object> params = new HashMap<>();
-        params.put("value", UUID.fromString(authorization.getAuthorizationCode().getValue().getValue()));
-        params.put("challenge", UUID.fromString(authorization.getAuthorizationCode().getChallenge().getValue()));
+        params.put("value", authorization.getAuthorizationCode().getValue().getValue());
+        params.put("challenge", authorization.getAuthorizationCode().getChallenge().getValue());
         params.put("expired_at", authorization.getAuthorizationCode().getExpiredAt().getValue());
         params.put("access_type_name", authorization.getAccessType().getValue());
         params.put("grant_type_name", authorization.getGrantType().getValue());
