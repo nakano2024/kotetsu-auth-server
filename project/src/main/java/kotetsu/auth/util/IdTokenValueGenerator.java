@@ -13,6 +13,7 @@ import java.util.Random;
 import org.bouncycastle.asn1.pkcs.RSAPrivateKey;
 import org.bouncycastle.util.io.pem.PemObject;
 import org.bouncycastle.util.io.pem.PemReader;
+import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -25,6 +26,7 @@ import kotetsu.auth.dto.util.OidcPrivateKey;
 import kotetsu.auth.dto.util.OidcPrivateKeyPemJson;
 import kotetsu.auth.dto.util.OidcPrivateKeyPemJsonWrapper;
 
+@Component
 public class IdTokenValueGenerator implements IGenerateIdTokenValuePort {
     @Override
     public IdTokenValue generate(final IssuedIdTokenMeta idTokenMeta, final ExistingIdTokenCore idTokenCore) {

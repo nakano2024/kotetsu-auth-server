@@ -7,12 +7,14 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.stereotype.Component;
 
 import kotetsu.auth.application.domain.entity.ResourceOwnerValidator;
 import kotetsu.auth.application.domain.repository.IFetchResourceOwnerValidator;
 import kotetsu.auth.application.domain.value.Key;
 import kotetsu.auth.application.domain.value.UserActivation;
 
+@Component
 public class ResourceOwnerValidatorRepository
     implements IFetchResourceOwnerValidator
 {

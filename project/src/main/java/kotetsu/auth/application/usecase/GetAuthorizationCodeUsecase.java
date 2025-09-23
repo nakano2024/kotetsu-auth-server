@@ -2,6 +2,7 @@ package kotetsu.auth.application.usecase;
 
 import java.util.Date;
 
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import kotetsu.auth.application.domain.entity.PendingAccessTokenCore;
@@ -47,6 +48,7 @@ import kotetsu.auth.application.exception.RedirectUriDoseNotMatchException;
 import kotetsu.auth.application.exception.RequestedScopeListNullRuntimeException;
 import kotetsu.auth.application.exception.RequesterClientNotFoundRuntimeException;
 
+@Component
 public class GetAuthorizationCodeUsecase {
     final IFetchPermittedScopeListPort permittedScopeListPort;
     final IFetchRequestedScopeListPort fetchRequestedScopeListPort;

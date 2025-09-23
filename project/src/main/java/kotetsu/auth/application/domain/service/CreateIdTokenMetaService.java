@@ -3,6 +3,8 @@ package kotetsu.auth.application.domain.service;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
+import org.springframework.stereotype.Component;
+
 import kotetsu.auth.application.domain.entity.IssuedIdTokenMeta;
 import kotetsu.auth.application.domain.value.Duration;
 import kotetsu.auth.application.domain.value.ExpiredAt;
@@ -10,6 +12,7 @@ import kotetsu.auth.application.domain.value.IdTokenUniqueId;
 import kotetsu.auth.application.domain.value.IssuedAt;
 import kotetsu.auth.application.domain.value.LinkedIdTokenCoreKey;
 
+@Component
 public class CreateIdTokenMetaService {
     public IssuedIdTokenMeta create(final LinkedIdTokenCoreKey linkedIdTokenCoreKey, final IdTokenUniqueId uniqueId, final IssuedAt issuedAt) {
         return IssuedIdTokenMeta.of(

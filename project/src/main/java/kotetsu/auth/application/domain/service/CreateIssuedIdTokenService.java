@@ -1,10 +1,13 @@
 package kotetsu.auth.application.domain.service;
 
+import org.springframework.stereotype.Component;
+
 import kotetsu.auth.application.domain.entity.ExistingIdTokenCore;
 import kotetsu.auth.application.domain.entity.IssuedIdToken;
 import kotetsu.auth.application.domain.entity.IssuedIdTokenMeta;
 import kotetsu.auth.application.domain.util.IGenerateIdTokenValuePort;
 
+@Component
 public class CreateIssuedIdTokenService {
     private final IGenerateIdTokenValuePort generateIdTokenValuePort;
 

@@ -3,6 +3,8 @@ package kotetsu.auth.application.domain.service;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
+import org.springframework.stereotype.Component;
+
 import kotetsu.auth.application.domain.entity.IssuedAccessToken;
 import kotetsu.auth.application.domain.util.IGenerateAccessTokenValuePort;
 import kotetsu.auth.application.domain.value.AccessTokenValue;
@@ -11,6 +13,7 @@ import kotetsu.auth.application.domain.value.ExpiredAt;
 import kotetsu.auth.application.domain.value.IssuedAt;
 import kotetsu.auth.application.domain.value.LinkedAccessTokenCoreKey;
 
+@Component
 public class CreateIssuedAccessTokenService {
     private final IGenerateAccessTokenValuePort generateAccessTokenValuePort;
 

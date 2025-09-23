@@ -5,10 +5,12 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.stereotype.Component;
 
 import kotetsu.auth.application.domain.entity.PendingIdTokenCore;
 import kotetsu.auth.application.domain.repository.IStorePendingIdTokenCorePort;
 
+@Component
 public class PendingIdTokenCoreRepository implements IStorePendingIdTokenCorePort {
     private final NamedParameterJdbcTemplate jdbcTemplate;
 

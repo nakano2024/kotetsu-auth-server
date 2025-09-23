@@ -3,6 +3,8 @@ package kotetsu.auth.application.domain.service;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
+import org.springframework.stereotype.Component;
+
 import kotetsu.auth.application.domain.entity.MeProfile;
 import kotetsu.auth.application.domain.entity.PendingInternalAuthToken;
 import kotetsu.auth.application.domain.value.Duration;
@@ -10,6 +12,7 @@ import kotetsu.auth.application.domain.value.ExpiredAt;
 import kotetsu.auth.application.domain.value.IssuedAt;
 import kotetsu.auth.application.domain.value.Subject;
 
+@Component
 public class CreatePendingInternalAuthTokenService {
     public PendingInternalAuthToken create(final Subject subject, final MeProfile profile, final IssuedAt issuedAt) {
         return PendingInternalAuthToken.of(

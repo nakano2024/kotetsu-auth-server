@@ -1,5 +1,7 @@
 package kotetsu.auth.application.usecase;
 
+import org.springframework.stereotype.Component;
+
 import kotetsu.auth.application.dto.data.UserCredentialData;
 import kotetsu.auth.application.dto.input.GetUserCredentialEmailInput;
 import kotetsu.auth.application.dto.output.UserCredentialsOutput;
@@ -7,6 +9,7 @@ import kotetsu.auth.application.exception.InputNullRuntimeException;
 import kotetsu.auth.application.exception.UserCredentialNotFoundException;
 import kotetsu.auth.application.query.IFindUserCredentialByEmailPort;
 
+@Component
 public class GetUserCredentialsByEmailUsecase {
     private final IFindUserCredentialByEmailPort findUserCredentialByEmailPort;
 

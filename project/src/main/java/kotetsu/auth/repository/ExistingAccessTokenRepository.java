@@ -20,6 +20,7 @@ import kotetsu.auth.application.domain.value.IssuedAt;
 import kotetsu.auth.application.domain.value.Key;
 import kotetsu.auth.application.domain.value.LinkedAccessTokenCoreKey;
 
+@Component
 public class ExistingAccessTokenRepository
     implements IFetchExistingAccessTokenPort,
     IDeleteExistingAccessTokenPort,

@@ -9,6 +9,7 @@ import java.util.UUID;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
+import org.springframework.stereotype.Component;
 
 import kotetsu.auth.application.domain.entity.PendingAccessTokenCore;
 import kotetsu.auth.application.domain.entity.RequestedScopeList;
@@ -16,6 +17,7 @@ import kotetsu.auth.application.domain.entity.Scope;
 import kotetsu.auth.application.domain.repository.IStorePendingAccessTokenCorePort;
 import kotetsu.auth.application.domain.value.Key;
 
+@Component
 public class PendingAccessTokenCoreRepository implements IStorePendingAccessTokenCorePort {
     private final NamedParameterJdbcTemplate jdbcTemplate;
 

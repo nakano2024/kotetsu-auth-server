@@ -8,6 +8,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.stereotype.Component;
 
 import kotetsu.auth.application.domain.entity.ExistingAuthorization;
 import kotetsu.auth.application.domain.repository.IDeleteExistingAuthorization;
@@ -23,6 +24,7 @@ import kotetsu.auth.application.domain.value.LinkedAccessTokenCoreKey;
 import kotetsu.auth.application.domain.value.LinkedIdTokenCoreKey;
 import kotetsu.auth.application.domain.value.LinkedRefreshTokenCoreKey;
 
+@Component
 public class ExistingAuthorizationRepository 
     implements IDeleteExistingAuthorization,
         IFetchExistingAuthorizationForUpdatePort {

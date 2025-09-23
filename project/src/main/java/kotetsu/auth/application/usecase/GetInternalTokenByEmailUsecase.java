@@ -2,6 +2,8 @@ package kotetsu.auth.application.usecase;
 
 import java.util.Date;
 
+import org.springframework.stereotype.Component;
+
 import kotetsu.auth.application.domain.entity.IssuedInternalAuthToken;
 import kotetsu.auth.application.domain.entity.MeProfile;
 import kotetsu.auth.application.domain.entity.PendingInternalAuthToken;
@@ -17,6 +19,7 @@ import kotetsu.auth.application.dto.output.IdTokenOutput;
 import kotetsu.auth.application.exception.InputNullRuntimeException;
 import kotetsu.auth.application.exception.MeProfileNotFoundIOException;
 
+@Component
 public class GetInternalTokenByEmailUsecase {
     private final IFetchMeProfilePort fetchMeProfilePort;
     private final CreatePendingInternalAuthTokenService createPendingInternalAuthTokenService;

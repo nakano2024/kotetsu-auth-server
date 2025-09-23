@@ -6,12 +6,14 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.stereotype.Component;
 
 import kotetsu.auth.application.domain.entity.AudienceClient;
 import kotetsu.auth.application.domain.repository.IFetchAudienceClientPort;
 import kotetsu.auth.application.domain.value.ClientId;
 import kotetsu.auth.application.domain.value.Key;
 
+@Component
 public class AudienceClientRepository implements IFetchAudienceClientPort {
     private final NamedParameterJdbcTemplate jdbcTemplate;
 

@@ -5,10 +5,12 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.stereotype.Component;
 
 import kotetsu.auth.application.domain.entity.IssuedAccessToken;
 import kotetsu.auth.application.domain.repository.IStoreIssuedAccessTokenPort;
 
+@Component
 public class IssuedAccessTokenRepository implements IStoreIssuedAccessTokenPort {
     private final NamedParameterJdbcTemplate jdbcTemplate;
 

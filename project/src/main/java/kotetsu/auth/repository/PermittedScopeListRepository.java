@@ -8,12 +8,14 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.stereotype.Component;
 
 import kotetsu.auth.application.domain.entity.PermittedScopeList;
 import kotetsu.auth.application.domain.entity.Scope;
 import kotetsu.auth.application.domain.repository.IFetchPermittedScopeListPort;
 import kotetsu.auth.application.domain.value.Key;
 
+@Component
 public class PermittedScopeListRepository implements IFetchPermittedScopeListPort {
     private final NamedParameterJdbcTemplate jdbcTemplate;
 

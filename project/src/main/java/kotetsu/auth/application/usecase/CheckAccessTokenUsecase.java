@@ -3,6 +3,8 @@ package kotetsu.auth.application.usecase;
 import java.util.Date;
 import java.util.Optional;
 
+import org.springframework.stereotype.Component;
+
 import kotetsu.auth.application.domain.entity.ExistingAccessToken;
 import kotetsu.auth.application.domain.entity.ExistingAccessTokenCore;
 import kotetsu.auth.application.domain.entity.IssuedAccessToken;
@@ -20,6 +22,7 @@ import kotetsu.auth.application.dto.output.AccessTokenCheckOutput;
 import kotetsu.auth.application.exception.ExistingAccessTokenCoreNullRuntimeException;
 import kotetsu.auth.application.exception.InputNullRuntimeException;
 
+@Component
 public class CheckAccessTokenUsecase {
     private final IFetchCurrentDatePort fetchCurrentDatePort;
     private final IFetchExistingAccessTokenPort fetchExistingAccessTokenPort;

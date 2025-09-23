@@ -1,5 +1,7 @@
 package kotetsu.auth.application.usecase;
 
+import org.springframework.stereotype.Component;
+
 import kotetsu.auth.application.dto.data.ClientCredentialData;
 import kotetsu.auth.application.dto.input.ClientCredentialOutput;
 import kotetsu.auth.application.dto.output.GetClientCredentialInput;
@@ -7,6 +9,7 @@ import kotetsu.auth.application.exception.ClientCredentialNotFoundException;
 import kotetsu.auth.application.exception.InputNullRuntimeException;
 import kotetsu.auth.application.query.IFindClientCredentialPort;
 
+@Component
 public class GetClientCredentialUsecase {
     private final IFindClientCredentialPort findClientCredentialPort;
 

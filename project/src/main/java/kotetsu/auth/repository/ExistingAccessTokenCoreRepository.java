@@ -8,6 +8,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.stereotype.Component;
 
 import kotetsu.auth.application.domain.entity.ExistingAccessTokenCore;
 import kotetsu.auth.application.domain.entity.RequestedRelatedAudienceList;
@@ -20,6 +21,7 @@ import kotetsu.auth.application.domain.value.Key;
 import kotetsu.auth.application.domain.value.ScopeName;
 import kotetsu.auth.application.domain.value.Subject;
 
+@Component
 public class ExistingAccessTokenCoreRepository implements IFetchExistingAccessTokenCorePort {
     private final NamedParameterJdbcTemplate template;
 

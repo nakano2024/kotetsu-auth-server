@@ -8,6 +8,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.stereotype.Component;
 
 import kotetsu.auth.application.domain.entity.ExistingRefreshToken;
 import kotetsu.auth.application.domain.repository.IDeleteExistingRefreshTokenPort;
@@ -20,6 +21,7 @@ import kotetsu.auth.application.domain.value.Key;
 import kotetsu.auth.application.domain.value.LinkedRefreshTokenCoreKey;
 import kotetsu.auth.application.domain.value.RefreshTokenValue;
 
+@Component
 public class ExistingRefreshTokenRepository
     implements IFetchExistingRefreshTokenForUpdatePort,
         IDeleteExistingRefreshTokenPort

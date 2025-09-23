@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.stereotype.Component;
 
 import kotetsu.auth.application.domain.entity.ExistingIdTokenCore;
 import kotetsu.auth.application.domain.repository.IFetchExistingIdTokenCorePort;
@@ -19,6 +20,7 @@ import kotetsu.auth.application.domain.value.Nonce;
 import kotetsu.auth.application.domain.value.Subject;
 import kotetsu.auth.application.domain.value.UserName;
 
+@Component
 public class ExistingIdTokenCoreRepository implements IFetchExistingIdTokenCorePort {
     private final NamedParameterJdbcTemplate jdbcTemplate;
 

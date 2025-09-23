@@ -6,10 +6,12 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.stereotype.Component;
 
 import kotetsu.auth.application.dto.data.UserCredentialData;
 import kotetsu.auth.application.query.IFindUserCredentialByEmailPort;
 
+@Component
 public class UserCredentialQueryService implements IFindUserCredentialByEmailPort {
     private final NamedParameterJdbcTemplate jdbcTemplate;
 

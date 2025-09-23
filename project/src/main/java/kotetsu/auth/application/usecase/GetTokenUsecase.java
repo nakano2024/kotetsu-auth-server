@@ -2,6 +2,7 @@ package kotetsu.auth.application.usecase;
 
 import java.util.Date;
 
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import kotetsu.auth.application.domain.entity.ExistingAccessToken;
@@ -65,6 +66,7 @@ import kotetsu.auth.application.exception.RefreshTokenExpiredException;
 import kotetsu.auth.application.exception.RefreshTokenNotFoundException;
 import kotetsu.auth.application.exception.TokenGrantTypeDoseNotMatchException;
 
+@Component
 public class GetTokenUsecase {
     private final IGenerateUuidPort generateUuidPort;
     private final IFetchExistingAuthorizationForUpdatePort fetchExistingAuthorizationPort;

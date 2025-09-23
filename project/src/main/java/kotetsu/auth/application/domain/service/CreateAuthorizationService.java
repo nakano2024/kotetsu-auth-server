@@ -3,6 +3,8 @@ package kotetsu.auth.application.domain.service;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
+import org.springframework.stereotype.Component;
+
 import kotetsu.auth.application.domain.entity.RequestedAuthorization;
 import kotetsu.auth.application.domain.util.IGenerateAuthorizationCodeValuePort;
 import kotetsu.auth.application.domain.value.AccessType;
@@ -15,6 +17,7 @@ import kotetsu.auth.application.domain.value.LinkedAccessTokenCoreKey;
 import kotetsu.auth.application.domain.value.LinkedIdTokenCoreKey;
 import kotetsu.auth.application.domain.value.LinkedRefreshTokenCoreKey;
 
+@Component
 public class CreateAuthorizationService {
 
     private final IGenerateAuthorizationCodeValuePort fetchGenerateAuthorizationCodeValuePort;

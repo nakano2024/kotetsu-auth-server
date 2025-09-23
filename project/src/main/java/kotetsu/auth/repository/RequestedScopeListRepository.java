@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.stereotype.Component;
 
 import kotetsu.auth.application.domain.entity.RequestedScopeList;
 import kotetsu.auth.application.domain.entity.Scope;
@@ -15,6 +16,7 @@ import kotetsu.auth.application.domain.value.Key;
 import kotetsu.auth.application.domain.value.RequestedScopeNameList;
 import kotetsu.auth.application.domain.value.ScopeName;
 
+@Component
 public class RequestedScopeListRepository implements IFetchRequestedScopeListPort {
     private final NamedParameterJdbcTemplate jdbcTemplate;
 

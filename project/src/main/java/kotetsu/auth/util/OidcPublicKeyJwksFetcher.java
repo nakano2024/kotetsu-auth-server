@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.springframework.stereotype.Component;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -12,6 +14,7 @@ import kotetsu.auth.application.util.IFetchOidcPublicKeyJwksPort;
 import kotetsu.auth.dto.util.OidcPublicKeyJwkJson;
 import kotetsu.auth.dto.util.OidcPublicKeyJwkWrapperJson;
 
+@Component
 public class OidcPublicKeyJwksFetcher implements IFetchOidcPublicKeyJwksPort {
     @Override
     public Optional<List<OidcPublicKeyJwk>> fetch() {
