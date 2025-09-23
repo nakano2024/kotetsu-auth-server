@@ -77,6 +77,6 @@ public class ExecuteTest {
             getOidcPublicKeyCertsUsecase.execute();
         });
 
-        assertEquals("OidcPublicKeyJwksはnullが許容されません。", exception.getMessage());
+        assertEquals("OidcPublicKeyJwksはNULLが許容されません。", exception.getMessage());
     }
 }

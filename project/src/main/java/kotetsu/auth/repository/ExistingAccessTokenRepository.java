@@ -8,6 +8,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.stereotype.Component;
 
 import kotetsu.auth.application.domain.entity.ExistingAccessToken;
 import kotetsu.auth.application.domain.repository.IDeleteExistingAccessTokenPort;
