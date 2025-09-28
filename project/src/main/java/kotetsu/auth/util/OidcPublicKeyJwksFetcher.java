@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -16,13 +17,15 @@ import kotetsu.auth.dto.util.OidcPublicKeyJwkWrapperJson;
 
 @Component
 public class OidcPublicKeyJwksFetcher implements IFetchOidcPublicKeyJwksPort {
+
+    @Value("${app.oidc.public.keys}")
+    private String publicKeyJwksJsonRaw;
+
     @Override
     public Optional<List<OidcPublicKeyJwk>> fetch() {
         try {
-            final String publicKeyJwksJsonRaw = System.getenv("OIDC_PUBLIC_KEYS");
-
             if (publicKeyJwksJsonRaw == null) {
-                throw new IllegalArgumentException("環境変数からの秘密鍵取得に失敗しました。");
+                throw new IllegalArgumentException("公開鍵取得に失敗しました。");
             }
 
             final ObjectMapper objectMapper = new ObjectMapper();

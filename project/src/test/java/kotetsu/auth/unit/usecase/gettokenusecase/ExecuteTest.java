@@ -151,7 +151,7 @@ public class ExecuteTest {
                     ExpiredAt.of(expiredDate)
                 ),
                 AccessType.of("online"),
-                LinkedAccessTokenCoreKey.of("access-core-key-123"),
+                LinkedAccessTokenCoreKey.of("3498665a-6863-7065-62ee-0be766cff4ea"),
                 LinkedIdTokenCoreKey.of("id-core-key-123"),
                 LinkedRefreshTokenCoreKey.of("refresh-core-key-123"),
                 GrantType.of("authorization_code")
@@ -162,7 +162,7 @@ public class ExecuteTest {
 
         when(fetchExistingAccessTokenCorePort.fetch(any())).thenReturn(Optional.of(
             ExistingAccessTokenCore.of(
-                Key.of("access-core-key-123"),
+                Key.of("3498665a-6863-7065-62ee-0be766cff4ea"),
                 Issuer.of("https://auth.example.com"),
                 Subject.of("user-123"),
                 RequestedScopeList.of(List.of(
@@ -176,7 +176,7 @@ public class ExecuteTest {
 
         final IssuedAccessToken mockAccessToken = IssuedAccessToken.of(
             AccessTokenValue.of("access-token-123"),
-            LinkedAccessTokenCoreKey.of("access-core-key-123"),
+            LinkedAccessTokenCoreKey.of("3498665a-6863-7065-62ee-0be766cff4ea"),
             Duration.of(IssuedAt.of(currentDate), ExpiredAt.of(expiredDate))
         );
         when(createIssuedAccessTokenService.create(any(), any())).thenReturn(mockAccessToken);
@@ -220,7 +220,7 @@ public class ExecuteTest {
                     ExpiredAt.of(expiredDate)
                 ),
                 AccessType.of("online"),
-                LinkedAccessTokenCoreKey.of("access-core-key-123"),
+                LinkedAccessTokenCoreKey.of("3498665a-6863-7065-62ee-0be766cff4ea"),
                 LinkedIdTokenCoreKey.of("id-core-key-123"),
                 LinkedRefreshTokenCoreKey.of("refresh-core-key-123"),
                 GrantType.of("authorization_code")
@@ -231,7 +231,7 @@ public class ExecuteTest {
 
         when(fetchExistingAccessTokenCorePort.fetch(any())).thenReturn(Optional.of(
             ExistingAccessTokenCore.of(
-                Key.of("access-core-key-123"),
+                Key.of("3498665a-6863-7065-62ee-0be766cff4ea"),
                 Issuer.of("https://auth.example.com"),
                 Subject.of("user-123"),
                 RequestedScopeList.of(List.of(
@@ -259,7 +259,7 @@ public class ExecuteTest {
 
         final IssuedAccessToken mockAccessToken = IssuedAccessToken.of(
             AccessTokenValue.of("access-token-123"),
-            LinkedAccessTokenCoreKey.of("access-core-key-123"),
+            LinkedAccessTokenCoreKey.of("3498665a-6863-7065-62ee-0be766cff4ea"),
             Duration.of(IssuedAt.of(currentDate), ExpiredAt.of(expiredDate))
         );
         when(createIssuedAccessTokenService.create(any(), any())).thenReturn(mockAccessToken);
@@ -320,7 +320,7 @@ public class ExecuteTest {
                     ExpiredAt.of(expiredDate)
                 ),
                 AccessType.of("offline"),
-                LinkedAccessTokenCoreKey.of("access-core-key-123"),
+                LinkedAccessTokenCoreKey.of("3498665a-6863-7065-62ee-0be766cff4ea"),
                 LinkedIdTokenCoreKey.of("id-core-key-123"),
                 LinkedRefreshTokenCoreKey.of("refresh-core-key-123"),
                 GrantType.of("authorization_code")
@@ -331,7 +331,7 @@ public class ExecuteTest {
 
         when(fetchExistingAccessTokenCorePort.fetch(any())).thenReturn(Optional.of(
             ExistingAccessTokenCore.of(
-                Key.of("access-core-key-123"),
+                Key.of("3498665a-6863-7065-62ee-0be766cff4ea"),
                 Issuer.of("https://auth.example.com"),
                 Subject.of("user-123"),
                 RequestedScopeList.of(List.of(
@@ -360,14 +360,14 @@ public class ExecuteTest {
         when(fetchExistingRefreshTokenCorePort.fetch(any())).thenReturn(Optional.of(
             ExistingRefreshTokenCore.of(
                 Key.of("refresh-core-key-123"),
-                LinkedAccessTokenCoreKey.of("access-core-key-123"),
+                LinkedAccessTokenCoreKey.of("3498665a-6863-7065-62ee-0be766cff4ea"),
                 LinkedIdTokenCoreKey.of("id-core-key-123")
             )
         ));
 
         final IssuedAccessToken mockAccessToken = IssuedAccessToken.of(
             AccessTokenValue.of("access-token-123"),
-            LinkedAccessTokenCoreKey.of("access-core-key-123"),
+            LinkedAccessTokenCoreKey.of("3498665a-6863-7065-62ee-0be766cff4ea"),
             Duration.of(IssuedAt.of(currentDate), ExpiredAt.of(expiredDate))
         );
         when(createIssuedAccessTokenService.create(any(), any())).thenReturn(mockAccessToken);
@@ -439,14 +439,14 @@ public class ExecuteTest {
         when(fetchExistingRefreshTokenCorePort.fetch(any())).thenReturn(Optional.of(
             ExistingRefreshTokenCore.of(
                 Key.of("refresh-core-key-123"),
-                LinkedAccessTokenCoreKey.of("access-core-key-123"),
+                LinkedAccessTokenCoreKey.of("3498665a-6863-7065-62ee-0be766cff4ea"),
                 LinkedIdTokenCoreKey.of("id-core-key-123")
             )
         ));
 
         when(fetchExistingAccessTokenCorePort.fetch(any())).thenReturn(Optional.of(
             ExistingAccessTokenCore.of(
-                Key.of("access-core-key-123"),
+                Key.of("3498665a-6863-7065-62ee-0be766cff4ea"),
                 Issuer.of("https://auth.example.com"),
                 Subject.of("user-123"),
                 RequestedScopeList.of(List.of(
@@ -461,7 +461,7 @@ public class ExecuteTest {
         when(fetchExistingAccessTokenByCoreKeyPort.fetchForUpdateByCoreKey(any())).thenReturn(Optional.of(
             ExistingAccessToken.of(
                 Key.of("access-token-key-123"),
-                LinkedAccessTokenCoreKey.of("access-core-key-123"),
+                LinkedAccessTokenCoreKey.of("3498665a-6863-7065-62ee-0be766cff4ea"),
                 Duration.of(IssuedAt.of(currentDate), ExpiredAt.of(expiredDate))
             )
         ));
@@ -475,7 +475,7 @@ public class ExecuteTest {
 
         final IssuedAccessToken mockAccessToken = IssuedAccessToken.of(
             AccessTokenValue.of("new-access-token-123"),
-            LinkedAccessTokenCoreKey.of("access-core-key-123"),
+            LinkedAccessTokenCoreKey.of("3498665a-6863-7065-62ee-0be766cff4ea"),
             Duration.of(IssuedAt.of(currentDate), ExpiredAt.of(expiredDate))
         );
         when(createIssuedAccessTokenService.create(any(), any())).thenReturn(mockAccessToken);
@@ -567,7 +567,7 @@ public class ExecuteTest {
                     ExpiredAt.of(expiredDate)
                 ),
                 AccessType.of("online"),
-                LinkedAccessTokenCoreKey.of("access-core-key-123"),
+                LinkedAccessTokenCoreKey.of("3498665a-6863-7065-62ee-0be766cff4ea"),
                 LinkedIdTokenCoreKey.of("id-core-key-123"),
                 LinkedRefreshTokenCoreKey.of("refresh-core-key-123"),
                 GrantType.of("authorization_code")

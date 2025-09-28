@@ -13,6 +13,7 @@ import java.util.Random;
 import org.bouncycastle.asn1.pkcs.RSAPrivateKey;
 import org.bouncycastle.util.io.pem.PemObject;
 import org.bouncycastle.util.io.pem.PemReader;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,6 +29,9 @@ import kotetsu.auth.dto.util.OidcPrivateKeyPemJsonWrapper;
 
 @Component
 public class IdTokenValueGenerator implements IGenerateIdTokenValuePort {
+    @Value("${app.oidc.private.keys}")
+    private String privateKeysJson;
+
     @Override
     public IdTokenValue generate(final IssuedIdTokenMeta idTokenMeta, final ExistingIdTokenCore idTokenCore) {
         final OidcPrivateKey privateKey = getRandomSelectedPrivateKey();
@@ -53,10 +57,8 @@ public class IdTokenValueGenerator implements IGenerateIdTokenValuePort {
     public OidcPrivateKey getRandomSelectedPrivateKey()
     {
         try { 
-            final String privateKeysJson = System.getenv("OIDC_PRIVATE_KEYS");
-
             if (privateKeysJson == null) {
-                throw new IllegalArgumentException("環境変数からの秘密鍵取得に失敗しました。");
+                throw new IllegalArgumentException("秘密鍵取得に失敗しました。");
             }
 
             final ObjectMapper objectMapper = new ObjectMapper();
@@ -79,10 +81,10 @@ public class IdTokenValueGenerator implements IGenerateIdTokenValuePort {
                 throw new IllegalArgumentException("OIDC_PRIVATE_KEYのPEMの値が不正です。");
             }
       
-            // PEMデータを読み込む
-            PemReader pemReader = new PemReader(new StringReader(pem));
-            PemObject pemObject = pemReader.readPemObject();
-            pemReader.close();
+            PemObject pemObject;
+            try (PemReader pemReader = new PemReader(new StringReader(pem))) {
+                pemObject = pemReader.readPemObject();
+            }
             
             if (pemObject == null || !pemObject.getType().equals("RSA PRIVATE KEY")) {
                 throw new IllegalArgumentException("PEMオブジェクトがRSA秘密鍵ではありません");
@@ -104,13 +106,7 @@ public class IdTokenValueGenerator implements IGenerateIdTokenValuePort {
                 keyFactory.generatePrivate(keySpec)
             );
         }
-        catch(IOException e) {
-            throw new RuntimeException(e.getMessage());
-        }
-        catch(NoSuchAlgorithmException e) {
-            throw new RuntimeException(e.getMessage());
-        }
-        catch(InvalidKeySpecException e) {
+        catch(IOException | NoSuchAlgorithmException | InvalidKeySpecException e) {
             throw new RuntimeException(e.getMessage());
         }
     }

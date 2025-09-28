@@ -12,7 +12,7 @@ public class OfTest {
     @Test
     public void objectIsConstructedWithMatchingArguments() {
         Key key = Key.of("test-key");
-        LinkedAccessTokenCoreKey linkedAccessTokenCoreKey = LinkedAccessTokenCoreKey.of("test-access-key");
+        LinkedAccessTokenCoreKey linkedAccessTokenCoreKey = LinkedAccessTokenCoreKey.of("3498665a-6863-7065-62ee-0be766cff4ea");
         LinkedIdTokenCoreKey linkedIdTokenCoreKey = LinkedIdTokenCoreKey.of("test-id-key");
 
         ExistingRefreshTokenCore existingRefreshTokenCore = ExistingRefreshTokenCore.of(
@@ -22,7 +22,7 @@ public class OfTest {
         );
 
         assertEquals("test-key", existingRefreshTokenCore.getKey().getValue());
-        assertEquals("test-access-key", existingRefreshTokenCore.getLinkedAccessTokenCoreKey().getValue());
+        assertEquals("3498665a-6863-7065-62ee-0be766cff4ea", existingRefreshTokenCore.getLinkedAccessTokenCoreKey().getValue());
         assertEquals("test-id-key", existingRefreshTokenCore.getLinkedIdTokenCoreKey().getValue());
     }
 }

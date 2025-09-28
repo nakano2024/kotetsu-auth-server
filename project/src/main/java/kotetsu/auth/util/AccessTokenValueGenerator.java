@@ -12,7 +12,7 @@ import kotetsu.auth.application.domain.value.AccessTokenValue;
 public class AccessTokenValueGenerator implements IGenerateAccessTokenValuePort {
     @Override
     public AccessTokenValue generate(int length) {
-        byte[] randomBytes = new byte[258];
+        byte[] randomBytes = new byte[length];
         new SecureRandom().nextBytes(randomBytes);
         final String tokenValueString = Base64.getUrlEncoder().withoutPadding().encodeToString(randomBytes);
         return AccessTokenValue.of(tokenValueString);

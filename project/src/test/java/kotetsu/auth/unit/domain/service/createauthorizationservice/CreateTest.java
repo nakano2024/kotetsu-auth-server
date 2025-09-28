@@ -38,7 +38,7 @@ public class CreateTest {
         RequestedAuthorization authorization = createAuthorizationService.create(
             AuthorizationCodeChallenge.of("code-challenge"),
             AccessType.of(AccessType.ONLINE),
-            LinkedAccessTokenCoreKey.of("linked-access-token-core-key"),
+            LinkedAccessTokenCoreKey.of("3498665a-6863-7065-62ee-0be766cff4ea"),
             LinkedIdTokenCoreKey.of("linked-id-token-core-key"),
             LinkedRefreshTokenCoreKey.of("linked-refresh-token-core-key"),
             IssuedAt.of(Date.from(
@@ -49,7 +49,7 @@ public class CreateTest {
         assertEquals("authorization-code-value", authorization.getAuthorizationCode().getValue().getValue());
         assertEquals("code-challenge", authorization.getAuthorizationCode().getChallenge().getValue());
         assertEquals(AccessType.ONLINE, authorization.getAccessType().getValue());
-        assertEquals("linked-access-token-core-key", authorization.getLinkedAccessTokenCoreKey().getValue());
+        assertEquals("3498665a-6863-7065-62ee-0be766cff4ea", authorization.getLinkedAccessTokenCoreKey().getValue());
         assertEquals("linked-id-token-core-key", authorization.getLinkedIdTokenCoreKey().getValue());
         assertEquals("linked-refresh-token-core-key", authorization.getLinkedRefreshTokenCoreKey().getValue());
         final Date expectedExpiredAt = Date.from(

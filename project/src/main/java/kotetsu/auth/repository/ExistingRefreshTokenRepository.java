@@ -37,12 +37,12 @@ public class ExistingRefreshTokenRepository
         final String sql = """
             SELECT key, refresh_token_core_key, grant_type_name, issued_at, expired_at
             FROM refresh_tokens
-            value = :value
+            WHERE value = :value
             FOR UPDATE;
         """;
 
         final Map<String, Object> params = new HashMap<>();
-        params.put("value", UUID.fromString(value.getValue()));
+        params.put("value", value.getValue());
 
         final List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql, params);
 

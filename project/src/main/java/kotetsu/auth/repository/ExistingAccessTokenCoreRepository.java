@@ -32,7 +32,7 @@ public class ExistingAccessTokenCoreRepository implements IFetchExistingAccessTo
     @Override
     public Optional<ExistingAccessTokenCore> fetch(Key key) {
         final String sql = """
-            SELECT atc.key, atc.issuer, atc.subject, atc.requester_client_id, s.key AS s_key, s.name AS s_name, rs.url AS rs_url 
+            SELECT atc.key AS atc_key, atc.issuer AS atc_issuer, atc.subject AS atc_subject, atc.client_id AS atc_client_id, s.key AS s_key, s.name AS s_name, rs.url AS rs_url 
             FROM access_token_cores AS atc
             JOIN access_token_core_scopes AS atcs ON atc.key = atcs.access_token_core_key
             JOIN scopes AS s ON atcs.scope_key = s.key
@@ -53,7 +53,7 @@ public class ExistingAccessTokenCoreRepository implements IFetchExistingAccessTo
 
         final List<Scope> scopes = rows.stream()
             .map(row -> Scope.of(
-                Key.of((String) row.get("s_key")),
+                Key.of(String.valueOf(row.get("s_key"))),
                 ScopeName.of((String) row.get("s_name")))
             )
             .collect(Collectors.toList());
@@ -65,7 +65,7 @@ public class ExistingAccessTokenCoreRepository implements IFetchExistingAccessTo
         final RequestedRelatedAudienceList scopeRelatedAudienceList = RequestedRelatedAudienceList.of(resourceServerUrls);
 
         return Optional.of(ExistingAccessTokenCore.of(
-            Key.of((String) rows.get(0).get("atc_key")),
+            Key.of(String.valueOf(rows.get(0).get("atc_key"))),
             Issuer.of((String) rows.get(0).get("atc_issuer")),
             Subject.of(String.valueOf(rows.get(0).get("atc_subject"))),
             requestedScopeList,

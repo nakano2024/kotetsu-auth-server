@@ -26,7 +26,7 @@ public class OfTest {
             ExpiredAt.of(new Date(2000))
         );
         AccessType accessType = AccessType.of("online");
-        LinkedAccessTokenCoreKey linkedAccessTokenCoreKey = LinkedAccessTokenCoreKey.of("test-access-key");
+        LinkedAccessTokenCoreKey linkedAccessTokenCoreKey = LinkedAccessTokenCoreKey.of("3498665a-6863-7065-62ee-0be766cff4ea");
         LinkedIdTokenCoreKey linkedIdTokenCoreKey = LinkedIdTokenCoreKey.of("test-id-key");
         LinkedRefreshTokenCoreKey linkedRefreshTokenCoreKey = LinkedRefreshTokenCoreKey.of("test-refresh-key");
         GrantType grantType = GrantType.of("authorization_code");
@@ -44,7 +44,7 @@ public class OfTest {
         assertEquals("test-key", existingAuthorization.getKey().getValue());
         assertEquals("test-code", existingAuthorization.getAuthorizationCode().getValue().getValue());
         assertEquals("online", existingAuthorization.getAccessType().getValue());
-        assertEquals("test-access-key", existingAuthorization.getLinkedAccessTokenCoreKey().getValue());
+        assertEquals("3498665a-6863-7065-62ee-0be766cff4ea", existingAuthorization.getLinkedAccessTokenCoreKey().getValue());
         assertEquals("test-id-key", existingAuthorization.getLinkedIdTokenCoreKey().getValue());
         assertEquals("test-refresh-key", existingAuthorization.getLinkedRefreshTokenCoreKey().getValue());
         assertEquals("authorization_code", existingAuthorization.getGrantType().getValue());

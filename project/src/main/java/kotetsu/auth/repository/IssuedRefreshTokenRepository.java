@@ -21,7 +21,7 @@ public class IssuedRefreshTokenRepository implements IStoreIssuedRefreshTokenPor
     @Override
     public void store(final IssuedRefreshToken issuedRefreshToken) {
         final String sql = """
-            INSERT INTO id_token_metas(
+            INSERT INTO refresh_tokens(
                 value,
                 refresh_token_core_key,
                 grant_type_name,

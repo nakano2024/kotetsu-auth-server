@@ -21,7 +21,7 @@ public class IssuedAccessTokenRepository implements IStoreIssuedAccessTokenPort 
     @Override
     public void store(IssuedAccessToken issuedAccessToken) {
         final String sql = """
-            INSERT INTO authorization_codes(
+            INSERT INTO access_tokens(
                 value,
                 access_token_core_key,
                 issued_at,

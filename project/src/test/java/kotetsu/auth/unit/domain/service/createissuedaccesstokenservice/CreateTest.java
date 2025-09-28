@@ -32,7 +32,7 @@ public class CreateTest {
         when(generateAccessTokenValuePort.generate(AccessTokenValue.LENGTH)).thenReturn(AccessTokenValue.of("access-token-value"));
 
         IssuedAccessToken token = createIssuedAccessTokenService.create(
-            LinkedAccessTokenCoreKey.of("linked-access-token-core-key"),
+            LinkedAccessTokenCoreKey.of("3498665a-6863-7065-62ee-0be766cff4ea"),
             IssuedAt.of(Date.from(
                 LocalDateTime.of(2025, 9, 13, 17, 15).atZone(ZoneId.of("UTC")).toInstant()
             ))
@@ -43,7 +43,7 @@ public class CreateTest {
                 LocalDateTime.of(2025, 9, 13, 17, 15).atZone(ZoneId.of("UTC")).toInstant()
         );
         assertEquals(expectedIssuedAt, token.getDuration().getIssuedAt().getValue());
-        assertEquals("linked-access-token-core-key", token.getLinkedAccessTokenCoreKey().getValue());
+        assertEquals("3498665a-6863-7065-62ee-0be766cff4ea", token.getLinkedAccessTokenCoreKey().getValue());
         final Date expectedExpiredAt = Date.from(
             LocalDateTime.of(2025, 9, 13, 18, 15).atZone(ZoneId.of("UTC")).toInstant()
         );

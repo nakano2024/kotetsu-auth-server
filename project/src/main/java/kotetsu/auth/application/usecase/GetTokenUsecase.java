@@ -207,10 +207,7 @@ public class GetTokenUsecase {
             LinkedAccessTokenCoreKey.of(accessTokenCore.getKey().getValue()), 
             IssuedAt.of(currentDate)
         );
-
         storeIssuedAccessTokenPort.store(issuedAccessToken);
-
-
 
         IssuedIdToken idToken = null;
         if (accessTokenCore.getScopeList().hasOpenid()) {

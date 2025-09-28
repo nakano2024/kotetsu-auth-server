@@ -1,6 +1,13 @@
 package kotetsu.auth.application.domain.entity;
 
+import java.util.Set;
+
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
 import jakarta.validation.constraints.NotNull;
+import kotetsu.auth.application.domain.exception.IssuedAccessTokenValidationRuntimeException;
 import kotetsu.auth.application.domain.value.AccessTokenValue;
 import kotetsu.auth.application.domain.value.Duration;
 import kotetsu.auth.application.domain.value.LinkedAccessTokenCoreKey;
@@ -38,6 +45,14 @@ public class IssuedAccessToken {
         final Duration duration
     ) {
         final IssuedAccessToken pendingAccessToken = new IssuedAccessToken(value, linkedAccessTokenCoreKey, duration);
+
+        final ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+        final Validator validator = factory.getValidator();
+        Set<ConstraintViolation<IssuedAccessToken>> violations = validator.validate(pendingAccessToken);
+        for (final ConstraintViolation<IssuedAccessToken> violation : violations) {
+            throw new IssuedAccessTokenValidationRuntimeException(violation.getMessage());
+        }
+        
         return pendingAccessToken;
     }
 }
