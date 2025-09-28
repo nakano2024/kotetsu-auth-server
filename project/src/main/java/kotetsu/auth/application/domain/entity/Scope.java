@@ -7,7 +7,7 @@ import kotetsu.auth.application.domain.value.ScopeName;
 import lombok.Getter;
 
 public class Scope {
-    public static final String KEY_OPENID = "44ea6d9f-205b-74a3-915c-9ae008e12f2b";
+    public static final String KEY_OPENID = "2dd0280c-300a-e8ad-dbc5-db202beb34a0";
     public static final String NAME_OPENID = "openid";
 
     @Getter

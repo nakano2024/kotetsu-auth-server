@@ -12,9 +12,6 @@ public class TokenOutput {
     private final String tokenType;
 
     @Getter
-    private final Long issuedAt;
-
-    @Getter
     private final Long expiresIn;
 
     private final String refreshToken;
@@ -43,7 +40,6 @@ public class TokenOutput {
     ) {
         this.accessToken = accessToken;
         this.tokenType = tokenType;
-        this.issuedAt = issuedAt;
         this.expiresIn = expiresIn;
         this.refreshToken = refreshToken;
         this.idToken = idToken;

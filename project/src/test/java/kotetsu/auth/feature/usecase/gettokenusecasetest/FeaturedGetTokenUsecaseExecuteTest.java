@@ -16,6 +16,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 import kotetsu.auth.application.dto.input.GetTokenInput;
+import kotetsu.auth.application.dto.output.TokenOutput;
 import kotetsu.auth.application.usecase.GetTokenUsecase;
 
 @SpringBootTest
@@ -59,12 +60,19 @@ public class FeaturedGetTokenUsecaseExecuteTest {
         when(clock.getZone()).thenReturn(ZoneId.of("UTC"));
     
         assertDoesNotThrow(() -> {
-            getTokenUsecase.execute(GetTokenInput.of(
+            TokenOutput output = getTokenUsecase.execute(GetTokenInput.of(
                 "refresh_token",
                 null,
                 null,
                 "rt_XyZw9876543210abcdef1234567890"
             ));
+
+            System.out.println("🌍: " + output.getAccessToken());
+            System.out.println("🌍: " + output.getScopeToken());
+            System.out.println("🌍: " + output.getTokenType());
+            System.out.println("🌍: " + output.getExpiresIn());
+            System.out.println("🌍: " + output.getIdToken().orElse(null));
+            System.out.println("🌍: " + output.getRefreshToken().orElse(null));
         });
     }
 }
