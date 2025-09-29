@@ -10,6 +10,7 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
 import kotetsu.auth.application.dto.input.GetAuthorizationCodeInput;
+import kotetsu.auth.application.dto.output.AuthorizationCodeOutput;
 import kotetsu.auth.application.usecase.GetAuthorizationCodeUsecase;
 
 @SpringBootTest
@@ -24,7 +25,7 @@ public class FeatturedGetAuthorizationCodeUsecaseExecuteTest {
     
     public void canGetAuthorizationCode() {
         assertDoesNotThrow(() -> {
-            getAuthorizationCodeUsecase.execute(GetAuthorizationCodeInput.of(
+            AuthorizationCodeOutput output = getAuthorizationCodeUsecase.execute(GetAuthorizationCodeInput.of(
                 "e3714a8a-16d6-e645-218b-4276371791c2",
                 "94e435a9-414f-34bd-5e6d-2e59678b09a6.kotetsu.com",
                 "https://client.example.com/callback",
@@ -33,6 +34,9 @@ public class FeatturedGetAuthorizationCodeUsecaseExecuteTest {
                 "SnGkLSwXfO",
                 "offline"
             ));
+
+            System.out.println("🚀code: " + output.getCode());
+            System.out.println("🚀redirect_uri: " + output.getRedirectUri());
         });
     }
 }

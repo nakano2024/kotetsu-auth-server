@@ -25,10 +25,10 @@ public class AccessType {
     }
 
     public boolean isOffline() {
-        return (value == OFFLINE);
+        return value.equals(OFFLINE);
     }
 
     public boolean isOnline() {
-        return (value == ONLINE);
+        return value.equals(ONLINE);
     }
 }

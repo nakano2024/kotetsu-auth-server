@@ -9,14 +9,14 @@ import kotetsu.auth.application.domain.value.AccessType;
 public class IsOnlineTest {
     @Test
     public void returnTrueIfArgumentIsOnline() {
-        AccessType accessType = AccessType.of(AccessType.ONLINE);
+        AccessType accessType = AccessType.of("online");
 
         assertTrue(accessType.isOnline());
     }
 
     @Test
     public void returnFalseIfArgumentIsOffline() {
-        AccessType accessType = AccessType.of(AccessType.OFFLINE);
+        AccessType accessType = AccessType.of("offline");
 
         assertFalse(accessType.isOnline());
     }

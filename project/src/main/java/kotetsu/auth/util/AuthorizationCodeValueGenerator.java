@@ -15,7 +15,7 @@ public class AuthorizationCodeValueGenerator implements IGenerateAuthorizationCo
         byte[] randomBytes = new byte[AuthorizationCodeValue.LENGTH];
 
         new SecureRandom().nextBytes(randomBytes);
-        final String authorizationCodeValueString = Base64.getEncoder().withoutPadding().encodeToString(randomBytes);
+        final String authorizationCodeValueString = Base64.getUrlEncoder().withoutPadding().encodeToString(randomBytes);
 
         return AuthorizationCodeValue.of(authorizationCodeValueString);
     }
