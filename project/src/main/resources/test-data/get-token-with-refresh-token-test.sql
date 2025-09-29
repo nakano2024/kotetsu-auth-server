@@ -133,11 +133,12 @@ INSERT INTO access_token_core_scopes (access_token_core_key, scope_key)
         '2dd0280c-300a-e8ad-dbc5-db202beb34a0'
     );
 
-INSERT INTO id_token_cores(key, issuer, subject, nonce)
+INSERT INTO id_token_cores(key, issuer, audience, subject, nonce)
     VALUES
     (
         '7f9a2b4c-3e1d-8f6a-9c5b-1a8e7d4f2b6c',
         'https://auth.example.com',
+        '94e435a9-414f-34bd-5e6d-2e59678b09a6.kotetsu.com',
         'e3714a8a-16d6-e645-218b-4276371791c2',
         'random_nonce_string_xyz123'
     );

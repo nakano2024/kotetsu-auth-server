@@ -24,12 +24,14 @@ public class PendingIdTokenCoreRepository implements IStorePendingIdTokenCorePor
             INSERT INTO id_token_cores(
                 key,
                 issuer,
+                audience,
                 subject,
                 nonce
             )
             VALUES(
                 :key,
                 :issuer,
+                :audience,
                 :subject,
                 :nonce
             );
@@ -38,6 +40,7 @@ public class PendingIdTokenCoreRepository implements IStorePendingIdTokenCorePor
         final Map<String, Object> params = new HashMap<>();
         params.put("key", UUID.fromString(idTokenCore.getKey().getValue()));
         params.put("issuer", idTokenCore.getIssuer().getValue());
+        params.put("audience", idTokenCore.getAudience().getValue());
         params.put("subject", UUID.fromString(idTokenCore.getSubject().getValue()));
         params.put("nonce", idTokenCore.getNonce().getValue());
 

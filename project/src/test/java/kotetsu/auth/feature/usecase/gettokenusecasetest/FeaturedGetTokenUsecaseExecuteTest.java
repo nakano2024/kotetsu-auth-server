@@ -40,12 +40,19 @@ public class FeaturedGetTokenUsecaseExecuteTest {
         when(clock.getZone()).thenReturn(ZoneId.of("UTC"));
 
         assertDoesNotThrow(() -> {
-            getTokenUsecase.execute(GetTokenInput.of(
+            TokenOutput output = getTokenUsecase.execute(GetTokenInput.of(
                 "authorization_code",
                 "XDTSRunXDmvgyWX6NamCU6UsJkbad1iv",
                 "test",
                 null
             ));
+
+            System.out.println("🌍token: " + output.getAccessToken());
+            System.out.println("🌍scope: " + output.getScopeToken());
+            System.out.println("🌍token_type : " + output.getTokenType());
+            System.out.println("🌍expires_in: " + output.getExpiresIn());
+            System.out.println("🌍id_token: " + output.getIdToken().orElse(null));
+            System.out.println("🌍refresh_token: " + output.getRefreshToken().orElse(null));
         });
     }
 
@@ -66,13 +73,13 @@ public class FeaturedGetTokenUsecaseExecuteTest {
                 null,
                 "rt_XyZw9876543210abcdef1234567890"
             ));
-
-            System.out.println("🌍: " + output.getAccessToken());
-            System.out.println("🌍: " + output.getScopeToken());
-            System.out.println("🌍: " + output.getTokenType());
-            System.out.println("🌍: " + output.getExpiresIn());
-            System.out.println("🌍: " + output.getIdToken().orElse(null));
-            System.out.println("🌍: " + output.getRefreshToken().orElse(null));
+            
+            System.out.println("🌍token: " + output.getAccessToken());
+            System.out.println("🌍scope: " + output.getScopeToken());
+            System.out.println("🌍token_type : " + output.getTokenType());
+            System.out.println("🌍expires_in: " + output.getExpiresIn());
+            System.out.println("🌍id_token: " + output.getIdToken().orElse(null));
+            System.out.println("🌍refresh_token: " + output.getRefreshToken().orElse(null));
         });
     }
 }

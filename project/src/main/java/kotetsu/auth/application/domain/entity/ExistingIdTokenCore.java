@@ -1,6 +1,7 @@
 package kotetsu.auth.application.domain.entity;
 
 import jakarta.validation.constraints.NotNull;
+import kotetsu.auth.application.domain.value.IdTokenAudience;
 import kotetsu.auth.application.domain.value.IdTokenProfile;
 import kotetsu.auth.application.domain.value.Issuer;
 import kotetsu.auth.application.domain.value.Key;
@@ -19,6 +20,10 @@ public class ExistingIdTokenCore {
 
     @Getter
     @NotNull
+    private final IdTokenAudience audience;
+
+    @Getter
+    @NotNull
     private final Subject subject;
 
     @Getter
@@ -32,12 +37,14 @@ public class ExistingIdTokenCore {
     private ExistingIdTokenCore(
         final Key key,
         final Issuer issuer,
+        final IdTokenAudience audience,
         final Subject subject,
         final Nonce nonce,
         final IdTokenProfile profile
     ) {
         this.key = key;
         this.issuer = issuer;
+        this.audience = audience;
         this.subject = subject;
         this.nonce = nonce;
         this.profile = profile;
@@ -46,6 +53,7 @@ public class ExistingIdTokenCore {
     public static ExistingIdTokenCore of(
         final Key key,
         final Issuer issuer,
+        final IdTokenAudience audience,
         final Subject subject,
         final Nonce nonce,
         final IdTokenProfile profile
@@ -53,6 +61,7 @@ public class ExistingIdTokenCore {
         ExistingIdTokenCore idTokenCore = new ExistingIdTokenCore(
             key,
             issuer,
+            audience,
             subject,
             nonce,
             profile

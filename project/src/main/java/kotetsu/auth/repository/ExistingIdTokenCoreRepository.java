@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import kotetsu.auth.application.domain.entity.ExistingIdTokenCore;
 import kotetsu.auth.application.domain.repository.IFetchExistingIdTokenCorePort;
 import kotetsu.auth.application.domain.value.Email;
+import kotetsu.auth.application.domain.value.IdTokenAudience;
 import kotetsu.auth.application.domain.value.IdTokenProfile;
 import kotetsu.auth.application.domain.value.ImageUrl;
 import kotetsu.auth.application.domain.value.Issuer;
@@ -31,7 +32,7 @@ public class ExistingIdTokenCoreRepository implements IFetchExistingIdTokenCoreP
     @Override
     public Optional<ExistingIdTokenCore> fetch(final Key key) {
         final String sql = """
-            SELECT itc.key, itc.issuer, itc.subject, itc.nonce, u.name AS u_name, u.email AS u_email, f.url AS f_url
+            SELECT itc.key, itc.issuer, itc.audience, itc.subject, itc.nonce, u.name AS u_name, u.email AS u_email, f.url AS f_url
             FROM id_token_cores AS itc
             JOIN users AS u ON itc.subject = u.key
             JOIN user_image_files AS uif ON u.key = uif.user_key
@@ -53,6 +54,7 @@ public class ExistingIdTokenCoreRepository implements IFetchExistingIdTokenCoreP
         return Optional.of(ExistingIdTokenCore.of(
             Key.of(String.valueOf(row.get("key"))),
             Issuer.of((String) row.get("issuer")),
+            IdTokenAudience.of((String) row.get("audience")),
             Subject.of(String.valueOf(row.get("subject"))),
             Nonce.of((String) row.get("nonce")),
             IdTokenProfile.of(

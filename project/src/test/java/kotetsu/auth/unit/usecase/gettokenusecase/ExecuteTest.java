@@ -62,6 +62,7 @@ import kotetsu.auth.application.domain.value.Duration;
 import kotetsu.auth.application.domain.value.Email;
 import kotetsu.auth.application.domain.value.ExpiredAt;
 import kotetsu.auth.application.domain.value.GrantType;
+import kotetsu.auth.application.domain.value.IdTokenAudience;
 import kotetsu.auth.application.domain.value.IdTokenProfile;
 import kotetsu.auth.application.domain.value.IdTokenUniqueId;
 import kotetsu.auth.application.domain.value.IdTokenValue;
@@ -247,6 +248,7 @@ public class ExecuteTest {
             ExistingIdTokenCore.of(
                 Key.of("id-core-key-123"),
                 Issuer.of("https://auth.example.com"),
+                IdTokenAudience.of("client-id"),
                 Subject.of("user-123"),
                 Nonce.of("nonce-123"),
                 IdTokenProfile.of(
@@ -347,6 +349,7 @@ public class ExecuteTest {
             ExistingIdTokenCore.of(
                 Key.of("id-core-key-123"),
                 Issuer.of("https://auth.example.com"),
+                IdTokenAudience.of("client-id"),
                 Subject.of("user-123"),
                 Nonce.of("nonce-123"),
                 IdTokenProfile.of(

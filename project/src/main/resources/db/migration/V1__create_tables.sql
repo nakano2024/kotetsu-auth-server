@@ -195,6 +195,7 @@ EXECUTE FUNCTION set_updated_at();
 CREATE TABLE IF NOT EXISTS id_token_cores (
   key         uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
   issuer      varchar(256) NOT NULL,
+  audience    varchar(256) NOT NULL REFERENCES clients(client_id) ON DELETE CASCADE,
   subject     uuid REFERENCES users(key) ON DELETE CASCADE,
   nonce       varchar(128),
   created_at  timestamptz NOT NULL DEFAULT current_timestamp,

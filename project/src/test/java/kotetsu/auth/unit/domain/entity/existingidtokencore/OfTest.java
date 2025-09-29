@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import kotetsu.auth.application.domain.entity.ExistingIdTokenCore;
 import kotetsu.auth.application.domain.value.Email;
+import kotetsu.auth.application.domain.value.IdTokenAudience;
 import kotetsu.auth.application.domain.value.IdTokenProfile;
 import kotetsu.auth.application.domain.value.ImageUrl;
 import kotetsu.auth.application.domain.value.Issuer;
@@ -18,6 +19,7 @@ public class OfTest {
     public void objectIsConstructedWithMatchingArguments() {
         Key key = Key.of("test-key");
         Issuer issuer = Issuer.of("test-issuer");
+        IdTokenAudience audience = IdTokenAudience.of("client-id");
         Subject subject = Subject.of("test-subject");
         Nonce nonce = Nonce.of("test-nonce");
         IdTokenProfile profile = IdTokenProfile.of(
@@ -29,6 +31,7 @@ public class OfTest {
         ExistingIdTokenCore existingIdTokenCore = ExistingIdTokenCore.of(
             key,
             issuer,
+            audience,
             subject,
             nonce,
             profile
@@ -37,6 +40,7 @@ public class OfTest {
         assertEquals("test-key", existingIdTokenCore.getKey().getValue());
         assertEquals("test-issuer", existingIdTokenCore.getIssuer().getValue());
         assertEquals("test-subject", existingIdTokenCore.getSubject().getValue());
+        assertEquals("client-id", existingIdTokenCore.getAudience().getValue());
         assertEquals("test-nonce", existingIdTokenCore.getNonce().getValue());
         assertEquals("test-user", existingIdTokenCore.getProfile().getName().getValue());
         assertEquals("test@example.com", existingIdTokenCore.getProfile().getEmail().getValue());
