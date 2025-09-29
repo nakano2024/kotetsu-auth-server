@@ -9,12 +9,10 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      OIDC_PRIVATE_KEYS: ${{ secrets.OIDC_PRIVATE_KEYS }}
     
     steps:
-    - name: Set Env
-      env:
-        OIDC_PRIVATE_KEYS: ${{ secrets.OIDC_PRIVATE_KEYS }}
-
     - name: Checkout code
       uses: actions/checkout@v3
 
