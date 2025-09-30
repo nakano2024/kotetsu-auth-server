@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       OIDC_PRIVATE_KEYS: ${{ secrets.OIDC_PRIVATE_KEYS }}
-      OIDC_PUBLIC_KEYS: ${{ vars.OIDC_PUBLIC_KEYS }}
+      OIDC_PUBLIC_KEYS: ${{ secrets.OIDC_PUBLIC_KEYS }}
     
     steps:
       - name: Checkout code
