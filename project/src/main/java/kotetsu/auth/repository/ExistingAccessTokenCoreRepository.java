@@ -70,7 +70,7 @@ public class ExistingAccessTokenCoreRepository implements IFetchExistingAccessTo
             Subject.of(String.valueOf(rows.get(0).get("atc_subject"))),
             requestedScopeList,
             scopeRelatedAudienceList,
-            ClientId.of((String) rows.get(0).get("atc_requester_client_id"))
+            ClientId.of((String) rows.get(0).get("atc_client_id"))
         ));
     }
 }

@@ -112,8 +112,7 @@ public class ExecuteTest {
 
         AccessTokenCheckOutput output = checkAccessTokenUsecase.execute(
             CheckAccessTokenInput.of(
-                "MJESxgCnWYOfMoOJguNBa7HgCdysD4WElDlGLlplWsYDefAjJynBKA0xjy6SckdPxjbH8YtVkd8jaXklr5b0hPaupYbwFGuPQUlJ5CwHWBMseFIFepqPHdAMnuSSoh12h6FWJWyUhxUSlpJJ0uDfPEWx3qMlGhWqlqfkOvUVrnwc4GWTrbmCwseOGvv1IVtVlvCTbEnoSrj0SaldGMr7Plrh7ddO6JRlh0q3w3ITJQ8relckhXoE48YGEF",
-                "574206d6-f061-6e71-41d4-eb536ba24c13"
+                "MJESxgCnWYOfMoOJguNBa7HgCdysD4WElDlGLlplWsYDefAjJynBKA0xjy6SckdPxjbH8YtVkd8jaXklr5b0hPaupYbwFGuPQUlJ5CwHWBMseFIFepqPHdAMnuSSoh12h6FWJWyUhxUSlpJJ0uDfPEWx3qMlGhWqlqfkOvUVrnwc4GWTrbmCwseOGvv1IVtVlvCTbEnoSrj0SaldGMr7Plrh7ddO6JRlh0q3w3ITJQ8relckhXoE48YGEF"
             )
         );
 
@@ -141,8 +140,7 @@ public class ExecuteTest {
 
         AccessTokenCheckOutput output = checkAccessTokenUsecase.execute(
             CheckAccessTokenInput.of(
-                "MJESxgCnWYOfMoOJguNBa7HgCdysD4WElDlGLlplWsYDefAjJynBKA0xjy6SckdPxjbH8YtVkd8jaXklr5b0hPaupYbwFGuPQUlJ5CwHWBMseFIFepqPHdAMnuSSoh12h6FWJWyUhxUSlpJJ0uDfPEWx3qMlGhWqlqfkOvUVrnwc4GWTrbmCwseOGvv1IVtVlvCTbEnoSrj0SaldGMr7Plrh7ddO6JRlh0q3w3ITJQ8relckhXoE48YGEF",
-                "574206d6-f061-6e71-41d4-eb536ba24c13"
+                "MJESxgCnWYOfMoOJguNBa7HgCdysD4WElDlGLlplWsYDefAjJynBKA0xjy6SckdPxjbH8YtVkd8jaXklr5b0hPaupYbwFGuPQUlJ5CwHWBMseFIFepqPHdAMnuSSoh12h6FWJWyUhxUSlpJJ0uDfPEWx3qMlGhWqlqfkOvUVrnwc4GWTrbmCwseOGvv1IVtVlvCTbEnoSrj0SaldGMr7Plrh7ddO6JRlh0q3w3ITJQ8relckhXoE48YGEF"
             )
         );
 
@@ -181,10 +179,7 @@ public class ExecuteTest {
         )));
 
         AccessTokenCheckOutput output = checkAccessTokenUsecase.execute(
-            CheckAccessTokenInput.of(
-                "MJESxgCnWYOfMoOJguNBa7HgCdysD4WElDlGLlplWsYDefAjJynBKA0xjy6SckdPxjbH8YtVkd8jaXklr5b0hPaupYbwFGuPQUlJ5CwHWBMseFIFepqPHdAMnuSSoh12h6FWJWyUhxUSlpJJ0uDfPEWx3qMlGhWqlqfkOvUVrnwc4GWTrbmCwseOGvv1IVtVlvCTbEnoSrj0SaldGMr7Plrh7ddO6JRlh0q3w3ITJQ8relckhXoE48YGEF",
-                "574206d6-f061-6e71-41d4-eb536ba24c13"
-            )
+            CheckAccessTokenInput.of("MJESxgCnWYOfMoOJguNBa7HgCdysD4WElDlGLlplWsYDefAjJynBKA0xjy6SckdPxjbH8YtVkd8jaXklr5b0hPaupYbwFGuPQUlJ5CwHWBMseFIFepqPHdAMnuSSoh12h6FWJWyUhxUSlpJJ0uDfPEWx3qMlGhWqlqfkOvUVrnwc4GWTrbmCwseOGvv1IVtVlvCTbEnoSrj0SaldGMr7Plrh7ddO6JRlh0q3w3ITJQ8relckhXoE48YGEF")
         );
 
         final AccessTokenCheckOutput expectedOutput = AccessTokenCheckOutput.of(
@@ -255,10 +250,7 @@ public class ExecuteTest {
         )));
 
         AccessTokenCheckOutput output = checkAccessTokenUsecase.execute(
-            CheckAccessTokenInput.of(
-                "MJESxgCnWYOfMoOJguNBa7HgCdysD4WElDlGLlplWsYDefAjJynBKA0xjy6SckdPxjbH8YtVkd8jaXklr5b0hPaupYbwFGuPQUlJ5CwHWBMseFIFepqPHdAMnuSSoh12h6FWJWyUhxUSlpJJ0uDfPEWx3qMlGhWqlqfkOvUVrnwc4GWTrbmCwseOGvv1IVtVlvCTbEnoSrj0SaldGMr7Plrh7ddO6JRlh0q3w3ITJQ8relckhXoE48YGEF",
-                "574206d6-f061-6e71-41d4-eb536ba24c13"
-            )
+            CheckAccessTokenInput.of("MJESxgCnWYOfMoOJguNBa7HgCdysD4WElDlGLlplWsYDefAjJynBKA0xjy6SckdPxjbH8YtVkd8jaXklr5b0hPaupYbwFGuPQUlJ5CwHWBMseFIFepqPHdAMnuSSoh12h6FWJWyUhxUSlpJJ0uDfPEWx3qMlGhWqlqfkOvUVrnwc4GWTrbmCwseOGvv1IVtVlvCTbEnoSrj0SaldGMr7Plrh7ddO6JRlh0q3w3ITJQ8relckhXoE48YGEF")
         );
 
         final AccessTokenCheckOutput expectedOutput = AccessTokenCheckOutput.of(

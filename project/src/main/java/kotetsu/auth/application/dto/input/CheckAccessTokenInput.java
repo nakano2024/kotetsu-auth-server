@@ -6,16 +6,12 @@ public class CheckAccessTokenInput {
     @Getter
     private final String token;
 
-    @Getter
-    private final String clientKey;
-
-    private CheckAccessTokenInput(final String token, final String clientKey) {
+    private CheckAccessTokenInput(final String token) {
         this.token = token;
-        this.clientKey = clientKey;
     }
 
-    public static CheckAccessTokenInput of(final String token, final String clientKey) {
-        final CheckAccessTokenInput input = new CheckAccessTokenInput(token, clientKey);
+    public static CheckAccessTokenInput of(final String token) {
+        final CheckAccessTokenInput input = new CheckAccessTokenInput(token);
 
         return input;
     }

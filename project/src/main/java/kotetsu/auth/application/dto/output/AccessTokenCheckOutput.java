@@ -13,7 +13,7 @@ public class AccessTokenCheckOutput {
     private final String scopeToken;
     private final String clientId;
     private final Long issuedAt;
-    private final Long expiresIn;
+    private final Long expiredAt;
     private final String subject;
     private final List<String> audiences;
     private final String issuer;
@@ -31,8 +31,8 @@ public class AccessTokenCheckOutput {
         return Optional.ofNullable(issuedAt);
     }
 
-    public Optional<Long> getExpiresIn() {
-        return Optional.ofNullable(expiresIn);
+    public Optional<Long> getExpiredAt() {
+        return Optional.ofNullable(expiredAt);
     }
 
     public Optional<String> getSubject() {
@@ -56,7 +56,7 @@ public class AccessTokenCheckOutput {
         final String scopeToken,
         final String clientId,
         final Long issuedAt,
-        final Long expiresIn,
+        final Long expiredAt,
         final String subject,
         final List<String> audiences,
         final String issuer,
@@ -66,7 +66,7 @@ public class AccessTokenCheckOutput {
         this.scopeToken = scopeToken;
         this.clientId = clientId;
         this.issuedAt = issuedAt;
-        this.expiresIn = expiresIn;
+        this.expiredAt = expiredAt;
         this.subject = subject;
         this.audiences = audiences;
         this.issuer = issuer;
@@ -78,7 +78,7 @@ public class AccessTokenCheckOutput {
         final String scopeToken,
         final String clientId,
         final Long issuedAt,
-        final Long expiresIn,
+        final Long expiredAt,
         final String subject,
         final List<String> audiences,
         final String issuer,
@@ -89,7 +89,7 @@ public class AccessTokenCheckOutput {
             scopeToken,
             clientId,
             issuedAt,
-            expiresIn,
+            expiredAt,
             subject,
             audiences,
             issuer,
