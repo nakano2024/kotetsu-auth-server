@@ -22,7 +22,6 @@ public class FeatturedGetAuthorizationCodeUsecaseExecuteTest {
 
     @Test
     @Sql("/test-data/get-authorization-code-test.sql")
-    
     public void canGetAuthorizationCode() {
         assertDoesNotThrow(() -> {
             AuthorizationCodeOutput output = getAuthorizationCodeUsecase.execute(GetAuthorizationCodeInput.of(
