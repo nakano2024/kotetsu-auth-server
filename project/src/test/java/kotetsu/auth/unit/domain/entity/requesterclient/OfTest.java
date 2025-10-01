@@ -13,12 +13,12 @@ public class OfTest {
     public void objectIsConstructedWithMatchingArguments() {
         RequesterClient requesterClient = RequesterClient.of(
             Key.of("test-key"),
-            ClientId.of("test-client-id"),
+            ClientId.of("30aa6868-ef8d-9508-6759-b8c808087687.kotetsu.com"),
             ClientRedirectUri.of("https://example.com/callback")
         );
 
         assertEquals("test-key", requesterClient.getKey().getValue());
-        assertEquals("test-client-id", requesterClient.getClientId().getValue());
+        assertEquals("30aa6868-ef8d-9508-6759-b8c808087687.kotetsu.com", requesterClient.getClientId().getValue());
         assertEquals("https://example.com/callback", requesterClient.getRedirectUri().getValue());
     }
 }

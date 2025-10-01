@@ -24,7 +24,7 @@ public class OfTest {
         RequestedScopeList requestedScopeList = RequestedScopeList.of(List.of(
             Scope.of(Key.of("scope-key"), ScopeName.of("read"))
         ));
-        ClientId requesterClientId = ClientId.of("requester-client-id");
+        ClientId requesterClientId = ClientId.of("30aa6868-ef8d-9508-6759-b8c808087687.kotetsu.com");
 
         PendingAccessTokenCore pendingAccessTokenCore = PendingAccessTokenCore.of(
             key,
@@ -38,6 +38,6 @@ public class OfTest {
         assertEquals("test-issuer", pendingAccessTokenCore.getIssuer().getValue());
         assertEquals("test-subject", pendingAccessTokenCore.getSubject().getValue());
         assertSame(requestedScopeList, pendingAccessTokenCore.getRequestedScopeList());
-        assertEquals("requester-client-id", pendingAccessTokenCore.getRequesterClientId().getValue());
+        assertEquals("30aa6868-ef8d-9508-6759-b8c808087687.kotetsu.com", pendingAccessTokenCore.getRequesterClientId().getValue());
     }
 }

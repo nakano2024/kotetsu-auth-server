@@ -12,10 +12,10 @@ public class OfTest {
     public void objectIsConstructedWithMatchingArguments() {
         AudienceClient audienceClient = AudienceClient.of(
             Key.of("6277c4cb-85a9-73b5-42ba-f3d279e749de"),
-            ClientId.of("test-client-id")
+            ClientId.of("30aa6868-ef8d-9508-6759-b8c808087687.kotetsu.com")
         );
 
         assertEquals("6277c4cb-85a9-73b5-42ba-f3d279e749de", audienceClient.getKey().getValue());
-        assertEquals("test-client-id", audienceClient.getClientId().getValue());
+        assertEquals("30aa6868-ef8d-9508-6759-b8c808087687.kotetsu.com", audienceClient.getClientId().getValue());
     }
 }

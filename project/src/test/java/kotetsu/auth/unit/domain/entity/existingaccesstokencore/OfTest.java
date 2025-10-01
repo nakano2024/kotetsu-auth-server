@@ -37,7 +37,7 @@ public class OfTest {
             Subject.of("f5323e50-a6a0-1442-e88f-b67bb6344183"),
             requestedScopeList,
             relatedAudienceList,
-            ClientId.of("requester-client-id")
+            ClientId.of("30aa6868-ef8d-9508-6759-b8c808087687.kotetsu.com")
         );
         
         assertEquals("59085ab5-b68b-5be2-2bf0-71608e4cae3e", existingAccessTokenCore.getKey().getValue());
@@ -45,7 +45,7 @@ public class OfTest {
         assertEquals("f5323e50-a6a0-1442-e88f-b67bb6344183", existingAccessTokenCore.getSubject().getValue());
         assertSame(requestedScopeList, existingAccessTokenCore.getScopeList());
         assertSame(relatedAudienceList, existingAccessTokenCore.getRelatedAudienceList());
-        assertEquals("requester-client-id", existingAccessTokenCore.getRequesterClientId().getValue());
+        assertEquals("30aa6868-ef8d-9508-6759-b8c808087687.kotetsu.com", existingAccessTokenCore.getRequesterClientId().getValue());
     }
 
     @Test
@@ -67,14 +67,14 @@ public class OfTest {
             Subject.of("f5323e50-a6a0-1442-e88f-b67bb6344183"),
             requestedScopeList,
             relatedAudienceList,
-            ClientId.of("requester-client-id")
+            ClientId.of("30aa6868-ef8d-9508-6759-b8c808087687.kotetsu.com")
         );
         
         assertEquals("59085ab5-b68b-5be2-2bf0-71608e4cae3e", existingAccessTokenCore.getKey().getValue());
         assertEquals("https://issuer.com", existingAccessTokenCore.getIssuer().getValue());
         assertEquals("f5323e50-a6a0-1442-e88f-b67bb6344183", existingAccessTokenCore.getSubject().getValue());
         assertSame(requestedScopeList, existingAccessTokenCore.getScopeList());
-        assertEquals(RequestedRelatedAudienceList.of(List.of("requester-client-id")).toStringList(), existingAccessTokenCore.getRelatedAudienceList().toStringList());
-        assertEquals("requester-client-id", existingAccessTokenCore.getRequesterClientId().getValue());
+        assertEquals(RequestedRelatedAudienceList.of(List.of("30aa6868-ef8d-9508-6759-b8c808087687.kotetsu.com")).toStringList(), existingAccessTokenCore.getRelatedAudienceList().toStringList());
+        assertEquals("30aa6868-ef8d-9508-6759-b8c808087687.kotetsu.com", existingAccessTokenCore.getRequesterClientId().getValue());
     }
 }

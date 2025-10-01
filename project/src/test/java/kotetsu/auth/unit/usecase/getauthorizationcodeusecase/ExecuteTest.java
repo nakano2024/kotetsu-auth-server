@@ -116,8 +116,8 @@ public class ExecuteTest {
         ))));
 
         when(fetchRequeterClientPort.fetch(any())).thenReturn(Optional.of(RequesterClient.of(
-            Key.of("52a95015-f708-41d3-8f46-f6c5c2ebc8e6"),
-            ClientId.of("2G3qRGhp2lBU2N5kXahQgBGx2H"),
+            Key.of("30aa6868-ef8d-9508-6759-b8c808087687.kotetsu.com"),
+            ClientId.of("30aa6868-ef8d-9508-6759-b8c808087687.kotetsu.com"),
             ClientRedirectUri.of("https://example.com/callback")
         )));
 
@@ -141,7 +141,7 @@ public class ExecuteTest {
             any(IssuedAt.class)
         )).thenReturn(RequestedAuthorization.of(
             AuthorizationCode.of(
-                AuthorizationCodeValue.of("LfYEaydDWOCIINJopILoPl"),
+                AuthorizationCodeValue.of("30aa6868-ef8d-9508-6759-b8c808087687.kotetsu.com"),
                 AuthorizationCodeChallenge.of("9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08"),
                 ExpiredAt.of(Date.from(
                     LocalDateTime.of(2025, 9, 13, 12, 10, 1).atZone(ZoneId.of("UTC")).toInstant()
@@ -156,7 +156,7 @@ public class ExecuteTest {
         assertDoesNotThrow(() -> {
             final AuthorizationCodeOutput result = getAuthorizationCodeUsecase.execute(GetAuthorizationCodeInput.of(
             "990a9655-8ace-499c-11db-503fbc63b0e2",
-            "LfYEaydDWOCIINJopILoPl",
+            "30aa6868-ef8d-9508-6759-b8c808087687.kotetsu.com",
             "https://example.com/callback",
             "task.read task.write",
             "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
@@ -177,7 +177,7 @@ public class ExecuteTest {
             ArgumentCaptor<PendingIdTokenCore> idTokenCoreCaptor = ArgumentCaptor.forClass(PendingIdTokenCore.class);
             verify(storeIdTokenBodyPort).store(idTokenCoreCaptor.capture());
             assertEquals("df8f55e1-2498-2b65-c610-b7145ccbc53f", idTokenCoreCaptor.getValue().getKey().getValue());
-            assertEquals("2G3qRGhp2lBU2N5kXahQgBGx2H", idTokenCoreCaptor.getValue().getAudience().getValue());
+            assertEquals("30aa6868-ef8d-9508-6759-b8c808087687.kotetsu.com", idTokenCoreCaptor.getValue().getAudience().getValue());
             assertEquals("https://auth.example.com", idTokenCoreCaptor.getValue().getIssuer().getValue());
             assertEquals("sqro48PJQ7L3teGAkN8J", idTokenCoreCaptor.getValue().getNonce().getValue());
             assertEquals("990a9655-8ace-499c-11db-503fbc63b0e2", idTokenCoreCaptor.getValue().getSubject().getValue());
@@ -215,7 +215,7 @@ public class ExecuteTest {
 
             ArgumentCaptor<RequestedAuthorization> authorizationCaptor = ArgumentCaptor.forClass(RequestedAuthorization.class);
             verify(storeAuthorizationPort).store(authorizationCaptor.capture());
-            assertEquals("LfYEaydDWOCIINJopILoPl", authorizationCaptor.getValue().getAuthorizationCode().getValue().getValue());
+            assertEquals("30aa6868-ef8d-9508-6759-b8c808087687.kotetsu.com", authorizationCaptor.getValue().getAuthorizationCode().getValue().getValue());
             assertEquals("9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08", authorizationCaptor.getValue().getAuthorizationCode().getChallenge().getValue());
             assertEquals(Date.from(
                 LocalDateTime.of(2025, 9, 13, 12, 10, 1).atZone(ZoneId.of("UTC")).toInstant()
@@ -226,7 +226,7 @@ public class ExecuteTest {
             assertEquals("32972779-f6e2-60be-44cc-dbb2b7dc8fd2", authorizationCaptor.getValue().getLinkedRefreshTokenCoreKey().getValue());
 
             final AuthorizationCodeOutput expectedResult = AuthorizationCodeOutput.of(
-                "LfYEaydDWOCIINJopILoPl",
+                "30aa6868-ef8d-9508-6759-b8c808087687.kotetsu.com",
                 "https://example.com/callback"
             );
             assertEquals(expectedResult, result);
@@ -249,7 +249,7 @@ public class ExecuteTest {
         RequesterClientNotFoundRuntimeException exception = assertThrows(RequesterClientNotFoundRuntimeException.class, () -> {
             getAuthorizationCodeUsecase.execute(GetAuthorizationCodeInput.of(
             "990a9655-8ace-499c-11db-503fbc63b0e2",
-            "52a95015-f708-41d3-8f46-f6c5c2ebc8e6",
+            "30aa6868-ef8d-9508-6759-b8c808087687.kotetsu.com",
             "https://example.com/callback",
             "task.read task.write",
             "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
@@ -264,15 +264,15 @@ public class ExecuteTest {
     @Test
     public void throwExceptionIfRedirectUriIsInvalid() {
         when(fetchRequeterClientPort.fetch(any())).thenReturn(Optional.of(RequesterClient.of(
-            Key.of("52a95015-f708-41d3-8f46-f6c5c2ebc8e6"),
-            ClientId.of("2G3qRGhp2lBU2N5kXahQgBGx2H"),
+            Key.of("30aa6868-ef8d-9508-6759-b8c808087687.kotetsu.com"),
+            ClientId.of("30aa6868-ef8d-9508-6759-b8c808087687.kotetsu.com"),
             ClientRedirectUri.of("https://example.com/invalid-callback")
         )));
 
         RedirectUriDoseNotMatchException exception = assertThrows(RedirectUriDoseNotMatchException.class, () -> {
             getAuthorizationCodeUsecase.execute(GetAuthorizationCodeInput.of(
             "990a9655-8ace-499c-11db-503fbc63b0e2",
-            "52a95015-f708-41d3-8f46-f6c5c2ebc8e6",
+            "30aa6868-ef8d-9508-6759-b8c808087687.kotetsu.com",
             "https://example.com/callback",
             "task.read task.write",
             "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
@@ -299,15 +299,15 @@ public class ExecuteTest {
         ))));
 
         when(fetchRequeterClientPort.fetch(any())).thenReturn(Optional.of(RequesterClient.of(
-            Key.of("52a95015-f708-41d3-8f46-f6c5c2ebc8e6"),
-            ClientId.of("2G3qRGhp2lBU2N5kXahQgBGx2H"),
+            Key.of("30aa6868-ef8d-9508-6759-b8c808087687.kotetsu.com"),
+            ClientId.of("30aa6868-ef8d-9508-6759-b8c808087687.kotetsu.com"),
             ClientRedirectUri.of("https://example.com/callback")
         )));
 
         ClientNotPermittedScopesContainedException exception = assertThrows(ClientNotPermittedScopesContainedException.class, () -> {
             getAuthorizationCodeUsecase.execute(GetAuthorizationCodeInput.of(
             "990a9655-8ace-499c-11db-503fbc63b0e2",
-            "52a95015-f708-41d3-8f46-f6c5c2ebc8e6",
+            "30aa6868-ef8d-9508-6759-b8c808087687.kotetsu.com",
             "https://example.com/callback",
             "task.read file.delete",
             "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
@@ -324,15 +324,15 @@ public class ExecuteTest {
         when(fetchRequestedScopeListPort.fetch(any())).thenReturn(Optional.empty());
 
         when(fetchRequeterClientPort.fetch(any())).thenReturn(Optional.of(RequesterClient.of(
-            Key.of("52a95015-f708-41d3-8f46-f6c5c2ebc8e6"),
-            ClientId.of("2G3qRGhp2lBU2N5kXahQgBGx2H"),
+            Key.of("30aa6868-ef8d-9508-6759-b8c808087687.kotetsu.com"),
+            ClientId.of("30aa6868-ef8d-9508-6759-b8c808087687.kotetsu.com"),
             ClientRedirectUri.of("https://example.com/callback")
         )));
 
         RequestedScopeListNullRuntimeException exception = assertThrows(RequestedScopeListNullRuntimeException.class, () -> {
             getAuthorizationCodeUsecase.execute(GetAuthorizationCodeInput.of(
             "990a9655-8ace-499c-11db-503fbc63b0e2",
-            "52a95015-f708-41d3-8f46-f6c5c2ebc8e6",
+            "30aa6868-ef8d-9508-6759-b8c808087687.kotetsu.com",
             "https://example.com/callback",
             "task.read task.write",
             "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
@@ -352,15 +352,15 @@ public class ExecuteTest {
         ))));
 
         when(fetchRequeterClientPort.fetch(any())).thenReturn(Optional.of(RequesterClient.of(
-            Key.of("52a95015-f708-41d3-8f46-f6c5c2ebc8e6"),
-            ClientId.of("2G3qRGhp2lBU2N5kXahQgBGx2H"),
+            Key.of("30aa6868-ef8d-9508-6759-b8c808087687.kotetsu.com"),
+            ClientId.of("30aa6868-ef8d-9508-6759-b8c808087687.kotetsu.com"),
             ClientRedirectUri.of("https://example.com/callback")
         )));
 
         InvalidScopeNameListTokenException exception = assertThrows(InvalidScopeNameListTokenException.class, () -> {
             getAuthorizationCodeUsecase.execute(GetAuthorizationCodeInput.of(
             "990a9655-8ace-499c-11db-503fbc63b0e2",
-            "52a95015-f708-41d3-8f46-f6c5c2ebc8e6",
+            "30aa6868-ef8d-9508-6759-b8c808087687.kotetsu.com",
             "https://example.com/callback",
             "task.read task.write notexist.read",
             "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
@@ -382,15 +382,15 @@ public class ExecuteTest {
         ))));
 
         when(fetchRequeterClientPort.fetch(any())).thenReturn(Optional.of(RequesterClient.of(
-            Key.of("52a95015-f708-41d3-8f46-f6c5c2ebc8e6"),
-            ClientId.of("2G3qRGhp2lBU2N5kXahQgBGx2H"),
+            Key.of("30aa6868-ef8d-9508-6759-b8c808087687.kotetsu.com"),
+            ClientId.of("30aa6868-ef8d-9508-6759-b8c808087687.kotetsu.com"),
             ClientRedirectUri.of("https://example.com/callback")
         )));
 
         PermittedScopeListNullRuntimeException exception = assertThrows(PermittedScopeListNullRuntimeException.class, () -> {
             getAuthorizationCodeUsecase.execute(GetAuthorizationCodeInput.of(
             "990a9655-8ace-499c-11db-503fbc63b0e2",
-            "52a95015-f708-41d3-8f46-f6c5c2ebc8e6",
+            "30aa6868-ef8d-9508-6759-b8c808087687.kotetsu.com",
             "https://example.com/callback",
             "task.read file.delete",
             "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",

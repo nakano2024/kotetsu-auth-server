@@ -103,7 +103,7 @@ public class ExecuteTest {
                     "https://file.example.com"
                 )
             ),
-            ClientId.of("pkmyIsnBHq1WGqbODvvf")
+            ClientId.of("30aa6868-ef8d-9508-6759-b8c808087687.kotetsu.com")
         )));
 
         when(fetchResourceOwnerValidatorPort.fetch(any())).thenReturn(Optional.of(ResourceOwnerValidator.of(
@@ -119,9 +119,9 @@ public class ExecuteTest {
         final AccessTokenCheckOutput expectedOutput = AccessTokenCheckOutput.of(
             true,
             "task.read task.delete file.write",
-            "pkmyIsnBHq1WGqbODvvf",
+            "30aa6868-ef8d-9508-6759-b8c808087687.kotetsu.com",
             1757761201L,
-            3600L,
+            1757764801L,
             "f1993751-8223-5e7d-5138-fb99cfb6cb68",
             List.of(
                 "https://task.example.com",
@@ -242,7 +242,7 @@ public class ExecuteTest {
                     "https://file.example.com"
                 )
             ),
-            ClientId.of("pkmyIsnBHq1WGqbODvvf")
+            ClientId.of("30aa6868-ef8d-9508-6759-b8c808087687.kotetsu.com")
         )));
 
         when(fetchResourceOwnerValidatorPort.fetch(any())).thenReturn(Optional.of(ResourceOwnerValidator.of(

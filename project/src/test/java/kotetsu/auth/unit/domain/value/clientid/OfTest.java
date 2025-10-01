@@ -8,8 +8,8 @@ import kotetsu.auth.application.domain.value.ClientId;
 public class OfTest {
     @Test
     public void objectIsConstructedWithMatchingArguments() {
-        ClientId clientId = ClientId.of("test-client-id");
+        ClientId clientId = ClientId.of("30aa6868-ef8d-9508-6759-b8c808087687.kotetsu.com");
 
-        assertEquals("test-client-id", clientId.getValue());
+        assertEquals("30aa6868-ef8d-9508-6759-b8c808087687.kotetsu.com", clientId.getValue());
     }
 }

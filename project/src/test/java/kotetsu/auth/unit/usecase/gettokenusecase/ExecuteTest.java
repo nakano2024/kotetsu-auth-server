@@ -171,7 +171,7 @@ public class ExecuteTest {
                     Scope.of(Key.of("scope-key-2"), ScopeName.of("write"))
                 )),
                 RequestedRelatedAudienceList.of(List.of("https://api.example.com")),
-                ClientId.of("client-123")
+                ClientId.of("30aa6868-ef8d-9508-6759-b8c808087687.kotetsu.com")
             )
         ));
 
@@ -240,7 +240,7 @@ public class ExecuteTest {
                     Scope.of(Key.of("scope-key-2"), ScopeName.of("profile"))
                 )),
                 RequestedRelatedAudienceList.of(List.of("https://api.example.com")),
-                ClientId.of("client-123")
+                ClientId.of("30aa6868-ef8d-9508-6759-b8c808087687.kotetsu.com")
             )
         ));
 
@@ -248,7 +248,7 @@ public class ExecuteTest {
             ExistingIdTokenCore.of(
                 Key.of("id-core-key-123"),
                 Issuer.of("https://auth.example.com"),
-                IdTokenAudience.of("client-id"),
+                IdTokenAudience.of("30aa6868-ef8d-9508-6759-b8c808087687.kotetsu.com"),
                 Subject.of("user-123"),
                 Nonce.of("nonce-123"),
                 IdTokenProfile.of(
@@ -341,7 +341,7 @@ public class ExecuteTest {
                     Scope.of(Key.of("scope-key-2"), ScopeName.of("profile"))
                 )),
                 RequestedRelatedAudienceList.of(List.of("https://api.example.com")),
-                ClientId.of("client-123")
+                ClientId.of("30aa6868-ef8d-9508-6759-b8c808087687.kotetsu.com")
             )
         ));
 
@@ -349,7 +349,7 @@ public class ExecuteTest {
             ExistingIdTokenCore.of(
                 Key.of("id-core-key-123"),
                 Issuer.of("https://auth.example.com"),
-                IdTokenAudience.of("client-id"),
+                IdTokenAudience.of("30aa6868-ef8d-9508-6759-b8c808087687.kotetsu.com"),
                 Subject.of("user-123"),
                 Nonce.of("nonce-123"),
                 IdTokenProfile.of(
@@ -457,7 +457,7 @@ public class ExecuteTest {
                     Scope.of(Key.of("scope-key-2"), ScopeName.of("write"))
                 )),
                 RequestedRelatedAudienceList.of(List.of("https://api.example.com")),
-                ClientId.of("client-123")
+                ClientId.of("30aa6868-ef8d-9508-6759-b8c808087687.kotetsu.com")
             )
         ));
 
