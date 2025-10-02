@@ -2,9 +2,11 @@ package kotetsu.auth.dto.util;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @AllArgsConstructor
+@NoArgsConstructor(force = true)
 public class OidcPublicKeyJwkJson {
     private final String kid;
     private final String kty;
