@@ -22,7 +22,7 @@ public class UserCredentialQueryService implements IFindUserCredentialByEmailPor
     @Override
     public Optional<UserCredentialData> findByEmail(String email) {
         final String sql = """
-            SELECT u.key AS u_key, name AS u_name, f.url AS f_url, email AS u_email, u.password_hash AS u_password_hash
+            SELECT u.key AS u_key, name AS u_name, f.url AS f_url, email AS u_email, is_active as u_is_active, u.password_hash AS u_password_hash
             FROM users as u
             JOIN user_image_files AS uif ON u.key = uif.user_key
             JOIN files AS f ON uif.file_key = f.key
@@ -45,7 +45,8 @@ public class UserCredentialQueryService implements IFindUserCredentialByEmailPor
             String.valueOf(row.get("u_name")),
             String.valueOf(row.get("f_url")),
             String.valueOf(row.get("u_email")),
-            String.valueOf(row.get("u_password_hash"))
+            String.valueOf(row.get("u_password_hash")),
+            (boolean) row.get("u_is_active")
         ));
     }
 }

@@ -18,18 +18,23 @@ public class UserCredentialData {
     @Getter
     private final String hashedPassword;
 
+    @Getter
+    private final boolean isActive;
+
     private UserCredentialData(
         final String key,
         final String name,
         final String imageUrl,
         final String email,
-        final String hashedPassword
+        final String hashedPassword,
+        final boolean isActive
     ) {
         this.key = key;
         this.name = name;
         this.imageUrl = imageUrl;
         this.email = email;
         this.hashedPassword = hashedPassword;
+        this.isActive = isActive;
     }
 
     public static UserCredentialData of(
@@ -37,14 +42,16 @@ public class UserCredentialData {
         final String name,
         final String imageUrl,
         final String email,
-        final String hashedPassword        
+        final String hashedPassword,
+        final boolean isActive        
     ) {
         return new UserCredentialData(
             key,
             name,
             imageUrl,
             email,
-            hashedPassword
+            hashedPassword,
+            isActive
         );
     }
 }

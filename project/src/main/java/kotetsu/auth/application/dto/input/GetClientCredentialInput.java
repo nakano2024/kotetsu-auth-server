@@ -1,4 +1,4 @@
-package kotetsu.auth.application.dto.output;
+package kotetsu.auth.application.dto.input;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;

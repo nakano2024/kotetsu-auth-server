@@ -11,7 +11,7 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
 import kotetsu.auth.application.dto.input.ClientCredentialOutput;
-import kotetsu.auth.application.dto.output.GetClientCredentialInput;
+import kotetsu.auth.application.dto.input.GetClientCredentialInput;
 import kotetsu.auth.application.usecase.GetClientCredentialUsecase;
 
 @SpringBootTest

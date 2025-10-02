@@ -37,7 +37,8 @@ public class ExecuteTest {
                 "田中太郎",
                 "https://file.example.com/5a224f1e-2d4b-02ac-43af-d82d7fa123cd.png",
                 "test@example.com",
-                "hashedPassword123"
+                "hashedPassword123",
+                true
             )
         ));
 
@@ -51,7 +52,8 @@ public class ExecuteTest {
                 "田中太郎",
                 "https://file.example.com/5a224f1e-2d4b-02ac-43af-d82d7fa123cd.png",
                 "test@example.com",
-                "hashedPassword123"
+                "hashedPassword123",
+                true
             );
 
             assertEquals(expectedOutput, resultOutput);

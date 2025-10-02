@@ -35,7 +35,8 @@ public class GetUserCredentialsByEmailUsercaseExecuteTest {
                 "田中太郎",
                 "https://file.example.com/1b210543-8f30-762f-6467-ea1aeca1fabc",
                 "tanaka@example.com",
-                "$2a$08$4p9u7J2OBNzu.PTf1ZB9peWx1AKCNkUifWRUwFzZr24Vgq95WyfJ2"
+                "$2a$08$4p9u7J2OBNzu.PTf1ZB9peWx1AKCNkUifWRUwFzZr24Vgq95WyfJ2",
+                true
             );
 
             assertEquals(expectedOutput, resultOutput);

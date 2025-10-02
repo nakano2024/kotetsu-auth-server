@@ -32,7 +32,8 @@ public class GetUserCredentialsByEmailUsecase {
             userCredential.getName(),
             userCredential.getImageUrl(),
             userCredential.getEmail(),
-            userCredential.getHashedPassword()
+            userCredential.getHashedPassword(),
+            userCredential.isActive()
         );
     }
 }

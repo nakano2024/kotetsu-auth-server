@@ -5,7 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import kotetsu.auth.application.dto.data.ClientCredentialData;
 import kotetsu.auth.application.dto.input.ClientCredentialOutput;
-import kotetsu.auth.application.dto.output.GetClientCredentialInput;
+import kotetsu.auth.application.dto.input.GetClientCredentialInput;
 import kotetsu.auth.application.exception.ClientCredentialNotFoundException;
 import kotetsu.auth.application.exception.InputNullRuntimeException;
 import kotetsu.auth.application.query.IFindClientCredentialPort;
