@@ -32,16 +32,29 @@ public class ExecuteTest {
     @Test
     public void canGetUserCredentialsIfUserExists() {
         when(findUserCredentialByEmailPort.findByEmail(any())).thenReturn(Optional.of(
-            UserCredentialData.of("user-key-123", "test@example.com", "hashedPassword123")
+            UserCredentialData.of(
+                "ce2b299f-b745-cced-2ff6-666fde7eb16f",
+                "田中太郎",
+                "https://file.example.com/5a224f1e-2d4b-02ac-43af-d82d7fa123cd.png",
+                "test@example.com",
+                "hashedPassword123"
+            )
         ));
 
         assertDoesNotThrow(() -> {
-            final UserCredentialsOutput result = getUserCredentialsByEmailUsecase.execute(
+            final UserCredentialsOutput resultOutput = getUserCredentialsByEmailUsecase.execute(
                 GetUserCredentialEmailInput.of("test@example.com")
             );
-            
-            assertEquals("test@example.com", result.getEmail());
-            assertEquals("hashedPassword123", result.getHashedPassword());
+
+            final UserCredentialsOutput expectedOutput = UserCredentialsOutput.of(
+                "ce2b299f-b745-cced-2ff6-666fde7eb16f",
+                "田中太郎",
+                "https://file.example.com/5a224f1e-2d4b-02ac-43af-d82d7fa123cd.png",
+                "test@example.com",
+                "hashedPassword123"
+            );
+
+            assertEquals(expectedOutput, resultOutput);
         });
     }
 

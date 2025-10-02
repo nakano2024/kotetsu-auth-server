@@ -28,6 +28,9 @@ public class GetUserCredentialsByEmailUsecase {
             .orElseThrow(() -> new UserCredentialNotFoundException());
 
         return UserCredentialsOutput.of(
+            userCredential.getKey(),
+            userCredential.getName(),
+            userCredential.getImageUrl(),
             userCredential.getEmail(),
             userCredential.getHashedPassword()
         );
