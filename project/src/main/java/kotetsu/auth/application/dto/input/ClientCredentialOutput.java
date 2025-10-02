@@ -2,7 +2,9 @@ package kotetsu.auth.application.dto.input;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
+import lombok.Value;
 
+@Value
 public class ClientCredentialOutput {
     @Getter
     @NotBlank
