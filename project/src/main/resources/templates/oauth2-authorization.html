@@ -5,10 +5,26 @@
         <title>ログイン</title>
     </head>
     <body>
+        <div th:text="${client_id}"></div>
+        <div th:text="${redirect_uri}"></div>
+        <div th:text="${nonce}"></div>
+        <div th:text="${code_challenge}"></div>
+        <div th:text="${state}"></div>
+        <div th:text="${username}"></div>
+        <div th:text="${scope}"></div>
+        <div th:text="${access_type}"></div>
         <div>
             認可しますか？
         </div>
-        <form>
+        <form th:action="@{/oauth2/authorization/code}" method="post">
+            <input type="hidden" name="client_id" th:value="${client_id}" />
+            <input type="hidden" name="redirect_uri" th:value="${redirect_uri}" />
+            <input type="hidden" name="nonce" th:value="${nonce}" />
+            <input type="hidden" name="code_challenge" th:value="${code_challenge}" />
+            <input type="hidden" name="state" th:value="${state}" />
+            <input type="hidden" name="username" th:value="${username}" />
+            <input type="hidden" name="scope" th:value="${scope}" />
+            <input type="hidden" name="access_type" th:value="${access_type}" />
             <button>
                 認可する
             </button>

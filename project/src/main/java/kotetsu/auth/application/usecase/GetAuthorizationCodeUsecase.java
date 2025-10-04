@@ -92,7 +92,8 @@ public class GetAuthorizationCodeUsecase {
     public AuthorizationCodeOutput execute(final GetAuthorizationCodeInput input)
         throws ClientNotPermittedScopesContainedException,
             RedirectUriDoseNotMatchException,
-            InvalidScopeNameListTokenException
+            InvalidScopeNameListTokenException,
+            RequesterClientNotFoundRuntimeException
     {
         final Date currentDate = fetchCurrentDatePort.fetch();
 
