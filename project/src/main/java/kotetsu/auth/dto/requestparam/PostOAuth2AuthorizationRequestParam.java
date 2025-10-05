@@ -3,6 +3,7 @@ package kotetsu.auth.dto.requestparam;
 import java.beans.ConstructorProperties;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 
 @Data
@@ -26,6 +27,7 @@ public class PostOAuth2AuthorizationRequestParam {
     private final String scope;
 
     @NotBlank
+    @Pattern(regexp = "^(offline|online)$")
     private final String accessType;
     
     @ConstructorProperties({

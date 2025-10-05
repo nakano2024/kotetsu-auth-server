@@ -7,7 +7,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
-public class OAuth2PostTokenRequestParam {
+public class PostOAuth2TokenRequestParam {
     @NotBlank
     private final String grantType;
 
@@ -23,7 +23,7 @@ public class OAuth2PostTokenRequestParam {
         "code_verifier",
         "refresh_token"
     })
-    public OAuth2PostTokenRequestParam(
+    public PostOAuth2TokenRequestParam(
         final String grantType,
         final String code,
         final String codeVerifier,

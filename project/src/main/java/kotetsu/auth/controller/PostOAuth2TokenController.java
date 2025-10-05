@@ -19,7 +19,7 @@ import kotetsu.auth.application.exception.RefreshTokenExpiredException;
 import kotetsu.auth.application.exception.RefreshTokenNotFoundException;
 import kotetsu.auth.application.exception.TokenGrantTypeDoseNotMatchException;
 import kotetsu.auth.application.usecase.GetTokenUsecase;
-import kotetsu.auth.dto.requestparam.OAuth2PostTokenRequestParam;
+import kotetsu.auth.dto.requestparam.PostOAuth2TokenRequestParam;
 import kotetsu.auth.dto.response.PostOAuth2TokenResponse;
 
 @RestController
@@ -32,7 +32,7 @@ public class PostOAuth2TokenController {
     }
 
     @PostMapping("/api/oauth2/token")
-    public ResponseEntity<PostOAuth2TokenResponse> handle(@Valid OAuth2PostTokenRequestParam param) throws BadRequestException
+    public ResponseEntity<PostOAuth2TokenResponse> handle(@Valid PostOAuth2TokenRequestParam param) throws BadRequestException
     {
         try {
             final TokenOutput output = usecase.execute(GetTokenInput.of(
