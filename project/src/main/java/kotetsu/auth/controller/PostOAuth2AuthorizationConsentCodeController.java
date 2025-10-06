@@ -1,9 +1,11 @@
 package kotetsu.auth.controller;
 
 import org.apache.coyote.BadRequestException;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.server.ResponseStatusException;
 
 import jakarta.validation.Valid;
 import kotetsu.auth.application.dto.input.GetAuthorizationCodeInput;
@@ -18,15 +20,15 @@ import kotetsu.auth.dto.security.MyUserDetails;
 
 
 @Controller
-public class PostOAuth2AuthorizationCodeController {
+public class PostOAuth2AuthorizationConsentCodeController {
 
     private final GetAuthorizationCodeUsecase usecase;
 
-    public PostOAuth2AuthorizationCodeController(final GetAuthorizationCodeUsecase usecase) {
+    public PostOAuth2AuthorizationConsentCodeController(final GetAuthorizationCodeUsecase usecase) {
         this.usecase = usecase;
     }
 
-    @PostMapping("/oauth2/authorization/code")
+    @PostMapping("/oauth2/authorization/consent/code")
     public String handle(
         @Valid PostOAuth2AuthorizationRequestParam param,
         @AuthenticationPrincipal MyUserDetails loginUser
@@ -50,17 +52,17 @@ public class PostOAuth2AuthorizationCodeController {
             return "redirect:" + redirectPath;
         }
         catch(ClientNotPermittedScopesContainedException exception) {
-            throw new BadRequestException(exception.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
         catch(RedirectUriDoseNotMatchException exception) {
-            throw new BadRequestException(exception.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
 
         }
         catch(InvalidScopeNameListTokenException exception) {
-            throw new BadRequestException(exception.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
         catch(RequesterClientNotFoundRuntimeException exception) {
-            throw new BadRequestException(exception.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -75,5 +77,4 @@ public class PostOAuth2AuthorizationCodeController {
         stringBuilder.append("&state=" + state);
         return stringBuilder.toString();
     }
-    
 }

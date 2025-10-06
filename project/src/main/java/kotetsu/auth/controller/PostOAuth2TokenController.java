@@ -1,9 +1,11 @@
 package kotetsu.auth.controller;
 
 import org.apache.coyote.BadRequestException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import jakarta.validation.Valid;
 import kotetsu.auth.application.dto.input.GetTokenInput;
@@ -52,34 +54,34 @@ public class PostOAuth2TokenController {
             ));
         } 
         catch (AuthorizationCodeNotFoundException e) {
-            throw new BadRequestException(e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
         catch (AuthorizationCodeExpiredException e) {
-            throw new BadRequestException(e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         } 
         catch (InvalidGrantTypeException e) {
-            throw new BadRequestException(e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
         catch (InvalidCodeVerifierException e) {
-            throw new BadRequestException(e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
         catch (InputAuthorizationCodeNullException e) {
-            throw new BadRequestException(e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
         catch (InputCodeVerifierNullException e) {
-            throw new BadRequestException(e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
         catch (InputRefreshTokenNullException e) {
-            throw new BadRequestException(e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
         catch (RefreshTokenNotFoundException e) {
-            throw new BadRequestException(e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
         catch (TokenGrantTypeDoseNotMatchException e) {
-            throw new BadRequestException(e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
         catch (RefreshTokenExpiredException e) {
-            throw new BadRequestException(e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
 }

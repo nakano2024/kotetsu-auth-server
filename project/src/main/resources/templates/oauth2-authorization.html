@@ -16,7 +16,7 @@
         <div>
             認可しますか？
         </div>
-        <form th:action="@{/oauth2/authorization/code}" method="post">
+        <form th:action="@{/oauth2/authorization/consent/code}" method="post">
             <input type="hidden" name="client_id" th:value="${client_id}" />
             <input type="hidden" name="redirect_uri" th:value="${redirect_uri}" />
             <input type="hidden" name="nonce" th:value="${nonce}" />
@@ -26,7 +26,15 @@
             <input type="hidden" name="scope" th:value="${scope}" />
             <input type="hidden" name="access_type" th:value="${access_type}" />
             <button>
-                認可する
+                続行する
+            </button>
+        </form>
+        <form th:action="@{/oauth2/authorization/deny}" method="post">
+            <input type="hidden" name="client_id" th:value="${client_id}" />
+            <input type="hidden" name="redirect_uri" th:value="${redirect_uri}" />
+            <input type="hidden" name="state" th:value="${state}" />
+            <button>
+                中断する
             </button>
         </form>
     </body>
