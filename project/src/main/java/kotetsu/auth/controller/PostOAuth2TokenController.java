@@ -1,6 +1,5 @@
 package kotetsu.auth.controller;
 
-import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,7 +33,7 @@ public class PostOAuth2TokenController {
     }
 
     @PostMapping("/api/oauth2/token")
-    public ResponseEntity<PostOAuth2TokenResponse> handle(@Valid PostOAuth2TokenRequestParam param) throws BadRequestException
+    public ResponseEntity<PostOAuth2TokenResponse> handle(@Valid PostOAuth2TokenRequestParam param)
     {
         try {
             final TokenOutput output = usecase.execute(GetTokenInput.of(

@@ -11,7 +11,7 @@ import jakarta.validation.Valid;
 import kotetsu.auth.application.dto.input.CheckAuthorizationRequestInput;
 import kotetsu.auth.application.dto.output.AuthorizationRequestCheckOutput;
 import kotetsu.auth.application.usecase.CheckAuthorizationRequestUsecase;
-import kotetsu.auth.dto.requestparam.GetOAuth2AuthorizationRequestParam;
+import kotetsu.auth.dto.requestparam.GetOAuth2AuthorizationRequestPageParam;
 import kotetsu.auth.dto.security.MyUserDetails;
 
 
@@ -26,7 +26,7 @@ public class GetOAuth2AuthorizationPageController {
 
     @GetMapping("/oauth2/authorization")
     public String handle(
-        @Valid GetOAuth2AuthorizationRequestParam param,
+        @Valid GetOAuth2AuthorizationRequestPageParam param,
         @AuthenticationPrincipal MyUserDetails loginUser,
         Model model
     ) {
@@ -55,6 +55,7 @@ public class GetOAuth2AuthorizationPageController {
         model.addAttribute("state", param.getState());
         model.addAttribute("scope", param.getScope());
         model.addAttribute("access_type", param.getAccessType());
+        model.addAttribute("response_type", param.getResponseType());
         model.addAttribute("username", loginUser.getName());
 
         return "oauth2-authorization";

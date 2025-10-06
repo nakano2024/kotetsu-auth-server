@@ -13,6 +13,7 @@
         <div th:text="${username}"></div>
         <div th:text="${scope}"></div>
         <div th:text="${access_type}"></div>
+        <div th:text="${response_type}"></div>
         <div>
             認可しますか？
         </div>
@@ -25,6 +26,7 @@
             <input type="hidden" name="username" th:value="${username}" />
             <input type="hidden" name="scope" th:value="${scope}" />
             <input type="hidden" name="access_type" th:value="${access_type}" />
+            <input type="hidden" name="response_type" th:value="${response_type}" />
             <button>
                 続行する
             </button>

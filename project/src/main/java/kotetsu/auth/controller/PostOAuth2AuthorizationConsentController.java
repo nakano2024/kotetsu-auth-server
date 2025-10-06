@@ -1,6 +1,5 @@
 package kotetsu.auth.controller;
 
-import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -15,41 +14,69 @@ import kotetsu.auth.application.exception.InvalidScopeNameListTokenException;
 import kotetsu.auth.application.exception.RedirectUriDoseNotMatchException;
 import kotetsu.auth.application.exception.RequesterClientNotFoundRuntimeException;
 import kotetsu.auth.application.usecase.GetAuthorizationCodeUsecase;
-import kotetsu.auth.dto.requestparam.PostOAuth2AuthorizationRequestParam;
+import kotetsu.auth.constant.ResponseTypeConstant;
+import kotetsu.auth.dto.requestparam.PostOAuth2AuthorizationRequestConsentParam;
 import kotetsu.auth.dto.security.MyUserDetails;
+import kotetsu.auth.exception.ResponseTypeInvalidRuntimeException;
 
 
 @Controller
-public class PostOAuth2AuthorizationConsentCodeController {
+public class PostOAuth2AuthorizationConsentController {
 
     private final GetAuthorizationCodeUsecase usecase;
 
-    public PostOAuth2AuthorizationConsentCodeController(final GetAuthorizationCodeUsecase usecase) {
+    public PostOAuth2AuthorizationConsentController(final GetAuthorizationCodeUsecase usecase) {
         this.usecase = usecase;
     }
 
     @PostMapping("/oauth2/authorization/consent/code")
     public String handle(
-        @Valid PostOAuth2AuthorizationRequestParam param,
+        @Valid PostOAuth2AuthorizationRequestConsentParam param,
         @AuthenticationPrincipal MyUserDetails loginUser
-    ) throws BadRequestException
+    )
     {
-
-        try {
-            final AuthorizationCodeOutput output = usecase.execute(GetAuthorizationCodeInput.of(
+        if (param.getResponseType().equals(ResponseTypeConstant.CODE)) {
+            return handleResponseTypeCode(
                 loginUser.getKey(),
                 param.getClientId(),
                 param.getRedirectUri(),
                 param.getScope(),
                 param.getCodeChallenge(),
                 param.getNonce(),
-                param.getAccessType()
+                param.getAccessType(),
+                param.getState()
+            );
+        }
+
+        throw new ResponseTypeInvalidRuntimeException();
+    }
+
+    private String handleResponseTypeCode(
+        final String loginUserKey,
+        final String clientId,
+        final String redirectUri,
+        final String scope,
+        final String codeChallenge,
+        final String nonce,
+        final String accessType,
+        final String state
+    ) {
+        try {
+            final AuthorizationCodeOutput output = usecase.execute(GetAuthorizationCodeInput.of(
+                loginUserKey,
+                clientId,
+                redirectUri,
+                scope,
+                codeChallenge,
+                nonce,
+                accessType
             ));
 
-            final String redirectPath = generateRedirectPath(
-                param.getRedirectUri(), output.getCode(), param.getState()
-            );
-            return "redirect:" + redirectPath;
+            final StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append(redirectUri);
+            stringBuilder.append("?code=" + output.getCode());
+            stringBuilder.append("&state=" + state);
+            return "redirect:" + stringBuilder.toString();
         }
         catch(ClientNotPermittedScopesContainedException exception) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
@@ -64,17 +91,5 @@ public class PostOAuth2AuthorizationConsentCodeController {
         catch(RequesterClientNotFoundRuntimeException exception) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
-    }
-
-    private String generateRedirectPath(
-        final String redirectUri,
-        final String code,
-        final String state
-    ) {
-        final StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(redirectUri);
-        stringBuilder.append("?code=" + code);
-        stringBuilder.append("&state=" + state);
-        return stringBuilder.toString();
     }
 }

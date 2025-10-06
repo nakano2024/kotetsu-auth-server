@@ -57,6 +57,7 @@ public class SecurityConfig {
     http
         .securityMatcher("/api/oauth2/**")
         .authorizeHttpRequests(auth -> auth
+            .requestMatchers("/api/oauth2/certs").permitAll()
             .anyRequest().authenticated()
         )
         .httpBasic(basic -> basic

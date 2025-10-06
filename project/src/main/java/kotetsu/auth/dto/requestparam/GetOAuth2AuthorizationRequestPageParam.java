@@ -7,7 +7,7 @@ import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 
 @Data
-public class GetOAuth2AuthorizationRequestParam {
+public class GetOAuth2AuthorizationRequestPageParam {
     @NotBlank
     private final String clientId;
 
@@ -29,6 +29,10 @@ public class GetOAuth2AuthorizationRequestParam {
     @NotBlank
     @Pattern(regexp = "^(offline|online)$")
     private final String accessType;
+
+    @NotBlank
+    @Pattern(regexp = "^(code)$")
+    private final String responseType;
     
     @ConstructorProperties({
         "client_id",
@@ -37,16 +41,18 @@ public class GetOAuth2AuthorizationRequestParam {
         "state",
         "code_challenge",
         "scope",
-        "access_type"
+        "access_type",
+        "response_type"
     })
-    public GetOAuth2AuthorizationRequestParam(
+    public GetOAuth2AuthorizationRequestPageParam(
         final String clientId,
         final String redirectUri,
         final String nonce,
         final String state,
         final String codeChallenge,
         final String scope,
-        final String accessType
+        final String accessType,
+        final String responseType
     ) {
         this.clientId = clientId;
         this.redirectUri = redirectUri;
@@ -55,5 +61,6 @@ public class GetOAuth2AuthorizationRequestParam {
         this.codeChallenge = codeChallenge;
         this.scope = scope;
         this.accessType = accessType;
+        this.responseType = responseType;
     }
 }
