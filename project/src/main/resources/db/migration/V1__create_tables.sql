@@ -129,6 +129,7 @@ EXECUTE FUNCTION set_updated_at();
 CREATE TABLE IF NOT EXISTS scopes (
   key         uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
   name        varchar(128) NOT NULL,
+  description varchar(128) NOT NULL,
   created_at  timestamptz NOT NULL DEFAULT current_timestamp,
   updated_at  timestamptz NOT NULL DEFAULT current_timestamp,
   CONSTRAINT uq_scopes_name UNIQUE (name)

@@ -11,5 +11,5 @@ INSERT INTO grant_types(name)
     VALUES('authorization_code'),
     ('refresh_token');
 
-INSERT INTO scopes(key, name)
-    VALUES('2dd0280c-300a-e8ad-dbc5-db202beb34a0', 'openid');
+INSERT INTO scopes(key, name, description)
+    VALUES('2dd0280c-300a-e8ad-dbc5-db202beb34a0', 'openid', '認証情報の取得');

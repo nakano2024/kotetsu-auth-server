@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   app:
-    build: ./docker/app-develop
+    build: ./Dockerfile.dev
     volumes:
       - app-store:/project
     ports:
@@ -18,7 +18,7 @@ services:
     command: sleep infinity
   
   data:
-    build: ./docker/data
+    image: postgres:14
     volumes:
       - db-store:/var/lib/postgresql/data
     ports:
@@ -30,7 +30,7 @@ services:
     tty: true
 
   data-testing:
-    build: ./docker/data
+    image: postgres:14
     volumes:
       - db-testing-store:/var/lib/postgresql/data
     ports:
