@@ -6,11 +6,17 @@
     </head>
     <body>
         <p>
-            「次へ進む」を選択された場合、お客様所有のデータに対して以下の操作を実行する権限をリダイレクト先に移譲します。
+            お客様所有のデータに対する下記操作の実行権限を移譲します。
         </p>
+        <div>
+            移譲する操作権限一覧:
+        </div>
         <ul>
             <li th:each="scopeDescription : ${scopeDescriptions}" th:text="${scopeDescription}"></li>
         </ul>
+        <div>
+            移譲先: <span>{クライアントURL}</span>
+        </div>
         <!-- <div th:text="${client_id}"></div>
         <div th:text="${redirect_uri}"></div>
         <div th:text="${nonce}"></div>
@@ -21,7 +27,10 @@
         <div th:text="${access_type}"></div>
         <div th:text="${response_type}"></div> -->
         <div>
-            認可しますか？
+            内容をご確認のうえ、同意いただける場合のみ「次へ進む」を選択してください。
+        </div>
+        <div>
+            同意されない場合は「キャンセル」を選択してください。
         </div>
         <form th:action="@{/oauth2/authorization/consent/code}" method="post">
             <input type="hidden" name="client_id" th:value="${client_id}" />
@@ -42,7 +51,7 @@
             <input type="hidden" name="redirect_uri" th:value="${redirect_uri}" />
             <input type="hidden" name="state" th:value="${state}" />
             <button>
-                中断する
+                キャンセル
             </button>
         </form>
     </body>

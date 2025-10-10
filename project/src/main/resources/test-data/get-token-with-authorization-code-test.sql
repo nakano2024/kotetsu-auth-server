@@ -21,13 +21,13 @@ INSERT INTO user_image_files(user_key, file_key)
         '1b210543-8f30-762f-6467-ea1aeca1fabc'
     );
 
-INSERT INTO scopes(key, name)
-    VALUES('0ebfaea3-4ffd-9913-b576-47c3cc5c8c1e', 'task.delete'),
-    ('ea1103c9-43df-ea19-fc61-0a813220588b', 'task.write'),
-    ('05bad623-ade2-3e2c-a518-9dac5c0652e1', 'task.read'),
-    ('f07a880c-d115-2589-3475-3afa4955ca1d', 'file.write'),
-    ('5e271a1d-244c-989c-5f0c-3f442b9a6bfa', 'file.create'),
-    ('ac2ad67e-41f6-5bd9-96f0-1b4bff52565d', 'file.read');
+INSERT INTO scopes(key, name, description)
+    VALUES('0ebfaea3-4ffd-9913-b576-47c3cc5c8c1e', 'task.delete', 'タスクの削除'),
+    ('ea1103c9-43df-ea19-fc61-0a813220588b', 'task.write', 'タスクの編集'),
+    ('05bad623-ade2-3e2c-a518-9dac5c0652e1', 'task.read', 'タスクの読み取り'),
+    ('f07a880c-d115-2589-3475-3afa4955ca1d', 'file.write', 'ファイルの編集'),
+    ('5e271a1d-244c-989c-5f0c-3f442b9a6bfa', 'file.create', 'ファイルの作成'),
+    ('ac2ad67e-41f6-5bd9-96f0-1b4bff52565d', 'file.read', 'ファイルの読み取り');
 
 INSERT INTO resource_servers(key, name, url)
     VALUES(
@@ -156,7 +156,7 @@ INSERT INTO authorization_codes(key, value, challenge, expired_at, access_type_n
     (
         '2a1b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d',
         'XDTSRunXDmvgyWX6NamCU6UsJkbad1iv',
-        '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08',
+        'n4bQgYhMfWWaL-qgxVrQFaO_TxsrC4Is0V1sFbDwCgg',
         '2025-09-30 00:00:00+00',
         'offline',
         'authorization_code',
