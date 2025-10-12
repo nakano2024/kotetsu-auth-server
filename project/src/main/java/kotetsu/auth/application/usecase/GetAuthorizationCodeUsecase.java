@@ -38,6 +38,7 @@ import kotetsu.auth.application.domain.value.Nonce;
 import kotetsu.auth.application.domain.value.RequestedScopeNameList;
 import kotetsu.auth.application.domain.value.RequestedScopeNameListToken;
 import kotetsu.auth.application.domain.value.Subject;
+import kotetsu.auth.application.dto.data.ResourceOwnerKeyData;
 import kotetsu.auth.application.dto.input.GetAuthorizationCodeInput;
 import kotetsu.auth.application.dto.output.AuthorizationCodeOutput;
 import kotetsu.auth.application.exception.ClientNotPermittedScopesContainedException;
@@ -47,6 +48,8 @@ import kotetsu.auth.application.exception.PermittedScopeListNullRuntimeException
 import kotetsu.auth.application.exception.RedirectUriDoseNotMatchException;
 import kotetsu.auth.application.exception.RequestedScopeListNullRuntimeException;
 import kotetsu.auth.application.exception.RequesterClientNotFoundRuntimeException;
+import kotetsu.auth.application.exception.ResourceOwnerKeyDataNullRuntimeException;
+import kotetsu.auth.application.query.IFindResourceOwnerKeyPort;
 
 @Component
 public class GetAuthorizationCodeUsecase {
@@ -61,6 +64,7 @@ public class GetAuthorizationCodeUsecase {
     final IFetchServerUrlPort fetchServerUrlPort;
     final IGenerateUuidPort generateUuidPort;
     final IFetchCurrentDatePort fetchCurrentDatePort;
+    final IFindResourceOwnerKeyPort findResourceOwnerKeyPort;
 
     public GetAuthorizationCodeUsecase(
         final IFetchPermittedScopeListPort permittedScopeListPort,
@@ -73,7 +77,8 @@ public class GetAuthorizationCodeUsecase {
         final CreateAuthorizationService createAuthorizationInformationService,
         final IFetchServerUrlPort fetchServerUrlPort,
         final IGenerateUuidPort generateUuidPort,
-        final IFetchCurrentDatePort fetchCurrentDatePort
+        final IFetchCurrentDatePort fetchCurrentDatePort,
+        final IFindResourceOwnerKeyPort findResourceOwnerKeyPort
     ) {
         this.permittedScopeListPort = permittedScopeListPort;
         this.fetchRequestedScopeListPort = fetchRequestedScopeListPort;
@@ -86,6 +91,7 @@ public class GetAuthorizationCodeUsecase {
         this.fetchServerUrlPort = fetchServerUrlPort;
         this.generateUuidPort = generateUuidPort;
         this.fetchCurrentDatePort = fetchCurrentDatePort;
+        this.findResourceOwnerKeyPort = findResourceOwnerKeyPort;
     }
 
     @Transactional
@@ -100,6 +106,9 @@ public class GetAuthorizationCodeUsecase {
         if (input == null) {
             throw new InputNullRuntimeException();
         }
+
+        final ResourceOwnerKeyData resourceOwnerKeyData = findResourceOwnerKeyPort.findByResourceOwnerKey(input.getResourceOwnerKey())
+            .orElseThrow(() -> new ResourceOwnerKeyDataNullRuntimeException());
 
         final RequesterClient requesterClient = fetchRequeterClientPort.fetch(ClientId.of(input.getClientId()))
             .orElseThrow(() -> new RequesterClientNotFoundRuntimeException());
@@ -127,7 +136,7 @@ public class GetAuthorizationCodeUsecase {
         final PendingAccessTokenCore accessTokenCore = PendingAccessTokenCore.of(
             Key.of(generateUuidPort.generate()),
             Issuer.of(fetchServerUrlPort.fetch()),
-            Subject.of(input.getResourceOwnerKey()),
+            Subject.of(resourceOwnerKeyData.getKey()),
             requestedScopeList,
             requesterClient.getClientId()
         );
@@ -136,7 +145,7 @@ public class GetAuthorizationCodeUsecase {
         final PendingIdTokenCore idTokenCore = PendingIdTokenCore.of(
             Key.of((generateUuidPort.generate())),
             Issuer.of(fetchServerUrlPort.fetch()),
-            Subject.of(input.getResourceOwnerKey()),
+            Subject.of(resourceOwnerKeyData.getKey()),
             Nonce.of(input.getNonce()),
             IdTokenAudience.of(requesterClient.getClientId().getValue())
         );

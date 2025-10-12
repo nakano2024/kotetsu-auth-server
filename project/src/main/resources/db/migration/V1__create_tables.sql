@@ -67,6 +67,7 @@ EXECUTE FUNCTION set_updated_at();
 CREATE TABLE IF NOT EXISTS clients (
   key           uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
   client_id     varchar(128) NOT NULL,
+  name varchar(128) NOT NULL,
   client_secret_hash varchar(128) NOT NULL,
   created_at    timestamptz NOT NULL DEFAULT current_timestamp,
   updated_at    timestamptz NOT NULL DEFAULT current_timestamp,

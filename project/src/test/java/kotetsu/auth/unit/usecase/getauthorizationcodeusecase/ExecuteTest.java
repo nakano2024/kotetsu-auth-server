@@ -14,6 +14,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import static org.mockito.Mockito.verify;
@@ -52,6 +54,7 @@ import kotetsu.auth.application.domain.value.LinkedAccessTokenCoreKey;
 import kotetsu.auth.application.domain.value.LinkedIdTokenCoreKey;
 import kotetsu.auth.application.domain.value.LinkedRefreshTokenCoreKey;
 import kotetsu.auth.application.domain.value.ScopeName;
+import kotetsu.auth.application.dto.data.ResourceOwnerKeyData;
 import kotetsu.auth.application.dto.input.GetAuthorizationCodeInput;
 import kotetsu.auth.application.dto.output.AuthorizationCodeOutput;
 import kotetsu.auth.application.exception.ClientNotPermittedScopesContainedException;
@@ -61,6 +64,7 @@ import kotetsu.auth.application.exception.PermittedScopeListNullRuntimeException
 import kotetsu.auth.application.exception.RedirectUriDoseNotMatchException;
 import kotetsu.auth.application.exception.RequestedScopeListNullRuntimeException;
 import kotetsu.auth.application.exception.RequesterClientNotFoundRuntimeException;
+import kotetsu.auth.application.query.IFindResourceOwnerKeyPort;
 import kotetsu.auth.application.usecase.GetAuthorizationCodeUsecase;
 
 @ExtendWith(MockitoExtension.class)
@@ -97,6 +101,9 @@ public class ExecuteTest {
 
     @Mock
     private IFetchCurrentDatePort fetchCurrentDatePort;
+
+    @Mock
+    private IFindResourceOwnerKeyPort findResourceOwnerKeyPort;
 
     @InjectMocks
     private GetAuthorizationCodeUsecase getAuthorizationCodeUsecase;
@@ -152,6 +159,9 @@ public class ExecuteTest {
             LinkedIdTokenCoreKey.of("df8f55e1-2498-2b65-c610-b7145ccbc53f"),
             LinkedRefreshTokenCoreKey.of("32972779-f6e2-60be-44cc-dbb2b7dc8fd2")
         ));
+
+        when(findResourceOwnerKeyPort.findByResourceOwnerKey(anyString()))
+            .thenReturn(Optional.of(ResourceOwnerKeyData.of("990a9655-8ace-499c-11db-503fbc63b0e2")));
 
         assertDoesNotThrow(() -> {
             final AuthorizationCodeOutput result = getAuthorizationCodeUsecase.execute(GetAuthorizationCodeInput.of(
@@ -245,6 +255,9 @@ public class ExecuteTest {
     @Test
     public void throwExceptionIfRequesterClientIsEmpty() {
         when(fetchRequeterClientPort.fetch(any())).thenReturn(Optional.empty());
+        
+        when(findResourceOwnerKeyPort.findByResourceOwnerKey(anyString()))
+            .thenReturn(Optional.of(ResourceOwnerKeyData.of("990a9655-8ace-499c-11db-503fbc63b0e2")));        
 
         RequesterClientNotFoundRuntimeException exception = assertThrows(RequesterClientNotFoundRuntimeException.class, () -> {
             getAuthorizationCodeUsecase.execute(GetAuthorizationCodeInput.of(
@@ -268,6 +281,9 @@ public class ExecuteTest {
             ClientId.of("30aa6868-ef8d-9508-6759-b8c808087687.kotetsu.com"),
             ClientRedirectUri.of("https://example.com/invalid-callback")
         )));
+
+        when(findResourceOwnerKeyPort.findByResourceOwnerKey(anyString()))
+            .thenReturn(Optional.of(ResourceOwnerKeyData.of("990a9655-8ace-499c-11db-503fbc63b0e2")));
 
         RedirectUriDoseNotMatchException exception = assertThrows(RedirectUriDoseNotMatchException.class, () -> {
             getAuthorizationCodeUsecase.execute(GetAuthorizationCodeInput.of(
@@ -304,6 +320,9 @@ public class ExecuteTest {
             ClientRedirectUri.of("https://example.com/callback")
         )));
 
+        when(findResourceOwnerKeyPort.findByResourceOwnerKey(anyString()))
+            .thenReturn(Optional.of(ResourceOwnerKeyData.of("990a9655-8ace-499c-11db-503fbc63b0e2")));
+
         ClientNotPermittedScopesContainedException exception = assertThrows(ClientNotPermittedScopesContainedException.class, () -> {
             getAuthorizationCodeUsecase.execute(GetAuthorizationCodeInput.of(
             "990a9655-8ace-499c-11db-503fbc63b0e2",
@@ -328,6 +347,9 @@ public class ExecuteTest {
             ClientId.of("30aa6868-ef8d-9508-6759-b8c808087687.kotetsu.com"),
             ClientRedirectUri.of("https://example.com/callback")
         )));
+
+        when(findResourceOwnerKeyPort.findByResourceOwnerKey(anyString()))
+            .thenReturn(Optional.of(ResourceOwnerKeyData.of("990a9655-8ace-499c-11db-503fbc63b0e2")));
 
         RequestedScopeListNullRuntimeException exception = assertThrows(RequestedScopeListNullRuntimeException.class, () -> {
             getAuthorizationCodeUsecase.execute(GetAuthorizationCodeInput.of(
@@ -356,6 +378,9 @@ public class ExecuteTest {
             ClientId.of("30aa6868-ef8d-9508-6759-b8c808087687.kotetsu.com"),
             ClientRedirectUri.of("https://example.com/callback")
         )));
+
+        when(findResourceOwnerKeyPort.findByResourceOwnerKey(anyString()))
+            .thenReturn(Optional.of(ResourceOwnerKeyData.of("990a9655-8ace-499c-11db-503fbc63b0e2")));
 
         InvalidScopeNameListTokenException exception = assertThrows(InvalidScopeNameListTokenException.class, () -> {
             getAuthorizationCodeUsecase.execute(GetAuthorizationCodeInput.of(
@@ -386,6 +411,9 @@ public class ExecuteTest {
             ClientId.of("30aa6868-ef8d-9508-6759-b8c808087687.kotetsu.com"),
             ClientRedirectUri.of("https://example.com/callback")
         )));
+
+        when(findResourceOwnerKeyPort.findByResourceOwnerKey(anyString()))
+            .thenReturn(Optional.of(ResourceOwnerKeyData.of("990a9655-8ace-499c-11db-503fbc63b0e2")));
 
         PermittedScopeListNullRuntimeException exception = assertThrows(PermittedScopeListNullRuntimeException.class, () -> {
             getAuthorizationCodeUsecase.execute(GetAuthorizationCodeInput.of(

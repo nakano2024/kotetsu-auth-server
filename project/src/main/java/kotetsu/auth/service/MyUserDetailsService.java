@@ -24,6 +24,7 @@ public class MyUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         try {
             final UserCredentialsOutput output = getUserCredentialsByEmailUsecase.execute(GetUserCredentialEmailInput.of(email));
+            System.out.println("★★★ loadUserByUsername called for: " + output.getEmail());
             return new MyUserDetails(
                 output.getKey(),
                 output.getName(),

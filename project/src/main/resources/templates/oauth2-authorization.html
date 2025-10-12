@@ -15,17 +15,8 @@
             <li th:each="scopeDescription : ${scopeDescriptions}" th:text="${scopeDescription}"></li>
         </ul>
         <div>
-            移譲先: <span>{クライアントURL}</span>
+            移譲先: <span th:text="${client_name}"></span>
         </div>
-        <!-- <div th:text="${client_id}"></div>
-        <div th:text="${redirect_uri}"></div>
-        <div th:text="${nonce}"></div>
-        <div th:text="${code_challenge}"></div>
-        <div th:text="${state}"></div>
-        <div th:text="${username}"></div>
-        <div th:text="${scope}"></div>
-        <div th:text="${access_type}"></div>
-        <div th:text="${response_type}"></div> -->
         <div>
             内容をご確認のうえ、同意いただける場合のみ「次へ進む」を選択してください。
         </div>

@@ -29,8 +29,8 @@ public class SecurityConfig {
     private final ClientDetailsService clientDetailsService;
 
     public SecurityConfig(
-        MyUserDetailsService myUserDetailsService,
-        ClientDetailsService clientDetailsService
+        final MyUserDetailsService myUserDetailsService,
+        final ClientDetailsService clientDetailsService
     ) {
         this.myUserDetailsService = myUserDetailsService;
         this.clientDetailsService = clientDetailsService;
