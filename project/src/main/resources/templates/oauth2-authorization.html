@@ -6,7 +6,7 @@
     </head>
     <body>
         <p>
-            お客様所有のデータに対する下記操作の実行権限を移譲します。
+            お客様所有のデータに対する下記操作権限を「<span th:text="${client_name}"></span>」に移譲します。
         </p>
         <div>
             移譲する操作権限一覧:
@@ -14,9 +14,6 @@
         <ul>
             <li th:each="scopeDescription : ${scopeDescriptions}" th:text="${scopeDescription}"></li>
         </ul>
-        <div>
-            移譲先: <span th:text="${client_name}"></span>
-        </div>
         <div>
             内容をご確認のうえ、同意いただける場合のみ「次へ進む」を選択してください。
         </div>
