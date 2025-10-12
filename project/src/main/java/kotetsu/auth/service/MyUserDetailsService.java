@@ -1,8 +1,5 @@
 package kotetsu.auth.service;
 
-import java.util.Collections;
-
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -12,29 +9,33 @@ import kotetsu.auth.application.dto.input.GetUserCredentialEmailInput;
 import kotetsu.auth.application.dto.output.UserCredentialsOutput;
 import kotetsu.auth.application.exception.UserCredentialNotFoundException;
 import kotetsu.auth.application.usecase.GetUserCredentialsByEmailUsecase;
+import kotetsu.auth.dto.security.MyUserDetails;
 
 @Service
 public class MyUserDetailsService implements UserDetailsService {
 
-    final private GetUserCredentialsByEmailUsecase getUserCredentialsByEmailUsecase;
+    private final GetUserCredentialsByEmailUsecase getUserCredentialsByEmailUsecase;
 
-    public MyUserDetailsService(GetUserCredentialsByEmailUsecase getUserCredentialsByEmailUsecase) {
+    public MyUserDetailsService(final GetUserCredentialsByEmailUsecase getUserCredentialsByEmailUsecase) {
         this.getUserCredentialsByEmailUsecase = getUserCredentialsByEmailUsecase;
     }
 
     @Override
-    public UserDetails loadUserByUsername(final String email) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         try {
-            UserCredentialsOutput output = getUserCredentialsByEmailUsecase.getUserCredentials(GetUserCredentialEmailInput.of(email));
-
-            return new User(
+            final UserCredentialsOutput output = getUserCredentialsByEmailUsecase.execute(GetUserCredentialEmailInput.of(email));
+            System.out.println("★★★ loadUserByUsername called for: " + output.getEmail());
+            return new MyUserDetails(
+                output.getKey(),
+                output.getName(),
+                output.getImageUrl(),
                 output.getEmail(),
                 output.getHashedPassword(),
-                Collections.emptyList()
+                output.isActive()
             );
         }
-        catch (UserCredentialNotFoundException exception) {
-            throw new UsernameNotFoundException(exception.getMessage());
+        catch(UserCredentialNotFoundException exception) {
+            throw new UsernameNotFoundException("User not found: " + email);
         }
     }
 }

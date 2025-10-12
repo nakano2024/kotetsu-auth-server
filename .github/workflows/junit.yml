@@ -4,29 +4,29 @@ on:
   pull_request:
     branches:
       - main
-      - develop  # 例として、mainとdevelopブランチへのPRに対してトリガー
+      - develop
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      OIDC_PRIVATE_KEYS: ${{ secrets.OIDC_PRIVATE_KEYS }}
+      OIDC_PUBLIC_KEYS: ${{ secrets.OIDC_PUBLIC_KEYS }}
     
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Set up Docker
-      uses: docker/setup-buildx-action@v2
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v2
 
-    - name: Set up Docker Compose
-      run: sudo apt-get install docker-compose
+      - name: Build and start containers with docker compose
+        run: |
+          docker compose up -d app data-testing
 
-    - name: Build and start containers with docker-compose
-      run: |
-        docker compose up -d app data-testing  # バックグラウンドでコンテナを起動
+      - name: Run tests inside the container
+        run: |
+          docker compose exec -T app mvn test
 
-    - name: Run tests inside the container
-      run: |
-        docker-compose exec -T app mvn test
-    - name: Tear down Docker Compose
-      run: docker-compose down  # テスト後にコンテナを停止
-  
+      - name: Tear down Docker Compose
+        run: docker compose down

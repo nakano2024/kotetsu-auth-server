@@ -1,0 +1,86 @@
+package kotetsu.auth.controller;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
+
+import jakarta.validation.Valid;
+import kotetsu.auth.application.dto.input.GetTokenInput;
+import kotetsu.auth.application.dto.output.TokenOutput;
+import kotetsu.auth.application.exception.AuthorizationCodeExpiredException;
+import kotetsu.auth.application.exception.AuthorizationCodeNotFoundException;
+import kotetsu.auth.application.exception.InputAuthorizationCodeNullException;
+import kotetsu.auth.application.exception.InputCodeVerifierNullException;
+import kotetsu.auth.application.exception.InputRefreshTokenNullException;
+import kotetsu.auth.application.exception.InvalidCodeVerifierException;
+import kotetsu.auth.application.exception.InvalidGrantTypeException;
+import kotetsu.auth.application.exception.RefreshTokenExpiredException;
+import kotetsu.auth.application.exception.RefreshTokenNotFoundException;
+import kotetsu.auth.application.exception.TokenGrantTypeDoseNotMatchException;
+import kotetsu.auth.application.usecase.GetTokenUsecase;
+import kotetsu.auth.dto.requestparam.PostOAuth2TokenRequestParam;
+import kotetsu.auth.dto.response.PostOAuth2TokenResponse;
+
+@RestController
+public class PostOAuth2TokenController {
+
+    final GetTokenUsecase usecase;
+
+    public PostOAuth2TokenController(final GetTokenUsecase usecase) {
+        this.usecase = usecase;
+    }
+
+    @PostMapping("/api/oauth2/token")
+    public ResponseEntity<PostOAuth2TokenResponse> handle(@Valid PostOAuth2TokenRequestParam param)
+    {
+        try {
+            final TokenOutput output = usecase.execute(GetTokenInput.of(
+                param.getGrantType(),
+                param.getCode(),
+                param.getCodeVerifier(),
+                param.getRefreshToken()
+            ));
+
+            return ResponseEntity.ok().body(new PostOAuth2TokenResponse(
+                output.getAccessToken(),
+                output.getTokenType(),
+                output.getExpiresIn(),
+                output.getScopeToken(),
+                output.getRefreshToken().orElse(null),
+                output.getIdToken().orElse(null)
+            ));
+        } 
+        catch (AuthorizationCodeNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+        catch (AuthorizationCodeExpiredException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        } 
+        catch (InvalidGrantTypeException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+        catch (InvalidCodeVerifierException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+        catch (InputAuthorizationCodeNullException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+        catch (InputCodeVerifierNullException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+        catch (InputRefreshTokenNullException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+        catch (RefreshTokenNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+        catch (TokenGrantTypeDoseNotMatchException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+        catch (RefreshTokenExpiredException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+    }
+}

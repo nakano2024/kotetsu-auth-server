@@ -1,12 +1,14 @@
 package kotetsu.auth.application.usecase;
 
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import kotetsu.auth.application.dto.data.UserCredentialData;
 import kotetsu.auth.application.dto.input.GetUserCredentialEmailInput;
 import kotetsu.auth.application.dto.output.UserCredentialsOutput;
+import kotetsu.auth.application.exception.InputNullRuntimeException;
 import kotetsu.auth.application.exception.UserCredentialNotFoundException;
-import kotetsu.auth.application.persistence.IFindUserCredentialByEmailPort;
+import kotetsu.auth.application.query.IFindUserCredentialByEmailPort;
 
 @Component
 public class GetUserCredentialsByEmailUsecase {
@@ -16,16 +18,22 @@ public class GetUserCredentialsByEmailUsecase {
         this.findUserCredentialByEmailPort = findUserCredentialByEmailPort;
     }
 
-    public UserCredentialsOutput getUserCredentials(GetUserCredentialEmailInput input) throws UserCredentialNotFoundException {
-        UserCredentialData userCredential = findUserCredentialByEmailPort.findByEmail(input.getEmail());
-
-        if (userCredential == null) {
-            throw new UserCredentialNotFoundException();
-        }
+    @Transactional
+    public UserCredentialsOutput execute(GetUserCredentialEmailInput input) throws UserCredentialNotFoundException {
+        if (input == null) {
+            throw new InputNullRuntimeException();
+        }        
+        
+        UserCredentialData userCredential = findUserCredentialByEmailPort.findByEmail(input.getEmail())
+            .orElseThrow(() -> new UserCredentialNotFoundException());
 
         return UserCredentialsOutput.of(
+            userCredential.getKey(),
+            userCredential.getName(),
+            userCredential.getImageUrl(),
             userCredential.getEmail(),
-            userCredential.getHashedPassword()
+            userCredential.getHashedPassword(),
+            userCredential.isActive()
         );
     }
 }

@@ -1,7 +1,8 @@
 version: '3.8'
 services:
   app:
-    build: ./docker/app-develop
+    build:
+      dockerfile:  ./Dockerfile.dev
     volumes:
       - app-store:/project
     ports:
@@ -10,14 +11,15 @@ services:
       - DATASOURCE_URL=jdbc:postgresql://data/usermanager
       - DATASOURCE_USERNAME=webapp
       - DATASOURCE_PASSWORD=webapp
-      - JWT_PRIVATE_KEY=${JWT_PRIVATE_KEY}
-      - JWT_PUBLIC_KEY=${JWT_PUBLIC_KEY}
+      - OIDC_PRIVATE_KEYS=${OIDC_PRIVATE_KEYS}
+      - OIDC_PUBLIC_KEYS=${OIDC_PUBLIC_KEYS}
+      - SERVER_URL=${SERVER_URL}
 
     tty: true
     command: sleep infinity
   
   data:
-    build: ./docker/data
+    image: postgres:14
     volumes:
       - db-store:/var/lib/postgresql/data
     ports:
@@ -29,7 +31,7 @@ services:
     tty: true
 
   data-testing:
-    build: ./docker/data
+    image: postgres:14
     volumes:
       - db-testing-store:/var/lib/postgresql/data
     ports:

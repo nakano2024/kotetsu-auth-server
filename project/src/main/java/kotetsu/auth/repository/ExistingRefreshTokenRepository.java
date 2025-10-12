@@ -1,0 +1,78 @@
+package kotetsu.auth.repository;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.stereotype.Component;
+
+import kotetsu.auth.application.domain.entity.ExistingRefreshToken;
+import kotetsu.auth.application.domain.repository.IDeleteExistingRefreshTokenPort;
+import kotetsu.auth.application.domain.repository.IFetchExistingRefreshTokenForUpdatePort;
+import kotetsu.auth.application.domain.value.Duration;
+import kotetsu.auth.application.domain.value.ExpiredAt;
+import kotetsu.auth.application.domain.value.GrantType;
+import kotetsu.auth.application.domain.value.IssuedAt;
+import kotetsu.auth.application.domain.value.Key;
+import kotetsu.auth.application.domain.value.LinkedRefreshTokenCoreKey;
+import kotetsu.auth.application.domain.value.RefreshTokenValue;
+
+@Component
+public class ExistingRefreshTokenRepository
+    implements IFetchExistingRefreshTokenForUpdatePort,
+        IDeleteExistingRefreshTokenPort
+{
+    private final NamedParameterJdbcTemplate jdbcTemplate;
+
+    public ExistingRefreshTokenRepository(final NamedParameterJdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
+
+    @Override
+    public Optional<ExistingRefreshToken> fetchForUpdate(RefreshTokenValue value) {
+        final String sql = """
+            SELECT key, refresh_token_core_key, grant_type_name, issued_at, expired_at
+            FROM refresh_tokens
+            WHERE value = :value
+            FOR UPDATE;
+        """;
+
+        final Map<String, Object> params = new HashMap<>();
+        params.put("value", value.getValue());
+
+        final List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql, params);
+
+        if (rows.isEmpty()) {
+            return Optional.empty();
+        }
+
+        final Map<String, Object> row = rows.get(0);
+
+        return Optional.of(ExistingRefreshToken.of(
+            Key.of(String.valueOf(row.get("key"))),
+            LinkedRefreshTokenCoreKey.of(String.valueOf(row.get("refresh_token_core_key"))),
+            Duration.of(
+                IssuedAt.of((Date) row.get("issued_at")),
+                ExpiredAt.of((Date) row.get("expired_at"))
+            ),
+            GrantType.of(String.valueOf(row.get("grant_type_name")))
+        )); 
+    }
+
+    @Override
+    public void delete(ExistingRefreshToken existingRefreshToken) {
+        final String sql = """
+            DELETE FROM refresh_tokens
+            WHERE key = :key
+        """;
+
+        final Map<String, Object> params = new HashMap<>();
+        params.put("key", UUID.fromString(existingRefreshToken.getKey().getValue()));
+
+        jdbcTemplate.update(sql, params);        
+    }
+}

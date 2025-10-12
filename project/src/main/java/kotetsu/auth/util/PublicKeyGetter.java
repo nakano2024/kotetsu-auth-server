@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 public class PublicKeyGetter {
     public PublicKey getPublicKey() {
 
-        final String pem = System.getenv("JWT_PUBLIC_KEY");
+        final String pem = System.getenv("INTERNAL_AUTH_PUBLIC_KEY");
 
         if (pem == null || pem.isEmpty()) {
             throw new IllegalArgumentException("JWT_PUBLIC_KEYの値が存在しません。");
@@ -30,7 +30,8 @@ public class PublicKeyGetter {
         try {       
             // PEMデータを読み込む
             PemReader pemReader = new PemReader(new StringReader(pem));
-            PemObject pemObject = pemReader.readPemObject();
+            final PemObject pemObject;
+            pemObject = pemReader.readPemObject();
             pemReader.close();
             
             if (pemObject == null || !pemObject.getType().equals("RSA PUBLIC KEY")) {

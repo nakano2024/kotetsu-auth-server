@@ -1,0 +1,76 @@
+package kotetsu.auth.repository;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.stereotype.Component;
+
+import kotetsu.auth.application.domain.entity.ExistingAccessTokenCore;
+import kotetsu.auth.application.domain.entity.RequestedRelatedAudienceList;
+import kotetsu.auth.application.domain.entity.RequestedScopeList;
+import kotetsu.auth.application.domain.entity.Scope;
+import kotetsu.auth.application.domain.repository.IFetchExistingAccessTokenCorePort;
+import kotetsu.auth.application.domain.value.ClientId;
+import kotetsu.auth.application.domain.value.Issuer;
+import kotetsu.auth.application.domain.value.Key;
+import kotetsu.auth.application.domain.value.ScopeName;
+import kotetsu.auth.application.domain.value.Subject;
+
+@Component
+public class ExistingAccessTokenCoreRepository implements IFetchExistingAccessTokenCorePort {
+    private final NamedParameterJdbcTemplate template;
+
+    public ExistingAccessTokenCoreRepository(final NamedParameterJdbcTemplate template) {
+        this.template = template;
+    }
+    
+    @Override
+    public Optional<ExistingAccessTokenCore> fetch(Key key) {
+        final String sql = """
+            SELECT atc.key AS atc_key, atc.issuer AS atc_issuer, atc.subject AS atc_subject, atc.client_id AS atc_client_id, s.key AS s_key, s.name AS s_name, rs.url AS rs_url 
+            FROM access_token_cores AS atc
+            JOIN access_token_core_scopes AS atcs ON atc.key = atcs.access_token_core_key
+            JOIN scopes AS s ON atcs.scope_key = s.key
+            LEFT JOIN scope_audiences AS sa ON s.key = sa.scope_key
+            LEFT JOIN resource_servers AS rs ON sa.resource_server_key = rs.key
+            WHERE atc.key = :key
+            ORDER BY s.created_at ASC;
+        """;
+
+        final Map<String, Object> params = new HashMap<>();
+        params.put("key", UUID.fromString(key.getValue()));
+
+        final List<Map<String, Object>> rows = template.queryForList(sql, params);
+
+        if (rows.isEmpty()) {
+            return Optional.empty();
+        }
+
+        final List<Scope> scopes = rows.stream()
+            .map(row -> Scope.of(
+                Key.of(String.valueOf(row.get("s_key"))),
+                ScopeName.of((String) row.get("s_name")))
+            )
+            .collect(Collectors.toList());
+        final RequestedScopeList requestedScopeList = RequestedScopeList.of(scopes);
+
+        final List<String> resourceServerUrls = rows.stream()
+            .map(row -> (String) row.get("rs_url"))
+            .collect(Collectors.toList());
+        final RequestedRelatedAudienceList scopeRelatedAudienceList = RequestedRelatedAudienceList.of(resourceServerUrls);
+
+        return Optional.of(ExistingAccessTokenCore.of(
+            Key.of(String.valueOf(rows.get(0).get("atc_key"))),
+            Issuer.of((String) rows.get(0).get("atc_issuer")),
+            Subject.of(String.valueOf(rows.get(0).get("atc_subject"))),
+            requestedScopeList,
+            scopeRelatedAudienceList,
+            ClientId.of((String) rows.get(0).get("atc_client_id"))
+        ));
+    }
+}
