@@ -6,26 +6,37 @@
         <link rel="stylesheet" th:href="@{/css/output.css}">
     </head>
     <body>
-        <div>
-            <div th:if=${param.error}>メールアドレスまたはパスワードが違います。</div>
+        <div class="flex justify-center items-center py-64">
+            <div class="flex items-center h-screen flex-col bg-gray-100">
+                <div>
+                    <div th:if=${param.error}>メールアドレスまたはパスワードが違います。</div>
+                </div>
+                <form th:action="@{/login}" method="post">
+                    <div>
+                        <label>メールアドレス</label>
+                        <input
+                            class="border border-gray-300 bg-white" 
+                            type="text"
+                            name="username"
+                        />
+                    </div>
+                    <div>
+                        <label>パスワード</label>
+                        <input
+                            class="border"
+                            type="password"
+                            name="password"
+                        />
+                    </div>
+                    <div>
+                        <button 
+                            type="submit"
+                        >
+                            ログイン
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
-        <form th:action="@{/login}" method="post">
-            <div>
-                <label>メールアドレス</label>
-                <input type="text" name="username" />
-            </div>
-            <div>
-                <label>パスワード</label>
-                <input type="password" name="password" />
-            </div>
-            <div>
-                <button 
-                    type="submit"
-                    class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition-colors"
-                >
-                    ログイン
-                </button>
-            </div>
-        </form>
     </body>
 </html>
