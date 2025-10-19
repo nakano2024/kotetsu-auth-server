@@ -138,6 +138,48 @@
 					</excludes>
 				</configuration>
 			</plugin>
+		    <!-- Node.jsとnpmを自動で扱う -->
+		    <plugin>
+		      <groupId>com.github.eirslett</groupId>
+		      <artifactId>frontend-maven-plugin</artifactId>
+		      <version>1.14.1</version>
+		
+		      <executions>
+		        <!-- Node.jsとnpmをインストール -->
+		        <execution>
+		          <id>install node and npm</id>
+		          <goals>
+		            <goal>install-node-and-npm</goal>
+		          </goals>
+		          <configuration>
+		            <nodeVersion>v18.18.0</nodeVersion> <!-- バージョンは適宜変更 -->
+		            <npmVersion>9.8.1</npmVersion>
+		          </configuration>
+		        </execution>
+		
+		        <!-- npm install を実行 -->
+		        <execution>
+		          <id>npm install</id>
+		          <goals>
+		            <goal>npm</goal>
+		          </goals>
+		          <configuration>
+		            <arguments>install</arguments>
+		          </configuration>
+		        </execution>
+		
+		        <!-- Tailwind CSS のビルド -->
+		        <execution>
+		          <id>npm run build:css</id>
+		          <goals>
+		            <goal>npm</goal>
+		          </goals>
+		          <configuration>
+		            <arguments>run build:css</arguments>
+		          </configuration>
+		        </execution>
+		      </executions>
+		    </plugin>
 		</plugins>
 	</build>
 
