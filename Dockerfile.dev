@@ -20,3 +20,4 @@ RUN curl -fsSL https://github.com/JetBrains/kotlin/releases/download/v${KOTLIN_V
     rm /tmp/kotlin.zip
 
 WORKDIR /project
+

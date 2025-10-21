@@ -119,7 +119,7 @@ public class SecurityConfig {
                 return;
             }
 
-            response.sendRedirect("/mypage");
+            response.sendRedirect("/");
         };
     }
 }

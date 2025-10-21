@@ -17,18 +17,18 @@
                     th:action="@{/login}"
                     method="post"
                 >
-                    <div class="flex flex-col gap-6">
+                    <div class="flex flex-col gap-10">
                         <div class="flex flex-col justify-center items-center">
                             <div
                                 th:if=${param.error}
                                 class="text-red-800"
                             >
-                                メールアドレスまたはパスワードが違います。
+                                認証に失敗しました。
                             </div>
                         </div>
                         <div>
                             <input
-                                class="border border-gray-300 bg-white w-full p-2 rounded" 
+                                class="border focus:outline-black focus:outline-2 border-gray-300 bg-white w-full p-2 rounded" 
                                 type="text"
                                 name="username"
                                 placeholder="メールアドレス"
@@ -36,15 +36,15 @@
                         </div>
                         <div>
                             <input
-                                class="border border-gray-300 bg-white w-full p-2 rounded"
+                                class="border focus:outline-black focus:outline-2 border-gray-300 bg-white w-full p-2 rounded"
                                 type="password"
                                 name="password"
                                 placeholder="パスワード"
                             />
                         </div>
-                        <div>
+                        <div class="flex justify-center w-full">
                             <button
-                                class="w-full font-bold text-white p-2 bg-black hover:bg-gray-600 active:bg-gray-800 rounded"
+                                class="w-1/2 font-bold text-white p-2 bg-black hover:bg-gray-600 rounded cursor-pointer"
                                 type="submit"
                             >
                                 Sign in
