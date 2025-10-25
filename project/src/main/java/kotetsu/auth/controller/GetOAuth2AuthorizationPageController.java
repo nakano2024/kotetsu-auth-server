@@ -77,7 +77,7 @@ public class GetOAuth2AuthorizationPageController {
             model.addAttribute("username", loginUser.getName());
             model.addAttribute("scopeDescriptions", scopeDescriptionsOutput.getScopeDescriptions());
             model.addAttribute("client_name", clientInformationOutput.getName());
-            return "oauth2-authorization";
+            return "pages/oauth2-authorization";
         }
         catch(InvalidScopeNameListTokenException exception) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);

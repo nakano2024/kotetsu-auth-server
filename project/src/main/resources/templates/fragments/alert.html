@@ -1,0 +1,11 @@
+<div
+    class="flex flex-col justify-center items-center font-bold border-2 border-red-700 rounded-md p-4 bg-red-50"
+    xmlns:th="http://www.thymeleaf.org"
+    th:fragment="alert(message)"
+>
+    <div 
+        th:text="${message}"
+        class="tracking-wider font-bold text-red-700"
+    >
+    </div>
+</div>
