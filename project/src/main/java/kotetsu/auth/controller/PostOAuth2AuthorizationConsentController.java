@@ -29,7 +29,7 @@ public class PostOAuth2AuthorizationConsentController {
         this.usecase = usecase;
     }
 
-    @PostMapping("/oauth2/authorization/consent/code")
+    @PostMapping("/oauth2/authorization/consent")
     public String handle(
         @Valid PostOAuth2AuthorizationRequestConsentParam param,
         @AuthenticationPrincipal MyUserDetails loginUser

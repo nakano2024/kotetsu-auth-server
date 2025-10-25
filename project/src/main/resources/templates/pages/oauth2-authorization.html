@@ -23,7 +23,7 @@
         <div>
             同意されない場合は「キャンセル」を選択してください。
         </div>
-        <form th:action="@{/oauth2/authorization/consent/code}" method="post">
+        <form th:action="@{/oauth2/authorization/consent}" method="post">
             <input type="hidden" name="client_id" th:value="${client_id}" />
             <input type="hidden" name="redirect_uri" th:value="${redirect_uri}" />
             <input type="hidden" name="nonce" th:value="${nonce}" />
@@ -34,7 +34,7 @@
             <input type="hidden" name="access_type" th:value="${access_type}" />
             <input type="hidden" name="response_type" th:value="${response_type}" />
             <button>
-                次へ進む
+                続行する
             </button>
         </form>
         <form th:action="@{/oauth2/authorization/deny}" method="post">
