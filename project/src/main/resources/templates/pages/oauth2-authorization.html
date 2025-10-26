@@ -1,49 +1,71 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html 
+    xmlns:th="http://www.thymeleaf.org"
+    xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{layouts/auth}"
+>
     <head>
         <meta charset="UTF-8">
-        <title>操作権限移譲に関する確認画面</title>
+        <title>アクセス権の許可</title>
     </head>
     <body>
-        <p>
-            お客様所有データに対する下記操作の実行権限を移譲します。
-        </p>
-        <div>
-            移譲する操作権限一覧:
+        <div layout:fragment="content">
+            <div class="flex flex-row justify-center">
+                <div class="w-20 h-20 bg-[url('/img/logo_icon.png')] bg-no-repeat bg-center bg-contain"></div>
+            </div>
+            <div class="flex justify-center">
+                <span class="text-xl text-center">
+                    <span
+                        class="font-bold" 
+                        th:text="${client_name}"
+                    >
+                    </span>へ、アカウントに対するアクセス権を<span class="font-bold">以下の範囲（スコープ）</span>で許可します。
+                </span>
+            </div>
+            <div class="flex flex-col gap-16">       
+                <div class="bg-gray-100 p-5 rounded-md flex flex-row flex-wrap gap-5">
+                    <div 
+                        class="font-bold tracking-wide text-blue-900"
+                        th:each="scopeDescription : ${scopeDescriptions}" th:text="${scopeDescription}"
+                    ></div>
+                </div>
+                <div class="flex flex-col gap-4 tracking-wide">
+                    <div>
+                        内容をご確認のうえ、<span class="font-bold underline">同意いただける場合のみ</span>「<span class="font-bold">続行する</span>」を選択してください。
+                    </div>
+                    <div>
+                        同意されない場合は「<span class="font-bold">キャンセル</span>」を選択してください。
+                    </div>
+                </div>
+                <div class="flex flex-row gap-16 justify-center">
+                    <div class="w-1/3">
+                        <form th:action="@{/oauth2/authorization/consent}" method="post">
+                            <input type="hidden" name="client_id" th:value="${client_id}" />
+                            <input type="hidden" name="redirect_uri" th:value="${redirect_uri}" />
+                            <input type="hidden" name="nonce" th:value="${nonce}" />
+                            <input type="hidden" name="code_challenge" th:value="${code_challenge}" />
+                            <input type="hidden" name="state" th:value="${state}" />
+                            <input type="hidden" name="username" th:value="${username}" />
+                            <input type="hidden" name="scope" th:value="${scope}" />
+                            <input type="hidden" name="access_type" th:value="${access_type}" />
+                            <input type="hidden" name="response_type" th:value="${response_type}" />
+                            <button class="w-full font-bold text-white p-2 bg-black hover:bg-gray-700 rounded-full cursor-pointer">
+                                続行する
+                            </button>
+                        </form>
+                    </div>
+                    <div class="w-1/3">
+                        <form th:action="@{/oauth2/authorization/deny}" method="post">
+                            <input type="hidden" name="client_id" th:value="${client_id}" />
+                            <input type="hidden" name="redirect_uri" th:value="${redirect_uri}" />
+                            <input type="hidden" name="state" th:value="${state}" />
+                            <button class="w-full font-bold text-black p-2 bg-white border border-black hover:bg-gray-100 rounded-full cursor-pointer">
+                                キャンセル
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
-        <ul>
-            <li th:each="scopeDescription : ${scopeDescriptions}" th:text="${scopeDescription}"></li>
-        </ul>
-        <div>
-            移譲先: <span th:text="${client_name}"></span>
-        </div>
-        <div>
-            内容をご確認のうえ、同意いただける場合のみ「次へ進む」を選択してください。
-        </div>
-        <div>
-            同意されない場合は「キャンセル」を選択してください。
-        </div>
-        <form th:action="@{/oauth2/authorization/consent}" method="post">
-            <input type="hidden" name="client_id" th:value="${client_id}" />
-            <input type="hidden" name="redirect_uri" th:value="${redirect_uri}" />
-            <input type="hidden" name="nonce" th:value="${nonce}" />
-            <input type="hidden" name="code_challenge" th:value="${code_challenge}" />
-            <input type="hidden" name="state" th:value="${state}" />
-            <input type="hidden" name="username" th:value="${username}" />
-            <input type="hidden" name="scope" th:value="${scope}" />
-            <input type="hidden" name="access_type" th:value="${access_type}" />
-            <input type="hidden" name="response_type" th:value="${response_type}" />
-            <button>
-                続行する
-            </button>
-        </form>
-        <form th:action="@{/oauth2/authorization/deny}" method="post">
-            <input type="hidden" name="client_id" th:value="${client_id}" />
-            <input type="hidden" name="redirect_uri" th:value="${redirect_uri}" />
-            <input type="hidden" name="state" th:value="${state}" />
-            <button>
-                キャンセル
-            </button>
-        </form>
     </body>
 </html>
