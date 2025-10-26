@@ -11,7 +11,10 @@
         <div layout:fragment="content">
             <div class="flex flex-col justify-center items-center">
                 <div class="flex flex-row items-center">
-                    <div class="w-16 h-16 bg-[url('/img/logo_icon.png')] bg-no-repeat bg-center bg-contain">
+                    <div 
+                        class="w-16 h-16 bg-no-repeat bg-center bg-contain"
+                        th:styleappend="|background-image: url('@{/images/logo_icon.png}');|"
+                    >
                     </div>
                     <div class="text-3xl font-bold">
                         KOTETSUアカウントにSign in

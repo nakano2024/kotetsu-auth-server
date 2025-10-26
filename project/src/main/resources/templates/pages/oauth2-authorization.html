@@ -11,7 +11,11 @@
     <body>
         <div layout:fragment="content">
             <div class="flex flex-row justify-center">
-                <div class="w-20 h-20 bg-[url('/img/logo_icon.png')] bg-no-repeat bg-center bg-contain"></div>
+                <div 
+                    class="w-20 h-20 bg-no-repeat bg-center bg-contain"
+                    th:styleappend="|background-image: url('@{/images/logo_icon.png}');|">
+                >
+                </div>
             </div>
             <div class="flex justify-center">
                 <span class="text-xl text-center">
