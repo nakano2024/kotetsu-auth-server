@@ -9,6 +9,7 @@ import lombok.Data;
 @Data
 public class PostOAuth2AuthorizationRequestConsentParam {
     @NotBlank
+    @Pattern(regexp = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}.kotetsu.com$")
     private final String clientId;
 
     @NotBlank

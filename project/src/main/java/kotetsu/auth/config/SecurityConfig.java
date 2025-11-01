@@ -96,7 +96,10 @@ public class SecurityConfig {
             .permitAll()
         )
         .logout(logout -> logout
-            .permitAll()
+            .logoutUrl("/logout")
+            .logoutSuccessUrl("/login?logout")
+            .invalidateHttpSession(true)
+            .deleteCookies("JSESSIONID")
         )
         .sessionManagement(session -> session.
             sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
