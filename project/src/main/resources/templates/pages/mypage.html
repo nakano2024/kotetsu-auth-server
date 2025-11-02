@@ -1,10 +1,33 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html 
+    xmlns:th="http://www.thymeleaf.org"
+    xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{layouts/mypage}"
+>
 <head>
     <meta charset="UTF-8">
     <title>Home</title>
 </head>
 <body>
-    <h1>ようこそ<span th:text="${username}"></span>さん！</h1>
+    <div 
+        layout:fragment="content"
+    >
+        <div class="flex flex-col justify-center items-center gap-5">
+            <div class="text-2xl font-bold">
+                ようこそ<span th:text="${username}"></span>さん！
+            </div>
+            <div class="w-1/3">
+                <form th:action="@{/logout}" method="post">
+                    <input type="hidden" name="client_id" th:value="${client_id}" />
+                    <input type="hidden" name="redirect_uri" th:value="${redirect_uri}" />
+                    <input type="hidden" name="state" th:value="${state}" />
+                    <button class="w-full font-bold text-black p-2 bg-white border border-black hover:bg-gray-100 rounded-full cursor-pointer">
+                        Sign Out
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
+
