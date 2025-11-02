@@ -26,22 +26,22 @@ services:
       - OIDC_PUBLIC_KEYS=${OIDC_PUBLIC_KEYS}
       - SERVER_URL=${SERVER_URL}
 
-  # app-dev:
-  #   build:
-  #     dockerfile:  ./Dockerfile.dev
-  #   volumes:
-  #     - app-store:/project
-  #   ports:
-  #     - 8765:8000
-  #   environment:
-  #     - DATASOURCE_URL=jdbc:postgresql://data/usermanager
-  #     - DATASOURCE_USERNAME=webapp
-  #     - DATASOURCE_PASSWORD=webapp
-  #     - OIDC_PRIVATE_KEYS=${OIDC_PRIVATE_KEYS}
-  #     - OIDC_PUBLIC_KEYS=${OIDC_PUBLIC_KEYS}
-  #     - SERVER_URL=${SERVER_URL}
-  #   tty: true
-  #   command: sleep infinity
+  app-dev:
+    build:
+      dockerfile:  ./Dockerfile.dev
+    volumes:
+      - app-store:/project
+    ports:
+      - 8765:8000
+    environment:
+      - DATASOURCE_URL=jdbc:postgresql://data/usermanager
+      - DATASOURCE_USERNAME=webapp
+      - DATASOURCE_PASSWORD=webapp
+      - OIDC_PRIVATE_KEYS=${OIDC_PRIVATE_KEYS}
+      - OIDC_PUBLIC_KEYS=${OIDC_PUBLIC_KEYS}
+      - SERVER_URL=${SERVER_URL}
+    tty: true
+    command: sleep infinity
   
   data:
     image: postgres:14
@@ -67,6 +67,14 @@ services:
       - POSTGRES_PASSWORD=webapp
     tty: true
 
+  client:
+    build:
+      dockerfile:  ./Dockerfile.client
+    volumes:
+      - client-store:/app  
+    ports:
+      - 3001:3000
+
 volumes:
   app-store:
     driver: local
@@ -74,5 +82,12 @@ volumes:
       type: none
       device: ./project
       o: bind
+  client-store:
+    driver: local
+    driver_opts:
+      type: none
+      device: ./client
+      o: bind
   db-store:
   db-testing-store:
+  

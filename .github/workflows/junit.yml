@@ -22,11 +22,11 @@ jobs:
 
       - name: Build and start containers with docker compose
         run: |
-          docker compose up -d app data-testing
+          docker compose up -d app-dev data-testing
 
       - name: Run tests inside the container
         run: |
-          docker compose exec -T app mvn test
+          docker compose exec -T app-dev mvn test
 
       - name: Tear down Docker Compose
         run: docker compose down
