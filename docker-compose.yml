@@ -26,22 +26,22 @@ services:
       - OIDC_PUBLIC_KEYS=${OIDC_PUBLIC_KEYS}
       - SERVER_URL=${SERVER_URL}
 
-  app-dev:
-    build:
-      dockerfile:  ./Dockerfile.dev
-    volumes:
-      - app-store:/project
-    ports:
-      - 8765:8000
-    environment:
-      - DATASOURCE_URL=jdbc:postgresql://data/usermanager
-      - DATASOURCE_USERNAME=webapp
-      - DATASOURCE_PASSWORD=webapp
-      - OIDC_PRIVATE_KEYS=${OIDC_PRIVATE_KEYS}
-      - OIDC_PUBLIC_KEYS=${OIDC_PUBLIC_KEYS}
-      - SERVER_URL=${SERVER_URL}
-    tty: true
-    command: sleep infinity
+  # app-dev:
+  #   build:
+  #     dockerfile:  ./Dockerfile.dev
+  #   volumes:
+  #     - app-store:/project
+  #   ports:
+  #     - 8765:8000
+  #   environment:
+  #     - DATASOURCE_URL=jdbc:postgresql://data/usermanager
+  #     - DATASOURCE_USERNAME=webapp
+  #     - DATASOURCE_PASSWORD=webapp
+  #     - OIDC_PRIVATE_KEYS=${OIDC_PRIVATE_KEYS}
+  #     - OIDC_PUBLIC_KEYS=${OIDC_PUBLIC_KEYS}
+  #     - SERVER_URL=${SERVER_URL}
+  #   tty: true
+  #   command: sleep infinity
   
   data:
     image: postgres:14
@@ -74,6 +74,37 @@ services:
       - client-store:/app  
     ports:
       - 3001:3000
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  client-redis:
+    image: redis:7
+    container_name: redis
+    ports:
+      - "6379:6379"
+    command: >
+      redis-server
+      --requirepass ${REDIS_PASSWORD}
+      --appendonly yes
+      --save 60 1000
+      --maxmemory-policy allkeys-lru
+    volumes:
+      - redis-data:/data
+      - ./redis.conf:/usr/local/etc/redis/redis.conf:ro
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  redisinsight:
+    image: redis/redisinsight:latest
+    container_name: redisinsight
+    ports:
+      - "5540:5540"      # ブラウザUI: http://localhost:5540
+    depends_on:
+      client-redis:
+        condition: service_healthy
 
 volumes:
   app-store:
@@ -90,4 +121,4 @@ volumes:
       o: bind
   db-store:
   db-testing-store:
-  
+  redis-data:
