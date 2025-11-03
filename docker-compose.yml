@@ -26,22 +26,22 @@ services:
       - OIDC_PUBLIC_KEYS=${OIDC_PUBLIC_KEYS}
       - SERVER_URL=${SERVER_URL}
 
-  # app-dev:
-  #   build:
-  #     dockerfile:  ./Dockerfile.dev
-  #   volumes:
-  #     - app-store:/project
-  #   ports:
-  #     - 8765:8000
-  #   environment:
-  #     - DATASOURCE_URL=jdbc:postgresql://data/usermanager
-  #     - DATASOURCE_USERNAME=webapp
-  #     - DATASOURCE_PASSWORD=webapp
-  #     - OIDC_PRIVATE_KEYS=${OIDC_PRIVATE_KEYS}
-  #     - OIDC_PUBLIC_KEYS=${OIDC_PUBLIC_KEYS}
-  #     - SERVER_URL=${SERVER_URL}
-  #   tty: true
-  #   command: sleep infinity
+  app-dev:
+    build:
+      dockerfile:  ./Dockerfile.dev
+    volumes:
+      - app-store:/project
+    ports:
+      - 8765:8000
+    environment:
+      - DATASOURCE_URL=jdbc:postgresql://data/usermanager
+      - DATASOURCE_USERNAME=webapp
+      - DATASOURCE_PASSWORD=webapp
+      - OIDC_PRIVATE_KEYS=${OIDC_PRIVATE_KEYS}
+      - OIDC_PUBLIC_KEYS=${OIDC_PUBLIC_KEYS}
+      - SERVER_URL=${SERVER_URL}
+    tty: true
+    command: sleep infinity
   
   data:
     image: postgres:14
