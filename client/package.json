@@ -10,7 +10,9 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "base64url": "^3.0.1",
     "nuxt": "^4.2.0",
+    "nuxt-auth-utils": "^0.5.25",
     "vue": "^3.5.22",
     "vue-router": "^4.6.3"
   },

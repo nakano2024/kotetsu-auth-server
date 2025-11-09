@@ -1,4 +1,4 @@
-FROM openjdk:17-slim
+FROM eclipse-temurin:17-jdk-jammy
 
 ENV MAVEN_VERSION=3.8.7 \
     KOTLIN_VERSION=1.8.10 \
