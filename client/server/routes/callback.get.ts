@@ -42,16 +42,10 @@ export default defineEventHandler(async (event: H3Event): Promise<void> => {
     }
     catch(error: any) {
         await clearUserSession(event);
-        if (error?.name === 'FetchError') {
-            const status = error.status;
-            const apiCode = error.data?.code;
-            console.error('FetchError status:', status);
-            console.error('API error code:', apiCode);
-
+        if (error instanceof FetchError) {
             throw createError({
-              statusCode: status,
+              statusCode: 502,
               message: "トークンの取得に失敗しました。",
-              data: { code: apiCode }
             });
         }        
         throw error;
