@@ -1,6 +1,6 @@
 
 import { defineEventHandler, type H3Event, getQuery } from 'h3'
-import { CallbackParameter, OAuth2Parameter, OidcParameter } from '~/types/auth';
+import { CallbackParameter, OAuth2Parameter, OAuthFetchTokenResponse, OidcParameter } from '~/types/auth';
 
 export default defineEventHandler(async (event: H3Event): Promise<void> => {
     const callbackParameter = getQuery<Partial<CallbackParameter>>(event);
@@ -11,8 +11,6 @@ export default defineEventHandler(async (event: H3Event): Promise<void> => {
     }
 
     const { oauth2Parameter,  oidcParameter } = await getUserSession(event);
-    await clearUserSession(event);
-    console.dir(oauth2Parameter);
 
     const oauth2SessionParameter = oauth2Parameter as OAuth2Parameter;
     const oidcSessionParameter = oidcParameter as OidcParameter;
@@ -20,10 +18,29 @@ export default defineEventHandler(async (event: H3Event): Promise<void> => {
         throw createError({ statusCode: 400, message: ERROR_MESSAGE_400, fatal: false });
     }
 
-    console.dir(oauth2SessionParameter.state);
     if (callbackParameter.state !== oauth2SessionParameter.state) {
         throw createError({ statusCode: 400, message: ERROR_MESSAGE_400, fatal: false });
     }
 
-    return sendRedirect(event, '/', 302);
+    const config = useRuntimeConfig();
+    const basicAuthCredential = Buffer.from(`${config.clientId}:${config.clientSecret}`, 'utf8').toString('base64');
+    try {
+        const tokenResponse = await $fetch<OAuthFetchTokenResponse>(`${config.idpUrl}/api/oauth2/token`, {
+            method: 'POST',
+            headers: {
+                Authorization: `Basic ${basicAuthCredential}`,
+            },
+            body: new URLSearchParams({
+                grant_type: 'authorization_code',
+                code: callbackParameter.code,
+                code_verifier: oauth2SessionParameter.codeVerifier,
+            }),
+        });
+        await clearUserSession(event);
+        return sendWebResponse(event, Response.json(tokenResponse));
+    }
+    catch(error: any) {
+        await clearUserSession(event);
+        throw error;
+    }
 });

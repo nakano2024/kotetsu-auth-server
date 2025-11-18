@@ -11,9 +11,11 @@ export default defineEventHandler(async (event: H3Event): Promise<void> => {
     const state = await randomBytes(32).toString('base64url');
     const nonce = await randomBytes(64).toString('base64url');
     const codeVerifier = await randomBytes(64).toString('base64url');
-    const codeChallengeHashBytes = new Uint8Array(await crypto.subtle.digest('SHA-256', Buffer.from(codeVerifier)));
-    const codeChallengeBuffer = Buffer.from(codeChallengeHashBytes);
-    const codeChallenge = base64url(codeChallengeBuffer);
+    const codeChallenge = await (async () => {
+      const data = new TextEncoder().encode(codeVerifier);
+      const digest = await crypto.subtle.digest('SHA-256', data);
+      return Buffer.from(digest).toString('base64url');
+    })();
 
     const queryParams = new URLSearchParams({
         client_id: config.clientId as string,
