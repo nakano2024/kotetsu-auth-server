@@ -20,7 +20,7 @@ export default defineEventHandler(async (event: H3Event): Promise<void> => {
     const queryParams = new URLSearchParams({
         client_id: config.clientId as string,
         redirect_uri: config.redirectUri as string,
-        scope: 'openid',
+        scope: 'openid task.read task.delete',
         response_type: 'code',
         access_type: 'offline',
         nonce: nonce,
