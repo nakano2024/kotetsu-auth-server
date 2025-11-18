@@ -26,7 +26,6 @@ export default defineEventHandler(async (event: H3Event): Promise<void> => {
 
         const config = useRuntimeConfig();
         const basicAuthCredential = Buffer.from(`${config.clientId}:${config.clientSecret}`, 'utf8').toString('base64');
-
         const tokenResponse = await $fetch<OAuthFetchTokenResponse>(`${config.idpUrl}/api/oauth2/token`, {
             method: 'POST',
             headers: {
