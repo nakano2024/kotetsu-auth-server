@@ -2,7 +2,7 @@ import { randomBytes } from 'crypto'
 import { defineEventHandler, type H3Event } from 'h3'
 import base64url from 'base64url'
 import { useRuntimeConfig, setUserSession, sendRedirect } from '#imports'
-import type { OAuth2Parameter, OidcParameter } from '@/types/auth'
+import type { OAuth2Parameter, OidcParameter } from '~/server/types/auth'
 
 export default defineEventHandler(async (event: H3Event): Promise<void> => {
 

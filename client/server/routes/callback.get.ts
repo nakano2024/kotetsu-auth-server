@@ -1,7 +1,9 @@
 
 import { defineEventHandler, type H3Event, getQuery } from 'h3'
-import { CallbackParameter, OAuth2Parameter, OAuthFetchTokenResponse, OidcParameter } from '~/types/auth';
+import { CallbackParameter, OAuth2Parameter, OidcParameter, UserMeSession } from '~/server/types/auth';
 import { FetchError } from 'ofetch'
+import { fetchCerts, fetchMeFromIdTokenWithVerification, fetchToken } from '../utils/auth';
+import { IdTokeVerificationError } from '../error/auth';
 
 export default defineEventHandler(async (event: H3Event): Promise<void> => {
     try {
@@ -25,20 +27,28 @@ export default defineEventHandler(async (event: H3Event): Promise<void> => {
         }
 
         const config = useRuntimeConfig();
-        const basicAuthCredential = Buffer.from(`${config.clientId}:${config.clientSecret}`, 'utf8').toString('base64');
-        const tokenResponse = await $fetch<OAuthFetchTokenResponse>(`${config.idpUrl}/api/oauth2/token`, {
-            method: 'POST',
-            headers: {
-                Authorization: `Basic ${basicAuthCredential}`,
-            },
-            body: new URLSearchParams({
-                grant_type: 'authorization_code',
-                code: callbackParameter.code,
-                code_verifier: oauth2SessionParameter.codeVerifier,
-            }),
+        const tokenResponse = await fetchToken({
+            clientId: config.clientId,
+            clientSecret: config.clientSecret,
+            code: callbackParameter.code,
+            codeVerifier: oauth2SessionParameter.codeVerifier,
         });
+
+        const certsResponse = await fetchCerts();
+        const userProfile = await fetchMeFromIdTokenWithVerification({
+            keys: certsResponse.keys
+        }, tokenResponse.idToken);
+
         await clearUserSession(event);
-        return sendWebResponse(event, Response.json(tokenResponse));
+        await setUserSession(event, {
+            userMe: {
+                sub: userProfile.sub,
+                name: userProfile.name,
+                email: userProfile.email,
+                scope: tokenResponse.scope,
+            } as UserMeSession,
+        })
+        return sendRedirect(event, '/mypage');
     }
     catch(error: any) {
         await clearUserSession(event);
@@ -47,7 +57,15 @@ export default defineEventHandler(async (event: H3Event): Promise<void> => {
               statusCode: 502,
               message: "トークンの取得に失敗しました。",
             });
-        }        
+        }
+
+        if (error instanceof IdTokeVerificationError) {
+            throw createError({
+                statusCode: 401,
+                message: 'トークンの検証に失敗しました。',
+            });
+        }
+
         throw error;
     }
 });

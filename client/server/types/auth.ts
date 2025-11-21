@@ -17,7 +17,7 @@ export interface OAuthFetchTokenParameter {
     clientId: string;
     clientSecret: string;
     code: string;
-    codeChallenge: string;
+    codeVerifier: string;
 }
 
 export interface OAuthFetchTokenResponse {
@@ -27,4 +27,32 @@ export interface OAuthFetchTokenResponse {
     expiresIn: number;
     idToken: string;
     refreshToken: string;
+}
+
+export interface Jwk {
+    kid: string,
+    kty: string,
+    alg: string,
+    use: string,
+    n: string,
+    e: string,
+}
+
+export interface FetchCertsResponse {
+    keys: Jwk[],
+}
+
+export interface UserProfile {
+    sub: string,
+    name: string,
+    email: string,
+    imageUrl: string,
+} 
+
+export interface UserMeSession {
+    sub: string,
+    name: string,
+    email: string,
+    imageUrl: string,
+    scope: string,
 }
