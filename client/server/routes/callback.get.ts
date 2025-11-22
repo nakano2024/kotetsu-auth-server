@@ -18,6 +18,7 @@ export default defineEventHandler(async (event: H3Event): Promise<void> => {
 
         const oauth2SessionParameter = oauth2Parameter as OAuth2Parameter;
         const oidcSessionParameter = oidcParameter as OidcParameter;
+        console.log(oauth2SessionParameter);
         if (!oauth2SessionParameter?.state || !oauth2SessionParameter?.codeVerifier || !oidcSessionParameter?.nonce) {
             throw createError({ statusCode: 400, message: ERROR_MESSAGE_400, fatal: false });
         }
@@ -40,14 +41,16 @@ export default defineEventHandler(async (event: H3Event): Promise<void> => {
         }, tokenResponse.idToken);
 
         await clearUserSession(event);
-        await setUserSession(event, {
+        await replaceUserSession(event, {
             userMe: {
                 sub: userProfile.sub,
                 name: userProfile.name,
                 email: userProfile.email,
                 scope: tokenResponse.scope,
             } as UserMeSession,
-        })
+            oauth2Parameter: undefined,
+            oidcParameter: undefined,
+        });
         return sendRedirect(event, '/mypage');
     }
     catch(error: any) {

@@ -5,9 +5,7 @@
         {{ userMe.name }}さんでログイン中
       </div>
       <div v-if="showTaskIndexLink">
-        <a href="/mypage/tasks">
-          タスク一覧
-        </a>
+        タスク一覧
       </div>
     </div>
   </div>
