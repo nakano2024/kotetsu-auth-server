@@ -19,5 +19,8 @@ RUN curl -fsSL https://github.com/JetBrains/kotlin/releases/download/v${KOTLIN_V
     ln -s /opt/kotlinc-${KOTLIN_VERSION} /opt/kotlinc && \
     rm /tmp/kotlin.zip
 
-WORKDIR /project
+COPY ./project/target /target
 
+WORKDIR /target
+
+CMD ["java", "-jar", "auth-0.0.1-SNAPSHOT.jar"]
